@@ -1,0 +1,5 @@
+{
+  "eslint.validate": ["vue", "javascript", "typescript"],
+  "css.validate": false,
+  "css.customData": [".vscode/tailwind.json"]
+}
