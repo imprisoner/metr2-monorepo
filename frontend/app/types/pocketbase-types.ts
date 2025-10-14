@@ -294,7 +294,7 @@ export type FlatsRecord = {
 	floorStructure?: RecordIdString
 	houseSeries: RecordIdString
 	id: string
-	image: string
+	images: string[]
 	journals?: RecordIdString[]
 	layout?: RecordIdString
 	nickname: string

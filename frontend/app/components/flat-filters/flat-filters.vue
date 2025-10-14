@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
-import type { FlatDictionaryFields, FlatFilter } from "~/types/common.types";
+import { getFlatFilters } from "~/api/functions";
+import type { FlatDictionaryFields } from "~/types/common.types";
 
 const { excludeField = null, initialFilter = null } = defineProps<{
   excludeField?: FlatDictionaryFields;
@@ -33,7 +33,7 @@ const { excludeField = null, initialFilter = null } = defineProps<{
   };
 }>();
 
-const filtersResponse: FlatFilter[] = await pb.send("/api/dictionaries", {});
+const filtersResponse = await getFlatFilters()
 
 const finalFilters = filtersResponse.filter(
   (flatFilter) => flatFilter.field != excludeField

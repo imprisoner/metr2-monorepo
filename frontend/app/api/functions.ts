@@ -1,10 +1,10 @@
 import {
   Collections,
-  type AvailableSpecialtiesViewRecord,
+  // type AvailableSpecialtiesViewRecord,
   type ContractorsServicesResponse,
-  type ContractorsSpecialtiesCardsResponse,
+  // type ContractorsSpecialtiesCardsResponse,
   type DictHouseSeriesRecord,
-  type DictSpecialtiesRecord,
+  // type DictSpecialtiesRecord,
   type HouseSeriesCardsResponse,
   type JournalsResponse,
   type UsersResponse,
@@ -16,6 +16,7 @@ import type {
   ServiceCategorysWithSpecialties,
   SpecialtyRecordWithServices,
 } from "~/types/api.types";
+import type { FlatFilter } from "~/types/common.types";
 
 export const getJournalsResponse = async <E>({
   page = 1,
@@ -113,33 +114,33 @@ export const getOneContractorsPost = async (id: string) => {
   return response;
 };
 
-export const getAvailableContractorsSpecialtiesCards = async () => {
-  const response = await pb
-    .collection(Collections.AvailableSpecialtiesView)
-    .getFullList<AvailableSpecialtiesViewRecord>();
+// export const getAvailableContractorsSpecialtiesCards = async () => {
+//   const response = await pb
+//     .collection(Collections.AvailableSpecialtiesView)
+//     .getFullList<AvailableSpecialtiesViewRecord>();
 
-  const recordsWithFullImageLink = response.map((record) => ({
-    ...record,
-    image: pb.files.getURL(record, record.image!),
-  }));
+//   const recordsWithFullImageLink = response.map((record) => ({
+//     ...record,
+//     image: pb.files.getURL(record, record.image!),
+//   }));
 
-  return recordsWithFullImageLink;
-};
+//   return recordsWithFullImageLink;
+// };
 
-export const getAllContractorsSpecialtiesCards = async () => {
-  const response = await pb
-    .collection(Collections.ContractorsSpecialtiesCards)
-    .getFullList<
-      ContractorsSpecialtiesCardsResponse<{ specialty: DictSpecialtiesRecord }>
-    >({ expand: "specialty" });
+// export const getAllContractorsSpecialtiesCards = async () => {
+//   const response = await pb
+//     .collection(Collections.ContractorsSpecialtiesCards)
+//     .getFullList<
+//       ContractorsSpecialtiesCardsResponse<{ specialty: DictSpecialtiesRecord }>
+//     >({ expand: "specialty" });
 
-  const recordsWithFullImageLink = response.map((record) => ({
-    ...record,
-    image: pb.files.getURL(record, record.image),
-  }));
+//   const recordsWithFullImageLink = response.map((record) => ({
+//     ...record,
+//     image: pb.files.getURL(record, record.image),
+//   }));
 
-  return recordsWithFullImageLink;
-};
+//   return recordsWithFullImageLink;
+// };
 
 export const getAllContractorsServicesCategoriesWithSpecialties = async () => {
   const response = await pb
@@ -184,5 +185,10 @@ export const getOneSpecialtyWithServices = async (id: string) => {
       expand: "dict_specialty_services_via_specialty",
     });
 
+  return response;
+};
+
+export const getFlatFilters = async () => {
+  const response: FlatFilter[] = await pb.send("/api/flat-props", {});
   return response;
 };

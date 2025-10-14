@@ -1,6 +1,6 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-routerAdd("GET", "/api/dictionaries", (c) => {
+routerAdd("GET", "/api/flat-props", (c) => {
   // список всех справочников
   function snakeToCamel(str) {
     return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());

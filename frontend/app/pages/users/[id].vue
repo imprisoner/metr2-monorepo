@@ -10,10 +10,6 @@
           :is-owner="isOwner"
           :blog-articles="blogArticles"
         />
-        <!-- <ProfileContractorSection
-          v-else
-          :contractor-id="userData.expand.contractors_via_user![0]!.id"
-        /> -->
       </template>
       <template #right>
         <Panel class="shadow-md h-fit">
@@ -70,7 +66,7 @@ const getUserPageData = async () => {
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({
       ...flat,
-      image: pb.files.getURL(flat, flat.image),
+      images: flat.images.map((filename) => pb.files.getURL(flat, filename)),
     }));
   }
 

@@ -1,7 +1,9 @@
 import type {
+  DictBuildingCategoryRecord,
   DictFinishingRecord,
   DictFlatTypeRecord,
   DictHouseSeriesRecord,
+  DictObjectStatusRecord,
   DictSquareM2Record,
 } from "./pocketbase-types";
 
@@ -60,6 +62,8 @@ export interface FlatFilter {
     | DictFlatTypeRecord
     | DictSquareM2Record
     | DictFinishingRecord
+    | DictObjectStatusRecord
+    | DictBuildingCategoryRecord
   )[];
 }
 

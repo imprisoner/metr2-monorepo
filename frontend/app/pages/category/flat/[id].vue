@@ -71,7 +71,11 @@ const flat = await pb
     expand: "user,houseSeries,flatType,finishing,squareM2,journals_via_flat",
   });
 
-const titleImageUrl = pb.files.getURL(flat, flat.image);
+const images = flat.images.map((filename) => {
+  return pb.files.getURL(flat, filename);
+});
+
+const titleImageUrl = images[0];
 
 const journalsResponse = await getJournalsResponse({
   filter: `flat="${flat.id}"`,
@@ -80,7 +84,7 @@ const journalsResponse = await getJournalsResponse({
   isShortContent: true,
 });
 
-const journals = journalsResponse.items
+const journals = journalsResponse.items;
 </script>
 
 <style scoped></style>
