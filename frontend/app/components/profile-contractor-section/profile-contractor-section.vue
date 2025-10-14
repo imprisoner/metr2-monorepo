@@ -86,12 +86,15 @@
       <div class="flex justify-between items-center w-full">
         <span class="font-bold">Блог</span>
         <Button
-          v-if="isOwner && blogArticles?.length"
+          v-if="isOwner"
+          v-slot="slotProps"
           severity="info"
           size="small"
-          @click="router.push('/write')"
+          as-child
         >
-          Добавить статью
+          <NuxtLink to="/write" :class="slotProps.class">
+            Добавить статью
+          </NuxtLink>
         </Button>
       </div>
     </template>
@@ -117,8 +120,16 @@
     </template>
     <div v-else class="flex flex-col items-center justify-center py-8">
       <span class="text-gray-500 mb-2">Здесь ещё нет статей</span>
-      <Button v-if="isOwner" severity="info" @click="router.push('/write')">
-        Добавить статью
+      <Button
+        v-if="isOwner"
+        v-slot="slotProps"
+        severity="info"
+        size="small"
+        as-child
+      >
+        <NuxtLink to="/write" :class="slotProps.class">
+          Добавить статью
+        </NuxtLink>
       </Button>
     </div>
   </Panel>
@@ -146,7 +157,9 @@ defineProps<{
     | undefined;
   portfolio: ContractorsPostsResponseWithExpand[];
   contractorInfo: ContractorsInfoRecord | undefined;
-  blogArticles: (ContractorsBlogPostsRecord & {previewImage: string | undefined})[]
+  blogArticles: (ContractorsBlogPostsRecord & {
+    previewImage: string | undefined;
+  })[];
 }>();
 
 const showAddServiceDialog = ref(false);
@@ -160,7 +173,5 @@ const onServiceSaved = async () => {
   showAddServiceDialog.value = false;
   emit("service-saved");
 };
-
-const router = useRouter()
 </script>
 

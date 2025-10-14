@@ -9,11 +9,17 @@
         <div class="flex justify-end items-center w-full">
           <Button
             v-if="isOwner"
+            v-slot="slotProps"
             severity="info"
             size="small"
-            @click="router.push(`/write/edit/${blogPostId}`)"
+            as-child
           >
-            Редактировать статью
+            <NuxtLink
+              :to="`/write/edit/${blogPostId}`"
+              :class="slotProps.class"
+            >
+              Редактировать статью
+            </NuxtLink>
           </Button>
         </div>
       </template>
@@ -40,7 +46,7 @@ const getOneBlogPost = async (id: string) => {
     .getOne<UsersBlogPostsResponse<UsersRecord>>(id, {
       expand: "user",
     });
-    console.log(response)
+  console.log(response);
   return response;
 };
 
@@ -49,8 +55,6 @@ const blogPost = await getOneBlogPost(blogPostId);
 const authStore = useAuthStore();
 
 const isOwner = blogPost.user === authStore.userInfo?.id;
-
-const router = useRouter();
 </script>
 
 <style></style>

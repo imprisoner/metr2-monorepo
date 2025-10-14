@@ -25,8 +25,5 @@ defineProps<{
 
 defineEmits<{
   (e: "delete" | "cancel-delete", src: string): void;
-  // (e: "cancel-delete", src: string): void;
 }>();
 </script>
-
-<style scoped></style>

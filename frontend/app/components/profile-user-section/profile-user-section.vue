@@ -31,9 +31,9 @@
             >
             <div v-if="isOwner" class="flex gap-2">
               <Button v-slot="slotProps" as-child>
-                <NuxtLink :class="slotProps.class"
-                  >Написать в бортжурнал</NuxtLink
-                >
+                <NuxtLink :class="slotProps.class" :to="`/write/journals/flats/${flat.id}`">
+                  Написать в бортжурнал
+                </NuxtLink>
               </Button>
               <Button
                 label="Редактировать"
@@ -60,12 +60,15 @@
       <div class="flex justify-between items-center w-full">
         <span class="font-bold">Блог</span>
         <Button
-          v-if="isOwner && blogArticles?.length"
+          v-if="isOwner"
+          v-slot="slotProps"
           severity="info"
           size="small"
-          @click="router.push('/write')"
+          as-child
         >
-          Добавить статью
+          <NuxtLink to="/write" :class="slotProps.class">
+            Добавить статью
+          </NuxtLink>
         </Button>
       </div>
     </template>
@@ -91,12 +94,24 @@
     </template>
     <div v-else class="flex flex-col items-center justify-center py-8">
       <span class="text-gray-500 mb-2">Здесь ещё нет статей</span>
-      <Button v-if="isOwner" severity="info" @click="router.push('/write')">
-        Добавить статью
+      <Button
+        v-if="isOwner"
+        v-slot="slotProps"
+        severity="info"
+        size="small"
+        as-child
+      >
+        <NuxtLink to="/write" :class="slotProps.class">
+          Добавить статью
+        </NuxtLink>
       </Button>
     </div>
   </Panel>
-  <AddFlatDialog v-if="showAddFlatDialog" v-model:visible="showAddFlatDialog" :flat="flatToEdit" />
+  <AddFlatDialog
+    v-if="showAddFlatDialog"
+    v-model:visible="showAddFlatDialog"
+    :flat="flatToEdit"
+  />
 </template>
 
 <script setup lang="ts">
@@ -115,8 +130,6 @@ const { blogArticles = [], flats } = defineProps<{
 
 const showAddFlatDialog = ref(false);
 
-const router = useRouter();
-
 const flatToEdit = ref<FlatsRecord>();
 
 const onEditFlat = (flatId: string) => {
@@ -126,8 +139,8 @@ const onEditFlat = (flatId: string) => {
 
 watchEffect(() => {
   if (showAddFlatDialog.value === false) {
-    flatToEdit.value = undefined
+    flatToEdit.value = undefined;
   }
-})
+});
 </script>
 

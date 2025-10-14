@@ -21,26 +21,6 @@
         @delete="onDeleteImage"
         @cancel-delete="onCancelDeleteImage"
       />
-      <!-- <div
-        v-for="(src, index) in images"
-        :key="index"
-        class="relative w-[160px] h-[160px] rounded-lg overflow-hidden"
-        :class="{ 'opacity-50': imagesToDelete.includes(src) }"
-      >
-        <i
-          v-if="imagesToDelete.includes(src)"
-          class="pi pi-times absolute top-4 right-4 cursor-pointer text-white"
-          @click="
-            imagesToDelete = imagesToDelete.filter((item) => item !== src)
-          "
-        />
-        <i
-          v-if="!imagesToDelete.includes(src)"
-          class="pi pi-trash absolute top-4 right-4 cursor-pointer text-white"
-          @click="imagesToDelete.push(src)"
-        />
-        <NuxtImg :src="src" class="w-full h-full object-cover" />
-      </div> -->
     </div>
   </div>
 </template>

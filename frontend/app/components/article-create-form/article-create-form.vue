@@ -1,5 +1,5 @@
 <template>
-  <Panel :header="panelHeaderText" pt:content:class=" flex flex-col gap-8">
+  <Panel :header="panelHeaderText" pt:content:class="flex flex-col gap-8">
     <div class="flex flex-col gap-2">
       <label class="font-semibold text-surface-500" for="title"
         >Заголовок записи</label
@@ -28,12 +28,6 @@
         />
       </div>
     </div>
-    <!-- <div class="flex flex-col gap-2">
-        <label class="font-semibold text-surface-500" for="publish">
-          Опубликовать
-        </label>
-        <ToggleSwitch id="published" v-model="published" />
-      </div> -->
     <div class="flex justify-end gap-2">
       <Button label="Отмена" severity="secondary" />
       <Button label="Сохранить" @click="save" />
@@ -72,7 +66,6 @@ const panelHeaderText = computed(() =>
 
 const title = ref(articleData.title);
 const previewImageIndex = ref(articleData.previewImageIndex);
-// const published = ref("");
 const content = ref(articleData.content);
 
 const uploadedImages = ref<string[]>(articleData.images);
