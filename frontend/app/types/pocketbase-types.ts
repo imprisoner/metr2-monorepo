@@ -320,7 +320,8 @@ export type JournalsRecord = {
 	created?: IsoDateString
 	flat: RecordIdString
 	id: string
-	images?: string[]
+	images: string[]
+	previewImageIndex?: number
 	title: string
 	updated?: IsoDateString
 	user: RecordIdString

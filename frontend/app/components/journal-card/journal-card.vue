@@ -62,12 +62,12 @@ interface JournalCardProps {
 
 const {journal} = defineProps<JournalCardProps>();
 
-const publishDate = new Date(journal.created).toLocaleDateString()
+const publishDate = new Date(journal.created!).toLocaleDateString()
 
 let coverImageUrl = undefined
 
-if (journal.images && journal.images[0]) {
-  coverImageUrl = pb.files.getURL(journal, journal.images[0])
+if (journal.images && journal.images.length) {
+  coverImageUrl = pb.files.getURL(journal, journal.images[journal.previewImageIndex!]!)
 }
 
 const imageCount = journal.images?.length ?? 0

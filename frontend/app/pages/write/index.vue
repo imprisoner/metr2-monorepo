@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <ArticleCreateForm />
+    <BlogArticleCreateForm />
   </div>
 </template>
 

@@ -1,12 +1,11 @@
 <template>
   <div class="w-full">
-    <ArticleCreateForm :article-id="articleId" :article-data="articleData" />
+    <BlogArticleCreateForm :article-id="articleId" :article-data="articleData" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { pb } from "~/api/pocketbase-client";
-import { imageUrlToBase64Client } from "~~/shared/utils";
 
 const articleId = useRoute().params.id as string;
 

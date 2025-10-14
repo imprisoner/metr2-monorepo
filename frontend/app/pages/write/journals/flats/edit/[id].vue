@@ -1,16 +1,17 @@
 <template>
-  <div class="w-full">
-    <BlogArticleCreateForm :article-id="articleId" :article-data="articleData" />
-  </div>
+  <JournalArticleCreateForm
+    :flat-id="articleRecord.flat"
+    :article-id="articleId"
+    :article-data="articleData"
+  />
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
-import {imageUrlToBase64Client } from "~~/shared/utils";
+import { getOneJournal } from "~/api/functions";
 
 const articleId = useRoute().params.id as string;
 
-const articleRecord = await pb.collection("journals_test").getOne(articleId);
+const articleRecord = await getOneJournal(articleId);
 
 const imageSources = extractImageSrcs(articleRecord.content);
 
@@ -32,4 +33,3 @@ const articleData = {
   images: base64ImageSources,
 };
 </script>
-
