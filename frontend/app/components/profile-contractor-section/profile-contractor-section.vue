@@ -42,7 +42,7 @@
       <PanelHeaderWithControls 
         text="Портфолио"
         button-label="Добавить статью в портфолио"
-        button-link=""
+        button-link="/write/portfolio"
         :controls-show-condition="!!(isOwner && portfolio.length)"
       />
     </template>
@@ -62,8 +62,9 @@
       v-else
       text="У подрядчика нет портфолио"
       button-label="Добавить статью"
+      button-link="/write/portfolio"
+      button-size=""
       :controls-show-condition="!!isOwner"
-      @button-click="showAddPortfolioDialog = true"
     />
   </Panel>
   <!--  -->
@@ -121,7 +122,6 @@ defineProps<{
 }>();
 
 const showAddServiceDialog = ref(false);
-const showAddPortfolioDialog = ref(false);
 
 const emit = defineEmits<{
   (e: "service-saved"): void;

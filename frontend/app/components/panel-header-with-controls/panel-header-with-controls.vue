@@ -6,19 +6,35 @@
         v-if="buttonLink"
         :label="buttonLabel"
         :to="buttonLink"
+        :button-size="buttonSize"
       />
-      <Button v-else :label="buttonLabel" severity="info" size="small" @click="$emit('button-click')" />
+      <Button
+        v-else
+        :label="buttonLabel"
+        severity="info"
+        size="small"
+        @click="$emit('button-click')"
+      />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  text: string;
-  controlsShowCondition: boolean;
-  buttonLabel: string;
-  buttonLink?: string;
-}>();
+import type { ButtonProps } from "primevue/button";
+
+withDefaults(
+  defineProps<{
+    text: string;
+    controlsShowCondition: boolean;
+    buttonLabel: string;
+    buttonLink?: string;
+    buttonSize?: ButtonProps["size"];
+  }>(),
+  {
+    buttonSize: "small",
+    buttonLink: undefined,
+  }
+);
 
 defineEmits<{
   (e: "button-click"): void;

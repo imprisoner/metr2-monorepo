@@ -1,5 +1,5 @@
 <template>
-  <Button v-slot="slotProps" severity="info" size="small" as-child>
+  <Button v-slot="slotProps" severity="info" :size="buttonSize" as-child>
     <NuxtLink :to="to" :class="slotProps.class">
       <template v-if="label">
         {{ label }}
@@ -10,11 +10,16 @@
 </template>
 
 <script setup lang="ts">
+import type { ButtonProps } from "primevue/button";
+
 interface ButtonLinkProps {
   to: string;
   label: string;
+  buttonSize?: ButtonProps["size"];
 }
 
-defineProps<ButtonLinkProps>();
+withDefaults(defineProps<ButtonLinkProps>(), {
+  buttonSize: "small",
+});
 </script>
 

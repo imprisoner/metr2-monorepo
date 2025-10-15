@@ -165,9 +165,11 @@ export type ContractorsInfoRecord = {
 export type ContractorsPostsRecord = {
 	content: HTMLString
 	contractor?: RecordIdString
-	contractorServices?: RecordIdString[]
+	contractorServices: RecordIdString[]
 	created?: IsoDateString
 	id: string
+	images?: string[]
+	previewImageIndex?: number
 	title: string
 	updated?: IsoDateString
 }
