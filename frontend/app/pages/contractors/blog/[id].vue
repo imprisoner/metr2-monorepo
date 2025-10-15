@@ -10,20 +10,11 @@
     <Panel>
       <template #header>
         <div class="flex justify-end items-center w-full">
-          <Button
+          <ButtonLink
             v-if="isOwner"
-            v-slot="slotProps"
-            severity="info"
-            size="small"
-            as-child
-          >
-            <NuxtLink
-              :to="`/write/edit/${blogPostId}`"
-              :class="slotProps.class"
-            >
-              Редактировать статью
-            </NuxtLink>
-          </Button>
+            label="Редактировать статью"
+            :to="`/write/edit/${blogPostId}`"
+          />
         </div>
       </template>
       <div class="content" v-html="blogPost.content" />
@@ -50,7 +41,7 @@ const getOneBlogPost = async (id: string) => {
   >(id, {
     expand: "contractor",
   });
-  console.log(response);
+
   return response;
 };
 
@@ -60,3 +51,4 @@ const authStore = useAuthStore();
 
 const isOwner = blogPost.contractor === authStore.userInfo?.id;
 </script>
+

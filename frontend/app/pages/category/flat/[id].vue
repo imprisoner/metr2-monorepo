@@ -32,20 +32,12 @@
     </Panel>
     <Panel pt:content:class="flex flex-col gap-4">
       <template #header>
-        <div class="flex justify-between items-center w-full">
-          <span class="font-bold">Бортжурналы</span>
-          <Button
-            v-if="isOwner && journals.length"
-            v-slot="slotProps"
-            severity="info"
-            size="small"
-            as-child
-          >
-            <NuxtLink to="/write" :class="slotProps.class">
-              Добавить статью
-            </NuxtLink>
-          </Button>
-        </div>
+        <PanelHeaderWithControls
+          text="Бортжурналы"
+          button-label="Добавить статью"
+          button-link="/write"
+          :controls-show-condition="!!(isOwner && journals.length)"
+        />
       </template>
       <template v-if="journals.length">
         <JournalCard
@@ -54,20 +46,13 @@
           :journal="journal"
         />
       </template>
-      <div v-else class="flex flex-col items-center justify-center py-8">
-        <span class="text-gray-500 mb-2">Здесь ещё нет статей</span>
-        <Button
-          v-if="isOwner"
-          v-slot="slotProps"
-          severity="info"
-          size="small"
-          as-child
-        >
-          <NuxtLink :to="`/write/journals/flats/${flat.id}`" :class="slotProps.class">
-            Добавить статью
-          </NuxtLink>
-        </Button>
-      </div>
+      <NoItemsSection
+        v-else
+        text="Здесь ещё нет статей"
+        :controls-show-condition="isOwner"
+        button-label="Добавить статью"
+        :button-link="`/write/journals/flats/${flat.id}`"
+      />
     </Panel>
   </div>
 </template>

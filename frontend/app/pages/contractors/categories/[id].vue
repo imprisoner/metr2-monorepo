@@ -13,7 +13,6 @@
       <ContractorCard
         v-for="contractor in contractorsResponse.items"
         :key="contractor.id"
-        :contractorsInfo="contractor.expand.user"
         :contractor-info="contractor"
         :services="contractor.expand.contractors_services_via_contractor"
         class="mb-8"
@@ -39,6 +38,3 @@ const contractorsFilter = `contractors_services_via_contractor.specialtyService.
 
 const contractorsResponse = await getFilteredContractorsList(contractorsFilter);
 </script>
-
-<style scoped></style>
-
