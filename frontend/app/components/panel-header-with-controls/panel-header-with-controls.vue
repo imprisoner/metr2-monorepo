@@ -1,12 +1,14 @@
 <template>
   <div class="flex justify-between items-center w-full">
     <span class="font-bold">{{ text }}</span>
-    <ButtonLink
-      v-if="controlsShowCondition && buttonLink"
-      :label="buttonLabel"
-      :to="buttonLink"
-    />
-    <Button v-else :label="buttonLabel" @click="$emit('button-click')" />
+    <template v-if="controlsShowCondition">
+      <ButtonLink
+        v-if="buttonLink"
+        :label="buttonLabel"
+        :to="buttonLink"
+      />
+      <Button v-else :label="buttonLabel" severity="info" size="small" @click="$emit('button-click')" />
+    </template>
   </div>
 </template>
 

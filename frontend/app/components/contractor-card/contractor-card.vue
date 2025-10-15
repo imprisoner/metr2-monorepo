@@ -1,5 +1,9 @@
 <template>
-  <Card class="hover:shadow-xl transition-all duration-300" pt:content:class="flex justify-between items-start gap-8 flex-wrap" pt:footer:class="flex gap-2 flex-wrap">
+  <Card
+    class="hover:shadow-xl transition-all duration-300"
+    pt:content:class="flex justify-between items-start gap-8 flex-wrap"
+    pt:footer:class="flex gap-2 flex-wrap"
+  >
     <template #content>
       <div class="flex gap-2">
         <Avatar
@@ -25,7 +29,7 @@
         <Button size="small" severity="info" label="Сообщение" />
       </div>
     </template>
-    <template #footer>
+    <template v-if="services" #footer>
       <Tag
         v-for="service in services"
         :key="service.id"
@@ -48,7 +52,7 @@ const lastSeen = "2 часа";
 
 defineProps<{
   contractorInfo: ContractorsRecord;
-  services: ContractorsServicesResponse<{
+  services?: ContractorsServicesResponse<{
     specialtyService: DictSpecialtyServicesRecord;
   }>[];
 }>();

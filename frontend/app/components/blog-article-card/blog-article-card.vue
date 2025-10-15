@@ -9,7 +9,7 @@
     </template>
     <template #title>
       <div class="flex justify-between">
-        <NuxtLink :to="`/users/blog/${post.id}`" class="font-bold text-xl">{{
+        <NuxtLink :to="link" class="font-bold text-xl">{{
           post.title
         }}</NuxtLink>
       </div>
@@ -18,11 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import type { UsersBlogPostsRecord } from "~/types/pocketbase-types";
+import type { ContractorsBlogPostsRecord, UsersBlogPostsRecord } from "~/types/pocketbase-types";
 
 defineProps<{
-  post: UsersBlogPostsRecord & {
+  post: (UsersBlogPostsRecord | ContractorsBlogPostsRecord) & {
     previewImage: string | undefined;
   };
+  link: string;
 }>();
 </script>

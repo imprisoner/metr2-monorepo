@@ -4,17 +4,12 @@
   </Panel>
   <Panel class="shadow-md mb-8">
     <template #header>
-      <div class="flex justify-between items-center w-full">
-        <span class="font-bold">Услуги</span>
-        <Button
-          v-if="isOwner && services?.length"
-          severity="info"
-          size="small"
-          @click="showAddServiceDialog = true"
-        >
-          Добавить услугу
-        </Button>
-      </div>
+      <PanelHeaderWithControls 
+        text="Услуги"
+        button-label="Добавить услугу"
+        :controls-show-condition="!!(isOwner && services?.length)"
+        @button-click="showAddServiceDialog = true"
+      />
     </template>
     <ul v-if="services">
       <li
@@ -33,29 +28,23 @@
         </span>
       </li>
     </ul>
-    <div v-else class="flex flex-col items-center justify-center py-8">
-      <span class="text-gray-500 mb-2">У подярдчика нет добавленных услуг</span>
-      <Button
-        v-if="isOwner"
-        severity="info"
-        @click="showAddServiceDialog = true"
-      >
-        Добавить услугу
-      </Button>
-    </div>
+    <NoItemsSection
+      v-else
+      text="У подярдчика нет добавленных услуг"
+      button-label="Добавить услугу"
+      :controls-show-condition="!!isOwner"
+      @button-click="showAddServiceDialog = true"
+    />
   </Panel>
+  <!--  -->
   <Panel class="shadow-md mb-8" pt:content:class="flex flex-col gap-4">
     <template #header>
-      <div class="flex justify-between items-center w-full">
-        <span class="font-bold">Портфолио</span>
-        <Button
-          v-if="isOwner && portfolio.length"
-          severity="info"
-          @click="showAddPortfolioDialog = true"
-        >
-          Добавить статью в портфолио
-        </Button>
-      </div>
+      <PanelHeaderWithControls 
+        text="Портфолио"
+        button-label="Добавить статью в портфолио"
+        button-link=""
+        :controls-show-condition="!!(isOwner && portfolio.length)"
+      />
     </template>
     <template v-if="portfolio.length">
       <ContractorPostCard
@@ -69,69 +58,38 @@
         :publish-date="new Date(post.created).toLocaleDateString()"
       />
     </template>
-    <div v-else class="flex flex-col items-center justify-center py-8">
-      <span class="text-gray-500 mb-2">У пользователя нет портфолио</span>
-      <Button
-        v-if="isOwner"
-        severity="info"
-        @click="showAddPortfolioDialog = true"
-      >
-        Добавить статью в портфолио
-      </Button>
-    </div>
+    <NoItemsSection
+      v-else
+      text="У подрядчика нет портфолио"
+      button-label="Добавить статью"
+      :controls-show-condition="!!isOwner"
+      @button-click="showAddPortfolioDialog = true"
+    />
   </Panel>
   <!--  -->
   <Panel class="shadow-md">
     <template #header>
-      <div class="flex justify-between items-center w-full">
-        <span class="font-bold">Блог</span>
-        <Button
-          v-if="isOwner"
-          v-slot="slotProps"
-          severity="info"
-          size="small"
-          as-child
-        >
-          <NuxtLink to="/write" :class="slotProps.class">
-            Добавить статью
-          </NuxtLink>
-        </Button>
-      </div>
+      <PanelHeaderWithControls 
+        text="Блог"
+        button-label="Добавить статью"
+        button-link="/write"
+        :controls-show-condition="!!isOwner"
+      />
     </template>
     <template v-if="blogArticles.length">
-      <Card v-for="post in blogArticles" :key="post.id" class="overflow-hidden">
-        <template #header>
-          <NuxtImg
-            v-if="post.previewImage"
-            :src="post.previewImage"
-            class="w-full object-cover"
-          />
-        </template>
-        <template #title>
-          <div class="flex justify-between">
-            <NuxtLink
-              :to="`/contractors/blog/${post.id}`"
-              class="font-bold text-xl"
-              >{{ post.title }}</NuxtLink
-            >
-          </div>
-        </template>
-      </Card>
+      <BlogArticleCard 
+        v-for="post in blogArticles" :key="post.id"
+        :post="post"
+        :link="`/contractors/blog/${post.id}`"
+      />
     </template>
-    <div v-else class="flex flex-col items-center justify-center py-8">
-      <span class="text-gray-500 mb-2">Здесь ещё нет статей</span>
-      <Button
-        v-if="isOwner"
-        v-slot="slotProps"
-        severity="info"
-        size="small"
-        as-child
-      >
-        <NuxtLink to="/write" :class="slotProps.class">
-          Добавить статью
-        </NuxtLink>
-      </Button>
-    </div>
+    <NoItemsSection 
+      v-else
+      text="Здесь ещё нет статей"
+      button-label="Добавить статью"
+      button-link="/write"
+      :controls-show-condition="!!isOwner"
+    />
   </Panel>
   <AddContractorServiceDialog
     v-model:visible="showAddServiceDialog"

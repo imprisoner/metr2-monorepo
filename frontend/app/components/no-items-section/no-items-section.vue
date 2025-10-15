@@ -3,7 +3,7 @@
     <span class="text-gray-500 mb-2">{{ text }}</span>
     <template v-if="controlsShowCondition">
       <ButtonLink v-if="buttonLink" :label="buttonLabel" :to="buttonLink" />
-      <Button v-else :label="buttonLabel" @click="$emit('button-click')" />
+      <Button v-else :label="buttonLabel" severity="info" @click="$emit('button-click')" />
     </template>
   </div>
 </template>

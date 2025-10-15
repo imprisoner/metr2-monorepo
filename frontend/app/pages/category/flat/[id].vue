@@ -30,12 +30,44 @@
         </li>
       </ul>
     </Panel>
-    <Panel header="Бортжурналы" pt:content:class="flex flex-col gap-4">
-      <JournalCard
-        v-for="journal in journals"
-        :key="journal.id"
-        :journal="journal"
-      />
+    <Panel pt:content:class="flex flex-col gap-4">
+      <template #header>
+        <div class="flex justify-between items-center w-full">
+          <span class="font-bold">Бортжурналы</span>
+          <Button
+            v-if="isOwner && journals.length"
+            v-slot="slotProps"
+            severity="info"
+            size="small"
+            as-child
+          >
+            <NuxtLink to="/write" :class="slotProps.class">
+              Добавить статью
+            </NuxtLink>
+          </Button>
+        </div>
+      </template>
+      <template v-if="journals.length">
+        <JournalCard
+          v-for="journal in journals"
+          :key="journal.id"
+          :journal="journal"
+        />
+      </template>
+      <div v-else class="flex flex-col items-center justify-center py-8">
+        <span class="text-gray-500 mb-2">Здесь ещё нет статей</span>
+        <Button
+          v-if="isOwner"
+          v-slot="slotProps"
+          severity="info"
+          size="small"
+          as-child
+        >
+          <NuxtLink :to="`/write/journals/flats/${flat.id}`" :class="slotProps.class">
+            Добавить статью
+          </NuxtLink>
+        </Button>
+      </div>
     </Panel>
   </div>
 </template>
@@ -85,7 +117,9 @@ const journalsResponse = await getJournalsResponse({
 });
 
 const journals = journalsResponse.items;
-</script>
 
-<style scoped></style>
+const authStore = useAuthStore();
+
+const isOwner = authStore.userInfo?.id === flat.user;
+</script>
 

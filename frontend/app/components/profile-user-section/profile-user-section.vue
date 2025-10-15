@@ -40,6 +40,7 @@
         v-for="post in blogArticles"
         :key="post.id"
         :post="post"
+        :link="`/users/blog/${post.id}`"
       />
     </template>
     <NoItemsSection
