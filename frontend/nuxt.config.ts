@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@nuxt/image",
     "@primevue/nuxt-module",
-    "@pinia/nuxt"
+    "@pinia/nuxt",
   ],
   primevue: {
     options: {
@@ -26,15 +26,14 @@ export default defineNuxtConfig({
     },
   },
   css: ["~/assets/css/main.css", "~/assets/scss/main.scss"],
-  // css: ['~/assets/scss/main.scss'],
   vite: {
     plugins: [tailwindcss()],
   },
   image: {
-    format: ['webp']
+    format: ["webp"],
   },
   routeRules: {
-    '/write': {},
-    '/write/edit/**': {ssr: false}
-  }
+    "/write": {},
+    "/write/**": { ssr: false },
+  },
 });

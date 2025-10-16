@@ -19,7 +19,7 @@
         <span class="text-xs text-gray-400">{{ location }}</span>
       </div>
     </div>
-    <div class="flex gap-4">
+    <div v-if="!isOwner" class="flex gap-4">
       <Button size="small" severity="info" label="Подписаться" />
       <Button size="small" severity="info" label="Сообщение" />
     </div>
@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
 import type { ContractorsRecord } from "~/types/pocketbase-types";
 
 const lastSeen = "2 часа";
@@ -37,7 +36,7 @@ const { contractor } = defineProps<{ contractor: ContractorsRecord }>();
 
 const location = 'Локация не указана'
 
+const authStore = useAuthStore()
+
+const isOwner = contractor.id === authStore.userInfo?.id
 </script>
-
-<style></style>
-

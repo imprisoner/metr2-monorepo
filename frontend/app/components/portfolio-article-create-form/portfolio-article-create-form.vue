@@ -1,9 +1,9 @@
 <template>
   <Panel :header="panelHeaderText" pt:content:class="flex flex-col gap-8">
     <div class="flex flex-col gap-2">
-      <label class="font-semibold text-surface-500" for="title"
-        >Заголовок записи</label
-      >
+      <label class="font-semibold text-surface-500" for="title">
+        Заголовок записи
+      </label>
       <InputText id="title" v-model="title" aria-describedby="title" />
     </div>
     <RichTextEditor
@@ -40,6 +40,12 @@
         :show-toggle-all="contractorsServicesOptions.length > 5"
       />
     </div>
+    <!-- Удалённые услуги  -->
+    <PortfolioArticleFormDeletedServices
+      v-if="deletedServices?.length"
+      :services="deletedServices!"
+      @remove-service="onRemoveDeletedService"
+    />
     <!--  -->
     <div class="flex justify-end gap-2">
       <Button label="Отмена" severity="secondary" />
@@ -61,6 +67,7 @@ interface ArticleData {
   content: string;
   images: string[];
   contractorServices: string[];
+  allServicesExpanded: DictSpecialtyServicesRecord[];
 }
 
 const {
@@ -70,6 +77,7 @@ const {
     content: "",
     images: [],
     contractorServices: [],
+    allServicesExpanded: [],
   },
   articleId = undefined,
 } = defineProps<{
@@ -115,7 +123,7 @@ const router = useRouter();
 
 const save = async () => {
   let response;
-  console.log(body.value)
+
   if (mode.value === "create") {
     response = await pb.collection(collection).create(body.value);
   } else {
@@ -159,25 +167,34 @@ const contractorsServicesOptions =
   await getAvailableContractorsServicesOptions();
 
 const removeDeletedServicesFromInitialData = () => {
-  const actual: string[] = []
-  const deleted: string[] = []
+  const actual: string[] = [];
+  const deleted: string[] = [];
 
   articleData.contractorServices.forEach((serviceId) => {
-    const existingServicesIds = 
-      contractorsServicesOptions.map((item) => item.id)
-      
-      if (existingServicesIds.includes(serviceId)) {
-        actual.push(serviceId)
-      } else {
-        deleted.push(serviceId)
-      }
+    const existingServicesIds = contractorsServicesOptions.map(
+      (item) => item.id
+    );
+
+    if (existingServicesIds.includes(serviceId)) {
+      actual.push(serviceId);
+    } else {
+      deleted.push(serviceId);
+    }
   });
 
-  return [actual, deleted]
+  return [actual, deleted];
 };
 
-const [actualServices, _] = removeDeletedServicesFromInitialData()
+const [actualServices, deletedServices] =
+  removeDeletedServicesFromInitialData();
 
-const selectedServices = ref<string[]>(actualServices as string[]);
+const selectedServices = ref<string[]>(actualServices || []);
+const selectedDeletedServices = ref<string[]>(deletedServices || []);
+
+const onRemoveDeletedService = (id: string) => {
+  selectedDeletedServices.value = selectedDeletedServices.value.filter(
+    (serviceId) => serviceId !== id
+  );
+};
 </script>
 

@@ -1,7 +1,9 @@
 <template>
-  <Card class="mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+  <Card
+    class="mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+  >
     <!-- Header slot: Image -->
-    <template v-if="image" #header>
+    <template #header>
       <div class="relative">
         <img :src="image" alt="post image" class="w-full rounded-t-lg" />
         <div
@@ -15,9 +17,11 @@
 
     <!-- Title slot -->
     <template #title>
-      <h2 class="font-bold text-base/5 line-clamp-2 h-[40px]">
-        {{ title }}
-      </h2>
+      <NuxtLink :to="`/contractors/posts/${postId}`">
+        <h2 class="font-bold text-base/5 line-clamp-2 h-[40px]">
+          {{ title }}
+        </h2>
+      </NuxtLink>
     </template>
 
     <!-- Content slot -->
@@ -26,7 +30,10 @@
         <span class="line-clamp-4">
           {{ text }}
         </span>
-        <NuxtLink :to="`/contractors/posts/${postId}`" class="text-blue-600 font-medium cursor-pointer flex w-fit ms-auto">
+        <NuxtLink
+          :to="`/contractors/posts/${postId}`"
+          class="text-blue-600 font-medium cursor-pointer flex w-fit ms-auto"
+        >
           Читать дальше
         </NuxtLink>
       </p>
@@ -53,8 +60,8 @@
 
 <script setup lang="ts">
 interface ContractorPostCardProps {
+  image: string;
   postId: string;
-  image?: string;
   imageCount?: number;
   title: string;
   text?: string;
@@ -65,3 +72,4 @@ interface ContractorPostCardProps {
 
 defineProps<ContractorPostCardProps>();
 </script>
+

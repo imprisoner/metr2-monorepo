@@ -4,7 +4,7 @@
   </Panel>
   <Panel class="shadow-md mb-8">
     <template #header>
-      <PanelHeaderWithControls 
+      <PanelHeaderWithControls
         text="Услуги"
         button-label="Добавить услугу"
         :controls-show-condition="!!(isOwner && services?.length)"
@@ -39,7 +39,7 @@
   <!--  -->
   <Panel class="shadow-md mb-8" pt:content:class="flex flex-col gap-4">
     <template #header>
-      <PanelHeaderWithControls 
+      <PanelHeaderWithControls
         text="Портфолио"
         button-label="Добавить статью в портфолио"
         button-link="/write/portfolio"
@@ -50,6 +50,7 @@
       <ContractorPostCard
         v-for="post in portfolio"
         :key="post.id"
+        :image="post.previewImage"
         :post-id="post.id"
         :title="post.title"
         :likes="0"
@@ -70,7 +71,7 @@
   <!--  -->
   <Panel class="shadow-md">
     <template #header>
-      <PanelHeaderWithControls 
+      <PanelHeaderWithControls
         text="Блог"
         button-label="Добавить статью"
         button-link="/write"
@@ -78,13 +79,14 @@
       />
     </template>
     <template v-if="blogArticles.length">
-      <BlogArticleCard 
-        v-for="post in blogArticles" :key="post.id"
+      <BlogArticleCard
+        v-for="post in blogArticles"
+        :key="post.id"
         :post="post"
         :link="`/contractors/blog/${post.id}`"
       />
     </template>
-    <NoItemsSection 
+    <NoItemsSection
       v-else
       text="Здесь ещё нет статей"
       button-label="Добавить статью"
@@ -114,7 +116,7 @@ defineProps<{
         specialtyService: DictSpecialtyServicesRecord;
       }>[]
     | undefined;
-  portfolio: ContractorsPostsResponseWithExpand[];
+  portfolio: (ContractorsPostsResponseWithExpand & { previewImage: string })[];
   contractorInfo: ContractorsInfoRecord | undefined;
   blogArticles: (ContractorsBlogPostsRecord & {
     previewImage: string | undefined;

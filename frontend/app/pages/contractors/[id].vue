@@ -95,11 +95,23 @@ const getContractorPortfolio = async (contractorId: string) => {
       fields: "*,content:excerpt(100,true)",
     });
 
-  return response;
+  const withPreviewImages = response.items.map((article) => {
+    let previewImage;
+
+    if (article.images) {
+      previewImage = pb.files.getURL(article, article.images[article.previewImageIndex]!);
+    }
+
+    return {
+      ...article,
+      previewImage,
+    };
+  });
+
+  return withPreviewImages;
 };
 
-const response = await getContractorPortfolio(contractorId);
-const portfolio = response.items;
+const portfolio = await getContractorPortfolio(contractorId);
 
 const authStore = useAuthStore();
 
@@ -134,7 +146,7 @@ const getContractorsBlogPosts = async () => {
     let previewImage;
 
     if (article.images) {
-      previewImage = pb.files.getURL(article, article.images[0]!);
+      previewImage = pb.files.getURL(article, article.images[article.previewImageIndex]!);
     }
 
     return {
