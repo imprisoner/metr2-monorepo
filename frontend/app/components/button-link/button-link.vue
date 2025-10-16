@@ -1,5 +1,5 @@
 <template>
-  <Button v-slot="slotProps" severity="info" :size="buttonSize" as-child>
+  <Button v-slot="slotProps" :severity="buttonSeverity" :size="buttonSize" as-child>
     <NuxtLink :to="to" :class="slotProps.class">
       <template v-if="label">
         {{ label }}
@@ -16,10 +16,12 @@ interface ButtonLinkProps {
   to: string;
   label: string;
   buttonSize?: ButtonProps["size"];
+  buttonSeverity?: ButtonProps["severity"]
 }
 
 withDefaults(defineProps<ButtonLinkProps>(), {
   buttonSize: "small",
+  buttonSeverity: "info"
 });
 </script>
 

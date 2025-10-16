@@ -32,7 +32,12 @@
       </div>
     </div>
     <div class="flex justify-end gap-2">
-      <Button label="Отмена" severity="secondary" />
+      <ButtonLink
+        button-size=""
+        label="Отмена"
+        button-severity="secondary"
+        :to="cancelButtonLink"
+      />
       <Button label="Сохранить" @click="save" />
     </div>
   </Panel>
@@ -123,5 +128,10 @@ const save = async () => {
     `/category/flat/${flatId}`
   );
 };
+
+const cancelButtonLink =
+  mode.value === "create"
+    ? `/users/${authStore.userInfo?.id}`
+    : `/journals/${articleId}`;
 </script>
 

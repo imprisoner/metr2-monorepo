@@ -48,7 +48,12 @@
     />
     <!--  -->
     <div class="flex justify-end gap-2">
-      <Button label="Отмена" severity="secondary" />
+      <ButtonLink
+        button-size=""
+        label="Отмена"
+        button-severity="secondary"
+        :to="cancelButtonLink"
+      />
       <Button label="Сохранить" @click="save" />
     </div>
   </Panel>
@@ -67,7 +72,6 @@ interface ArticleData {
   content: string;
   images: string[];
   contractorServices: string[];
-  allServicesExpanded: DictSpecialtyServicesRecord[];
 }
 
 const {
@@ -77,7 +81,6 @@ const {
     content: "",
     images: [],
     contractorServices: [],
-    allServicesExpanded: [],
   },
   articleId = undefined,
 } = defineProps<{
@@ -196,5 +199,10 @@ const onRemoveDeletedService = (id: string) => {
     (serviceId) => serviceId !== id
   );
 };
+
+const cancelButtonLink =
+  mode.value === "create"
+    ? `/contractors/${authStore.userInfo?.id}`
+    : `/contractors/posts/${articleId}`;
 </script>
 
