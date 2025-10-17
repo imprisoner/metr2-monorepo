@@ -65,11 +65,16 @@ interface ExpandContractor {
 }
 
 const getContractorInfoAndServices = async (id: string) => {
+  const expand = [
+    "contractors_info_via_contractor",
+    "contractors_services_via_contractor",
+    "contractors_services_via_contractor.specialtyService",
+  ].join(",");
+
   const response = await pb
     .collection(Collections.Contractors)
-    .getOne<ContractorsResponse<ExpandContractor>>(id, {
-      expand:
-        "contractors_info_via_contractor,contractors_services_via_contractor,contractors_services_via_contractor.specialtyService",
+    .getFirstListItem<ContractorsResponse<ExpandContractor>>(`hrid = "${id}"`, {
+      expand,
     });
 
   return response;
@@ -99,7 +104,10 @@ const getContractorPortfolio = async (contractorId: string) => {
     let previewImage;
 
     if (article.images) {
-      previewImage = pb.files.getURL(article, article.images[article.previewImageIndex]!);
+      previewImage = pb.files.getURL(
+        article,
+        article.images[article.previewImageIndex]!
+      );
     }
 
     return {
@@ -111,13 +119,13 @@ const getContractorPortfolio = async (contractorId: string) => {
   return withPreviewImages;
 };
 
-const portfolio = await getContractorPortfolio(contractorId);
+const portfolio = await getContractorPortfolio(contractorResponse.value.id);
 
 const authStore = useAuthStore();
 
 const isOwner = computed(() => {
   if (authStore.userInfo?.collectionName === "contractors") {
-    return authStore.userInfo.id === contractorId;
+    return authStore.userInfo.hrid === contractorId;
   }
 
   return false;
@@ -145,7 +153,10 @@ const getContractorsBlogPosts = async () => {
     let previewImage;
 
     if (article.images) {
-      previewImage = pb.files.getURL(article, article.images[article.previewImageIndex]!);
+      previewImage = pb.files.getURL(
+        article,
+        article.images[article.previewImageIndex]!
+      );
     }
 
     return {

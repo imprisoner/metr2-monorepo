@@ -120,12 +120,12 @@ const save = async () => {
     content: contentWithReplacedImages,
   });
 
-  router.push(`/${authStore.userInfo?.collectionName}/${authStore.userInfo!.id}`)
+  router.push(`/${authStore.userInfo?.collectionName}/${authStore.userInfo!.hrid}`)
 };
 
 const cancelButtonLink =
   mode.value === "create"
-    ? `/${authStore.userInfo!.collectionName}/${authStore.userInfo?.id}`
+    ? `/${authStore.userInfo!.collectionName}/${authStore.userInfo?.hrid}`
     : `/${authStore.userInfo!.collectionName}/blog/${articleId}`;
 </script>
 

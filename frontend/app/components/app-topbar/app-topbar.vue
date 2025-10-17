@@ -59,15 +59,29 @@
 
       <div class="layout-topbar-menu hidden lg:block">
         <div class="layout-topbar-menu-content">
-          <Button v-if="!store.isAuthorized" label="Войти" variant="text" severity="contrast" @click="showLoginDialog = true"/>
+          <Button
+            v-if="!store.isAuthorized"
+            label="Войти"
+            variant="text"
+            severity="contrast"
+            @click="showLoginDialog = true"
+          />
           <template v-else>
             <Button v-slot="slotProps" as-child variant="text">
-              <NuxtLink :to="profileLink" :class="slotProps.class" class="layout-topbar-action">
-                <i class="pi pi-user" /> 
+              <NuxtLink
+                :to="profileLink"
+                :class="slotProps.class"
+                class="layout-topbar-action"
+              >
+                <i class="pi pi-user" />
                 <span>Профиль</span>
               </NuxtLink>
             </Button>
-            <Button variant="text" severity="contrast" class="ms-2" @click="logout"
+            <Button
+              variant="text"
+              severity="contrast"
+              class="ms-2"
+              @click="logout"
               >Выйти</Button
             >
           </template>
@@ -75,28 +89,26 @@
       </div>
     </div>
   </div>
-  <LoginDialog v-model:visible="showLoginDialog"/>
+  <LoginDialog v-model:visible="showLoginDialog" />
 </template>
 
 <script setup lang="ts">
-const {
-  toggleMenu
-} = useLayout();
+const { toggleMenu } = useLayout();
 
 const store = useAuthStore();
 
 const logout = () => {
-  store.logout()
-  navigateTo("/")
-}
+  store.logout();
+  navigateTo("/");
+};
 
-const showLoginDialog = ref(false)
+const showLoginDialog = ref(false);
 
 const profileLink = computed(() => {
-  const collection =store.userInfo?.collectionName
-  const userId =store.userInfo?.id
+  const collection = store.userInfo?.collectionName;
+  const id = store.userInfo?.hrid;
 
-  return `/${collection}/${userId}`
-})
+  return `/${collection}/${id}`;
+});
 </script>
 

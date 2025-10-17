@@ -10,7 +10,7 @@
       <div class="flex flex-col gap-0.5">
         <div class="flex gap-2 items-baseline">
           <NuxtLink
-            :to="`/users/${userInfo.id}`"
+            :to="`/users/${userInfo.hrid}`"
             class="text-base font-semibold"
             >{{ userInfo.name }}</NuxtLink
           >

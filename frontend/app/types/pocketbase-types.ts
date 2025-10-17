@@ -127,6 +127,7 @@ export type ContractorsRecord = {
 	created?: IsoDateString
 	email: string
 	emailVisibility?: boolean
+	hrid: string
 	id: string
 	name: string
 	password: string
@@ -370,6 +371,7 @@ export type UsersRecord = {
 	created?: IsoDateString
 	email: string
 	emailVisibility?: boolean
+	hrid: string
 	id: string
 	name: string
 	password: string

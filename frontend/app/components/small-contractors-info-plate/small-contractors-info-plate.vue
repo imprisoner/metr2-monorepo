@@ -10,7 +10,7 @@
       <div class="flex flex-col gap-0.5">
         <div class="flex gap-2 items-baseline">
           <NuxtLink
-            :to="`/contractors/${contractor.id}`"
+            :to="`/contractors/${contractor.hrid}`"
             class="text-base font-semibold"
             >{{ contractor.name }}</NuxtLink
           >
@@ -32,7 +32,6 @@ import type { ContractorsRecord } from "~/types/pocketbase-types";
 const lastSeen = "2 часа";
 
 const { contractor } = defineProps<{ contractor: ContractorsRecord }>();
-
 
 const location = 'Локация не указана'
 

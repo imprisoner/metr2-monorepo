@@ -70,9 +70,10 @@ const getUserPageData = async () => {
 
   const userData = await pb
     .collection(Collections.Users)
-    .getOne<UsersResponse<Expand>>(userId, {
+    .getFirstListItem<UsersResponse<Expand>>(`hrid = "${userId}"`, {
       expand,
     });
+
   let flats: FlatsRecord[] = [];
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({
@@ -111,7 +112,13 @@ const blogArticles = ref(userPageData.blogArticles);
 
 const authStore = useAuthStore();
 
-const isOwner = computed(() => authStore.userInfo?.id === userId);
+const isOwner = computed(() => {
+  if (authStore.userInfo?.collectionName === "users") {
+    return authStore.userInfo.hrid === userId;
+  }
+
+  return false;
+});
 
 const editProfileDialogVisibility = ref(false);
 

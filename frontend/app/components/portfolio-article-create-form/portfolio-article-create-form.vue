@@ -144,7 +144,7 @@ const save = async () => {
     content: contentWithReplacedImages,
   });
 
-  router.push(`/contractors/${authStore.userInfo!.id}`);
+  router.push(`/contractors/${authStore.userInfo!.hrid}`);
 };
 
 const getAvailableContractorsServicesOptions = async () => {
@@ -202,7 +202,7 @@ const onRemoveDeletedService = (id: string) => {
 
 const cancelButtonLink =
   mode.value === "create"
-    ? `/contractors/${authStore.userInfo?.id}`
+    ? `/contractors/${authStore.userInfo?.hrid}`
     : `/contractors/posts/${articleId}`;
 </script>
 
