@@ -49,7 +49,7 @@ migrate((app) => {
           "guid = {:guid}",
           { guid: regionGuid }
         );
-        console.log(region.id)
+
         if (region) {
           city.set("region", region.id);
           app.save(city);

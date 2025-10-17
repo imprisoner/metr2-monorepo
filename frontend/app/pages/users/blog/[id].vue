@@ -36,7 +36,6 @@ const getOneBlogPost = async (id: string) => {
     .getOne<UsersBlogPostsResponse<UsersRecord>>(id, {
       expand: "user",
     });
-  console.log(response);
   return response;
 };
 

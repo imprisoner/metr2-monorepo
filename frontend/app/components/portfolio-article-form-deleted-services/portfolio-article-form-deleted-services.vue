@@ -31,11 +31,9 @@ const buildFilter = () => {
 };
 
 const getDeletedServicesRecords = async () => {
-  console.log(buildFilter())
   const response = await pb.collection("dict_specialty_services").getFullList({
     filter: buildFilter(),
   });
-  console.log(response)
   return response;
 };
 

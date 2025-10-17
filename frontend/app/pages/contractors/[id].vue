@@ -130,7 +130,6 @@ const onEditProfile = async () => {
 };
 
 const onServiceSaved = async () => {
-  console.log("onServiceSaved");
   contractorResponse.value = await getContractorInfoAndServices(contractorId);
 };
 

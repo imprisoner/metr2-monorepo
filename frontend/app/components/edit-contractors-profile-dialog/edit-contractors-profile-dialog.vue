@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { SelectButton } from "#components";
+import { getAllCities } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
 import type { ContractorsInfoRecord } from "~/types/pocketbase-types";
 
@@ -71,11 +72,8 @@ const emit = defineEmits<{
   (e: "save"): void;
 }>();
 
-const locationOptions = ref([
-  { name: "Екатеринбург", value: "Екатеринбург" },
-  { name: "Самара", value: "Самара" },
-  { name: "Москва", value: "Москва" },
-]);
+const citiesResponse = await getAllCities()
+const locationOptions = citiesResponse.map((city) => ({ name: city.name, value: city.id }))
 
 const genderOptions = [
   { label: "мужской", value: "male" },

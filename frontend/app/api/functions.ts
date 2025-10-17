@@ -85,10 +85,16 @@ export const getOneHouseSeriesCard = async (id: string) => {
 };
 
 export const getOneUser = async <E>(id: string) => {
+  const expand = [
+    "flats_via_user",
+    "users_info_via_user",
+    "users_info_via_user.location",
+  ].join(",");
+  
   const response = await pb
     .collection(Collections.Users)
     .getOne<UsersResponse<E>>(id, {
-      expand: "flats_via_user",
+      expand,
     });
 
   return response;
@@ -190,5 +196,10 @@ export const getOneSpecialtyWithServices = async (id: string) => {
 
 export const getFlatFilters = async () => {
   const response: FlatFilter[] = await pb.send("/api/flat-props", {});
+  return response;
+};
+
+export const getAllCities = async () => {
+  const response = await pb.collection("dict_cities").getFullList();
   return response;
 };

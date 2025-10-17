@@ -20,6 +20,7 @@ export enum Collections {
 	DictBuildYear = "dict_build_year",
 	DictBuildingCategory = "dict_building_category",
 	DictCeilingHeight = "dict_ceiling_height",
+	DictCities = "dict_cities",
 	DictElevator = "dict_elevator",
 	DictFinishing = "dict_finishing",
 	DictFlatType = "dict_flat_type",
@@ -30,6 +31,7 @@ export enum Collections {
 	DictObjectStatus = "dict_object_status",
 	DictParking = "dict_parking",
 	DictPricePerM2 = "dict_price_per_m2",
+	DictRegions = "dict_regions",
 	DictServiceCategories = "dict_service_categories",
 	DictSpecialties = "dict_specialties",
 	DictSpecialtyServices = "dict_specialty_services",
@@ -165,7 +167,7 @@ export type ContractorsInfoRecord = {
 export type ContractorsPostsRecord = {
 	content: HTMLString
 	contractor?: RecordIdString
-	contractorServices: RecordIdString[]
+	contractorServices?: RecordIdString[]
 	created?: IsoDateString
 	id: string
 	images?: string[]
@@ -202,6 +204,17 @@ export type DictBuildingCategoryRecord = {
 export type DictCeilingHeightRecord = {
 	id: string
 	name: string
+}
+
+export type DictCitiesRecord<Tcoords = unknown> = {
+	coords?: null | Tcoords
+	guid: string
+	id: string
+	isCapital?: boolean
+	label?: string
+	name: string
+	name_en?: string
+	region?: RecordIdString
 }
 
 export type DictElevatorRecord = {
@@ -252,6 +265,19 @@ export type DictParkingRecord = {
 export type DictPricePerM2Record = {
 	id: string
 	name: string
+}
+
+export type DictRegionsRecord = {
+	capital?: RecordIdString
+	code?: number
+	district?: string
+	fullname?: string
+	guid: string
+	id: string
+	iso_3166_2?: string
+	label?: string
+	name: string
+	name_en?: string
 }
 
 export type DictServiceCategoriesRecord = {
@@ -374,7 +400,7 @@ export type UsersInfoRecord = {
 	displayName?: string
 	gender?: UsersInfoGenderOptions
 	id: string
-	location?: string
+	location?: RecordIdString
 	nickname?: string
 	updated?: IsoDateString
 	user: RecordIdString
@@ -395,6 +421,7 @@ export type DictBalconyResponse<Texpand = unknown> = Required<DictBalconyRecord>
 export type DictBuildYearResponse<Texpand = unknown> = Required<DictBuildYearRecord> & BaseSystemFields<Texpand>
 export type DictBuildingCategoryResponse<Texpand = unknown> = Required<DictBuildingCategoryRecord> & BaseSystemFields<Texpand>
 export type DictCeilingHeightResponse<Texpand = unknown> = Required<DictCeilingHeightRecord> & BaseSystemFields<Texpand>
+export type DictCitiesResponse<Tcoords = unknown, Texpand = unknown> = Required<DictCitiesRecord<Tcoords>> & BaseSystemFields<Texpand>
 export type DictElevatorResponse<Texpand = unknown> = Required<DictElevatorRecord> & BaseSystemFields<Texpand>
 export type DictFinishingResponse<Texpand = unknown> = Required<DictFinishingRecord> & BaseSystemFields<Texpand>
 export type DictFlatTypeResponse<Texpand = unknown> = Required<DictFlatTypeRecord> & BaseSystemFields<Texpand>
@@ -405,6 +432,7 @@ export type DictLayoutResponse<Texpand = unknown> = Required<DictLayoutRecord> &
 export type DictObjectStatusResponse<Texpand = unknown> = Required<DictObjectStatusRecord> & BaseSystemFields<Texpand>
 export type DictParkingResponse<Texpand = unknown> = Required<DictParkingRecord> & BaseSystemFields<Texpand>
 export type DictPricePerM2Response<Texpand = unknown> = Required<DictPricePerM2Record> & BaseSystemFields<Texpand>
+export type DictRegionsResponse<Texpand = unknown> = Required<DictRegionsRecord> & BaseSystemFields<Texpand>
 export type DictServiceCategoriesResponse<Texpand = unknown> = Required<DictServiceCategoriesRecord> & BaseSystemFields<Texpand>
 export type DictSpecialtiesResponse<Texpand = unknown> = Required<DictSpecialtiesRecord> & BaseSystemFields<Texpand>
 export type DictSpecialtyServicesResponse<Texpand = unknown> = Required<DictSpecialtyServicesRecord> & BaseSystemFields<Texpand>
@@ -435,6 +463,7 @@ export type CollectionRecords = {
 	dict_build_year: DictBuildYearRecord
 	dict_building_category: DictBuildingCategoryRecord
 	dict_ceiling_height: DictCeilingHeightRecord
+	dict_cities: DictCitiesRecord
 	dict_elevator: DictElevatorRecord
 	dict_finishing: DictFinishingRecord
 	dict_flat_type: DictFlatTypeRecord
@@ -445,6 +474,7 @@ export type CollectionRecords = {
 	dict_object_status: DictObjectStatusRecord
 	dict_parking: DictParkingRecord
 	dict_price_per_m2: DictPricePerM2Record
+	dict_regions: DictRegionsRecord
 	dict_service_categories: DictServiceCategoriesRecord
 	dict_specialties: DictSpecialtiesRecord
 	dict_specialty_services: DictSpecialtyServicesRecord
@@ -474,6 +504,7 @@ export type CollectionResponses = {
 	dict_build_year: DictBuildYearResponse
 	dict_building_category: DictBuildingCategoryResponse
 	dict_ceiling_height: DictCeilingHeightResponse
+	dict_cities: DictCitiesResponse
 	dict_elevator: DictElevatorResponse
 	dict_finishing: DictFinishingResponse
 	dict_flat_type: DictFlatTypeResponse
@@ -484,6 +515,7 @@ export type CollectionResponses = {
 	dict_object_status: DictObjectStatusResponse
 	dict_parking: DictParkingResponse
 	dict_price_per_m2: DictPricePerM2Response
+	dict_regions: DictRegionsResponse
 	dict_service_categories: DictServiceCategoriesResponse
 	dict_specialties: DictSpecialtiesResponse
 	dict_specialty_services: DictSpecialtyServicesResponse
@@ -516,6 +548,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'dict_build_year'): RecordService<DictBuildYearResponse>
 	collection(idOrName: 'dict_building_category'): RecordService<DictBuildingCategoryResponse>
 	collection(idOrName: 'dict_ceiling_height'): RecordService<DictCeilingHeightResponse>
+	collection(idOrName: 'dict_cities'): RecordService<DictCitiesResponse>
 	collection(idOrName: 'dict_elevator'): RecordService<DictElevatorResponse>
 	collection(idOrName: 'dict_finishing'): RecordService<DictFinishingResponse>
 	collection(idOrName: 'dict_flat_type'): RecordService<DictFlatTypeResponse>
@@ -526,6 +559,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'dict_object_status'): RecordService<DictObjectStatusResponse>
 	collection(idOrName: 'dict_parking'): RecordService<DictParkingResponse>
 	collection(idOrName: 'dict_price_per_m2'): RecordService<DictPricePerM2Response>
+	collection(idOrName: 'dict_regions'): RecordService<DictRegionsResponse>
 	collection(idOrName: 'dict_service_categories'): RecordService<DictServiceCategoriesResponse>
 	collection(idOrName: 'dict_specialties'): RecordService<DictSpecialtiesResponse>
 	collection(idOrName: 'dict_specialty_services'): RecordService<DictSpecialtyServicesResponse>

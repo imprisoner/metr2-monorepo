@@ -26,7 +26,9 @@
             >{{ link.nickname }}</NuxtLink
           >
         </p>
-        <span class="text-xs text-gray-400">{{ userInfo.location }}</span>
+        <span v-if="location" class="text-xs text-gray-400">{{
+          location
+        }}</span>
       </div>
     </div>
     <div v-if="!isOwner" class="flex gap-4">
@@ -38,7 +40,11 @@
 
 <script setup lang="ts">
 import { getOneUser } from "~/api/functions";
-import type { FlatsRecord } from "~/types/pocketbase-types";
+import type {
+  DictCitiesRecord,
+  FlatsRecord,
+  UsersInfoResponse,
+} from "~/types/pocketbase-types";
 
 const lastSeen = "2 часа";
 
@@ -46,11 +52,15 @@ const { userId } = defineProps<{ userId: string }>();
 
 interface Expand {
   flats_via_user: FlatsRecord[] | undefined;
+  users_info_via_user:
+    | UsersInfoResponse<{ location: DictCitiesRecord | undefined }>
+    | undefined;
 }
 
 const userInfo = await getOneUser<Expand>(userId);
 
 const flats = userInfo.expand.flats_via_user;
+const location = userInfo.expand.users_info_via_user?.expand.location;
 
 let flatLinks: { nickname: string; id: string }[] = [];
 
@@ -61,8 +71,8 @@ if (flats) {
   }));
 }
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
-const isOwner = userInfo.id === authStore.userInfo?.id
-
+const isOwner = userInfo.id === authStore.userInfo?.id;
 </script>
+

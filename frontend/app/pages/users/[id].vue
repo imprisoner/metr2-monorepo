@@ -16,7 +16,8 @@
           <DetailedUserInfoPlate
             :avatar="userData.avatar"
             :location="
-              userData.expand.users_info_via_user?.location || 'Нет локации'
+              userData.expand.users_info_via_user?.expand.location?.name ||
+              'Нет локации'
             "
             :name="userData.name"
             :is-owner="isOwner"
@@ -38,12 +39,12 @@
 
 <script setup lang="ts">
 import { pb } from "~/api/pocketbase-client";
-import EditUserProfileDialog from "~/components/edit-user-profile-dialog/edit-user-profile-dialog.vue";
 import {
   Collections,
+  type DictCitiesRecord,
   type FlatsRecord,
   type UsersBlogPostsRecord,
-  type UsersInfoRecord,
+  type UsersInfoResponse,
   type UsersResponse,
 } from "~/types/pocketbase-types";
 
@@ -51,17 +52,27 @@ const userId = useRoute().params.id as string;
 
 interface Expand {
   flats_via_user: FlatsRecord[] | undefined;
-  users_info_via_user: UsersInfoRecord | undefined;
+  users_info_via_user:
+    | UsersInfoResponse<{
+        location: DictCitiesRecord | undefined;
+      }>
+    | undefined;
   users_blog_posts_via_user: UsersBlogPostsRecord[] | undefined;
 }
 
 const getUserPageData = async () => {
+  const expand = [
+    "flats_via_user",
+    "users_info_via_user",
+    "users_blog_posts_via_user",
+    "users_info_via_user.location",
+  ].join(",");
+
   const userData = await pb
     .collection(Collections.Users)
     .getOne<UsersResponse<Expand>>(userId, {
-      expand: "flats_via_user,users_info_via_user,users_blog_posts_via_user",
+      expand,
     });
-
   let flats: FlatsRecord[] = [];
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({
@@ -70,7 +81,9 @@ const getUserPageData = async () => {
     }));
   }
 
-  let blogArticles: (UsersBlogPostsRecord & { previewImage: string | undefined })[] = [];
+  let blogArticles: (UsersBlogPostsRecord & {
+    previewImage: string | undefined;
+  })[] = [];
 
   if (userData.expand.users_blog_posts_via_user) {
     blogArticles = userData.expand.users_blog_posts_via_user.map((article) => {
