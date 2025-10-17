@@ -1,5 +1,8 @@
 /// <reference path="../pb_data/types.d.ts" />
+
 migrate((app) => {
+  const getAllCities = () => app.findRecordsByFilter("dict_cities", "", "", 2000, 0)
+
   const citiesColl = app.findCollectionByNameOrId("dict_cities");
   const regionsColl = app.findCollectionByNameOrId("dict_regions");
 
@@ -7,9 +10,7 @@ migrate((app) => {
     throw new Error("Collection dict_cities not found");
   }
 
-  const getAllCities = () => app.findRecordsByFilter("dict_cities", "", "", 2000, 0)
-
-  const oldCities = getAllCities();
+  const oldCities = getAllCities(app);
   // удаляем старое текстовое поле region (если есть)
   citiesColl.fields = citiesColl.fields.filter(f => f.name !== "region");
 
@@ -34,17 +35,12 @@ migrate((app) => {
 
   // пытаемся связать города с их регионами по guid, если совпадает
   try {
-    const newCities = getAllCities();
+    const newCities = getAllCities(app);
     
     for (const city of newCities) {
       const oldCity = oldCities.find((oldCity) => oldCity.id === city.id);
-
-      // console.log(JSON.stringify(oldCity))
-
       const regionGuid = oldCity.get("region")
-      // const blabla = oldCity.region; // старое значение guid региона
-      // console.log("REGION GUID from city record: ", regionGuid)
-      // console.log("CITY NAME ", JSON.stringify(city))
+      
       if (!regionGuid) continue;
 
       try {
@@ -69,16 +65,19 @@ migrate((app) => {
 
   return;
 }, (app) => {
-  const collection = app.findCollectionByNameOrId("dict_cities");
+  const getAllCities = () => app.findRecordsByFilter("dict_cities", "", "", 2000, 0)
+  const citiesColl = app.findCollectionByNameOrId("dict_cities");
 
-  if (!collection) {
+  if (!citiesColl) {
     throw new Error("Collection dict_cities not found");
   }
 
-  // возвращаем текстовое поле region
-  collection.fields.removeByName('region')
+  const oldCities = getAllCities(app)
 
-  collection.fields.add(new Field(
+  // возвращаем текстовое поле region
+  citiesColl.fields.removeByName('region')
+
+  citiesColl.fields.add(new Field(
     {
       id: "text_region_" + Math.random().toString(36).slice(2, 10),
       name: "region",
@@ -89,5 +88,27 @@ migrate((app) => {
     }
   ));
 
-  app.save(collection);
+  app.save(citiesColl);
+
+  try {
+    const newCities = getAllCities(app);
+    
+    for (const city of newCities) {
+      const oldCity = oldCities.find((oldCity) => oldCity.id === city.id);
+      const regionId = oldCity.get("region")
+      if (!regionId) continue;
+      try {
+        const region = app.findRecordById('dict_regions', regionId)
+        if (region) {
+          city.set("region", region.getString('guid'));
+          app.save(city);
+        }
+      } catch (_) {
+        console.log("REGION IS NOT FOUND")
+        // если регион не найден — пропускаем
+      }
+    }
+  } catch (e) {
+    console.log("Error linking cities with regions:", e);
+  }
 });
