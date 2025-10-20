@@ -3,7 +3,7 @@
     v-model:visible="visible"
     closable
     modal
-    header="Добавить квартиру"
+    :header="headerString"
     class="w-[600px]"
     pt:content:class="flex flex-wrap flex-col overflow-auto gap-y-8 gap-x-4"
   >
@@ -98,6 +98,10 @@ import type {
 const { flat } = defineProps<{
   flat: FlatsRecord | undefined;
 }>();
+
+const headerString = computed(() =>
+  flat ? "Редактировать квартиру" : "Добавить квартиру"
+);
 
 const visible = defineModel<boolean>("visible", { required: true });
 
@@ -194,9 +198,9 @@ const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
   if (!valid) return;
 
   if (flat?.id) {
-    editFlat(flat.id, values as FormFields)
+    editFlat(flat.id, values as FormFields);
   } else {
-    createNewFlat(values as FormFields)
+    createNewFlat(values as FormFields);
   }
 
   toast.add({

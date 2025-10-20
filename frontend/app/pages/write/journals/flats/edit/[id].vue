@@ -7,11 +7,23 @@
 </template>
 
 <script setup lang="ts">
+import type { ClientResponseError } from "pocketbase";
 import { getOneJournal } from "~/api/functions";
+import type { JournalsRecord } from "~/types/pocketbase-types";
+
+definePageMeta({
+  middleware: ['auth', 'is-user'],
+})
 
 const articleId = useRoute().params.id as string;
 
-const articleRecord = await getOneJournal(articleId);
+let articleRecord: JournalsRecord
+
+try {
+  articleRecord = await getOneJournal(articleId);
+} catch (err) {
+  throw showError(err as ClientResponseError);
+}
 
 const imageSources = extractImageSrcs(articleRecord.content);
 
@@ -28,7 +40,7 @@ const contentWithReplacedImages = replaceAllImageSrcs(
 
 const articleData = {
   title: articleRecord.title,
-  previewImageIndex: articleRecord.previewImageIndex,
+  previewImageIndex: articleRecord.previewImageIndex ?? 0,
   content: contentWithReplacedImages,
   images: base64ImageSources,
 };

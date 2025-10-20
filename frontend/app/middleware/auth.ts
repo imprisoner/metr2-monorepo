@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async () => {
 
   try {
     if (pb.authStore.isValid) {
-      await pb.collection("users").authRefresh();
+      await pb.collection(pb.authStore.record!.collectionName).authRefresh();
     }
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
   } catch {

@@ -8,11 +8,16 @@
 </template>
 
 <script setup lang="ts">
+import type { ClientResponseError } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
 import type {
   ContractorsPostsResponse,
   DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
+
+definePageMeta({
+  middleware: ["auth", 'is-contractor'],
+});
 
 const route = useRoute();
 
@@ -20,13 +25,21 @@ const articleId = route.params["id"] as string;
 
 const collection = "contractors_posts";
 
-const articleRecord = await pb.collection(collection).getOne<
-  ContractorsPostsResponse<{
-    contractorServices: DictSpecialtyServicesRecord[];
-  }>
->(articleId, {
-  expand: "contractorServices",
-});
+type ContractorsArticleResponse = ContractorsPostsResponse<{
+  contractorServices: DictSpecialtyServicesRecord[];
+}>;
+
+let articleRecord: ContractorsArticleResponse;
+
+try {
+  articleRecord = await pb
+    .collection(collection)
+    .getOne<ContractorsArticleResponse>(articleId, {
+      expand: "contractorServices",
+    });
+} catch (err) {
+  throw createError(err as ClientResponseError);
+}
 
 const imageSources = extractImageSrcs(articleRecord.content);
 
@@ -47,7 +60,7 @@ const articleData = {
   content: contentWithReplacedImages,
   images: base64ImageSources,
   contractorServices: articleRecord.contractorServices,
-  allServicesExpanded: articleRecord.expand.contractorServices
+  allServicesExpanded: articleRecord.expand.contractorServices,
 };
 </script>
 

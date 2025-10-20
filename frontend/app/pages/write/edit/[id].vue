@@ -1,19 +1,37 @@
 <template>
   <div class="w-full">
-    <BlogArticleCreateForm :article-id="articleId" :article-data="articleData" />
+    <BlogArticleCreateForm
+      :article-id="articleId"
+      :article-data="articleData"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import type { ClientResponseError } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
+import type { ContractorsBlogPostsRecord, UsersBlogPostsRecord } from "~/types/pocketbase-types";
+
+definePageMeta({
+  middleware: ["auth"],
+});
 
 const articleId = useRoute().params.id as string;
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
-const collection = authStore.userInfo!.collectionName === 'users' ? 'users_blog_posts' : 'contractors_blog_posts'
+const collection =
+  authStore.userInfo!.collectionName === "users"
+    ? "users_blog_posts"
+    : "contractors_blog_posts";
 
-const articleRecord = await pb.collection(collection).getOne(articleId);
+let articleRecord: UsersBlogPostsRecord | ContractorsBlogPostsRecord;
+
+try {
+  articleRecord = await pb.collection(collection).getOne(articleId);
+} catch (err) {
+  throw createError(err as ClientResponseError);
+}
 
 const imageSources = extractImageSrcs(articleRecord.content);
 
@@ -30,7 +48,7 @@ const contentWithReplacedImages = replaceAllImageSrcs(
 
 const articleData = {
   title: articleRecord.title,
-  previewImageIndex: articleRecord.previewImageIndex,
+  previewImageIndex: articleRecord.previewImageIndex ?? 0,
   content: contentWithReplacedImages,
   images: base64ImageSources,
 };
