@@ -7,7 +7,7 @@
         :src="userInfo.avatar"
         size="xlarge"
       />
-      <div class="flex flex-col gap-0.5">
+      <div class="flex flex-col gap-1">
         <div class="flex gap-2 items-baseline">
           <NuxtLink
             :to="`/users/${userInfo.hrid}`"
@@ -16,18 +16,17 @@
           >
           <span class="text-xs text-gray-400">Был {{ lastSeen }} назад</span>
         </div>
-        <p v-if="flatLinks.length" class="text-sm">
+        <div v-if="flatLinks.length" class="text-sm">
           Я живу в
-          <NuxtLink
-            v-for="link in flatLinks"
-            :key="link.id"
-            :to="`/category/flat/${link.id}`"
-            class="font-semibold"
-            >{{ link.nickname }}</NuxtLink
-          >
-        </p>
+          <template v-for="(link, index) in flatLinks" :key="link.id">
+            <NuxtLink :to="`/category/flat/${link.id}`" class="font-semibold">
+              {{ link.nickname}}
+            </NuxtLink>
+            <template v-if="index !== flatLinks.length - 1">, </template>
+          </template>
+        </div>
         <span v-if="location" class="text-xs text-gray-400">{{
-          location
+          location.name
         }}</span>
       </div>
     </div>
