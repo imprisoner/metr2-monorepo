@@ -119,7 +119,9 @@ const getContractorPortfolio = async (contractorId: string) => {
   return withPreviewImages;
 };
 
-const portfolio = await getContractorPortfolio(contractorResponse.value.id);
+const portfolio: (ContractorsPostsResponseWithExpand & {
+  previewImage: string | undefined;
+})[] = await getContractorPortfolio(contractorResponse.value.id);
 
 const authStore = useAuthStore();
 
@@ -141,7 +143,7 @@ const onServiceSaved = async () => {
   contractorResponse.value = await getContractorInfoAndServices(contractorId);
 };
 
-const getContractorsBlogPosts = async () => {
+const getContractorsBlogPosts = async (contractorId: string) => {
   const response = await pb
     .collection("contractors_blog_posts")
     .getFullList<ContractorsBlogPostsResponse<ContractorsRecord>>({
@@ -168,6 +170,6 @@ const getContractorsBlogPosts = async () => {
   return withPreviewImages;
 };
 
-const blogArticles = await getContractorsBlogPosts();
+const blogArticles = await getContractorsBlogPosts(contractorResponse.value.id);
 </script>
 

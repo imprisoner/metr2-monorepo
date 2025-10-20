@@ -3,11 +3,12 @@
     v-model:visible="visible"
     closable
     close-on-escape
-    header="Добавьте услугу"
+    :header="dialogHeader"
     modal
     :style="{ width: '600px' }"
   >
     <CascadeSelect
+      v-if="!contractorsService"
       v-model="selectedSpecialty"
       :options="options"
       option-label="sname"
@@ -18,8 +19,9 @@
       class="mb-8"
       @update:model-value="onUpdateSpecialty"
     />
-    <div class="flex gap-8">
+    <div class="flex gap-8 mb-8">
       <Listbox
+        v-if="!contractorsService"
         v-model="selectedService"
         :options="servicesResponse"
         option-label="name"
@@ -29,21 +31,23 @@
       <div class="flex flex-col gap-4">
         <label class="flex flex-col gap-2 w-full">
           <span>Минимальная цена</span>
-          <InputNumber v-model="priceMin" :disabled="!selectedService" />
+          <InputNumber v-model="priceMin" :disabled="disableFields" />
         </label>
         <label class="flex flex-col gap-2 w-full">
           <span>Максимальная цена</span>
-          <InputNumber v-model="priceMax" :disabled="!selectedService" />
+          <InputNumber v-model="priceMax" :disabled="disableFields" />
         </label>
       </div>
     </div>
-    <div class="mt-8">
-      <Button
-        label="Сохранить"
-        fluid
-        :disabled="!selectedService"
-        @click="save"
-      />
+    <div class="flex">
+      <label class="flex flex-col gap-2 w-full">
+        <span>Описание услуги</span>
+        <TextArea v-model="description" :disabled="disableFields" maxlength="300"/>
+      </label>
+    </div>
+    <div class="mt-8 flex gap-2 justify-end">
+      <Button v-if="mode === 'edit'" severity="danger" label="Удалить" @click="remove" />
+      <Button label="Сохранить" :disabled="disableFields" @click="save" />
     </div>
   </Dialog>
 </template>
@@ -52,10 +56,30 @@
 import { pb } from "~/api/pocketbase-client";
 import type {
   ContractorsServicesRecord,
+  ContractorsServicesResponse,
   DictServiceCategoriesResponse,
   DictSpecialtiesRecord,
   DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
+
+const { contractorsService = undefined } = defineProps<{
+  contractorsService?: ContractorsServicesResponse<{
+    specialtyService: DictSpecialtyServicesRecord;
+  }>;
+}>();
+
+const mode = computed(() => (contractorsService ? "edit" : "create"));
+const dialogHeader = computed(() =>
+  mode.value === "create"
+    ? "Добавить услугу"
+    : `Редактировать услугу - ${
+        contractorsService!.expand.specialtyService.name
+      }`
+);
+
+const disableFields = computed(() =>
+  mode.value === "create" && !selectedService.value
+);
 
 const emit = defineEmits<{
   (e: "save"): void;
@@ -109,24 +133,42 @@ const onUpdateSpecialty = async (specialty: DictSpecialtiesRecord) => {
   selectedService.value = undefined;
 };
 
-const priceMin = ref(0);
-const priceMax = ref(0);
+const priceMin = ref(contractorsService?.priceMin ?? 0);
+const priceMax = ref(contractorsService?.priceMax ?? 0);
+const description = ref(contractorsService?.description ?? "")
 
 const authStore = useAuthStore();
 
 const save = async () => {
-  if (!selectedService.value) return;
+  if (disableFields.value) return;
 
-  const body: Omit<ContractorsServicesRecord, "id" | "created" | "updated"> = {
-    specialtyService: selectedService.value.id,
+  const body: {
+    specialtyService?: string;
+    contractor?: string;
+    priceMin: number;
+    priceMax: number;
+  } = {
+    specialtyService: selectedService.value?.id ?? contractorsService?.specialtyService,
     contractor: authStore.userInfo!.id,
     priceMax: priceMax.value,
     priceMin: priceMin.value,
   };
 
-  await pb.collection("contractors_services").create(body);
+  if (mode.value === "create") {
+    await pb.collection("contractors_services").create(body);
+  } else {
+    await pb
+      .collection("contractors_services")
+      .update(contractorsService!.id, body);
+  }
 
   emit("save");
 };
+
+const remove = async () => {
+  await pb.collection("contractors_services").delete(contractorsService!.id)
+
+  emit("save");
+}
 </script>
 

@@ -8,24 +8,30 @@
         text="Услуги"
         button-label="Добавить услугу"
         :controls-show-condition="!!(isOwner && services?.length)"
-        @button-click="showAddServiceDialog = true"
+        @button-click="onAddServiceClick"
       />
     </template>
     <ul v-if="services">
       <li
         v-for="service in services"
         :key="service.id"
-        class="flex justify-between"
+        class="flex justify-between gap-8"
       >
-        <span>
-          {{ capitalizeFirstLetter(service.expand.specialtyService.name) }}
-        </span>
-        <span class="font-bold">
-          <template v-if="service.priceMin">
-            от {{ service.priceMin }} ₽
-          </template>
-          <template v-else>по договорённости</template>
-        </span>
+        <div class="flex-1 flex justify-between">
+          <span>
+            {{ capitalizeFirstLetter(service.expand.specialtyService.name) }}
+          </span>
+          <span class="font-bold">
+            <template v-if="service.priceMin">
+              от {{ service.priceMin }} ₽
+            </template>
+            <template v-else>по договорённости</template>
+          </span>
+        </div>
+        <i
+          class="pi pi-pencil cursor-pointer"
+          @click="onEditContractorsService(service.id)"
+        />
       </li>
     </ul>
     <NoItemsSection
@@ -50,7 +56,7 @@
       <ContractorPostCard
         v-for="post in portfolio"
         :key="post.id"
-        :image="post.previewImage"
+        :image="post.previewImage || ''"
         :post-id="post.id"
         :title="post.title"
         :likes="0"
@@ -95,7 +101,9 @@
     />
   </Panel>
   <AddContractorServiceDialog
+    v-if="showAddServiceDialog"
     v-model:visible="showAddServiceDialog"
+    :contractors-service="serviceToEdit"
     @save="onServiceSaved"
   />
 </template>
@@ -109,14 +117,16 @@ import type {
   DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
 
-defineProps<{
+const { services } = defineProps<{
   isOwner?: boolean;
   services:
     | ContractorsServicesResponse<{
         specialtyService: DictSpecialtyServicesRecord;
       }>[]
     | undefined;
-  portfolio: (ContractorsPostsResponseWithExpand & { previewImage: string })[];
+  portfolio: (ContractorsPostsResponseWithExpand & {
+    previewImage: string | undefined;
+  })[];
   contractorInfo: ContractorsInfoRecord | undefined;
   blogArticles: (ContractorsBlogPostsRecord & {
     previewImage: string | undefined;
@@ -133,5 +143,22 @@ const onServiceSaved = async () => {
   showAddServiceDialog.value = false;
   emit("service-saved");
 };
+
+const serviceToEdit = ref<
+  | ContractorsServicesResponse<{
+      specialtyService: DictSpecialtyServicesRecord;
+    }>
+  | undefined
+>();
+
+const onEditContractorsService = (serviceId: string) => {
+  serviceToEdit.value = services?.find((service) => service.id === serviceId);
+  showAddServiceDialog.value = true;
+};
+
+const onAddServiceClick = () => {
+  serviceToEdit.value = undefined
+  showAddServiceDialog.value = true
+}
 </script>
 
