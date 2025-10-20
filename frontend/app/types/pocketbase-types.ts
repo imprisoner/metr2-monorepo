@@ -143,6 +143,8 @@ export type ContractorsBlogPostsRecord = {
 	id: string
 	images?: string[]
 	previewImageIndex?: number
+	publishDate?: IsoDateString
+	published?: boolean
 	title: string
 	updated?: IsoDateString
 }
@@ -173,6 +175,8 @@ export type ContractorsPostsRecord = {
 	id: string
 	images?: string[]
 	previewImageIndex?: number
+	publishDate?: IsoDateString
+	published?: boolean
 	title: string
 	updated?: IsoDateString
 }
@@ -352,6 +356,8 @@ export type JournalsRecord = {
 	id: string
 	images: string[]
 	previewImageIndex?: number
+	publishDate?: IsoDateString
+	published?: boolean
 	title: string
 	updated?: IsoDateString
 	user: RecordIdString
@@ -387,6 +393,8 @@ export type UsersBlogPostsRecord = {
 	id: string
 	images?: string[]
 	previewImageIndex?: number
+	publishDate?: IsoDateString
+	published?: boolean
 	title: string
 	updated?: IsoDateString
 	user: RecordIdString
