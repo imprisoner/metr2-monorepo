@@ -160,7 +160,7 @@ export type ContractorsInfoRecord = {
 	experienceYears?: number
 	gender?: ContractorsInfoGenderOptions
 	id: string
-	location?: string
+	location?: RecordIdString
 	nickname?: string
 	updated?: IsoDateString
 }
@@ -180,6 +180,7 @@ export type ContractorsPostsRecord = {
 export type ContractorsServicesRecord = {
 	contractor?: RecordIdString
 	created?: IsoDateString
+	description?: string
 	id: string
 	priceMax?: number
 	priceMin?: number

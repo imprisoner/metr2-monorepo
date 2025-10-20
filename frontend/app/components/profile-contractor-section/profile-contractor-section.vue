@@ -15,23 +15,16 @@
       <li
         v-for="service in services"
         :key="service.id"
-        class="flex justify-between gap-8"
+        class="mb-4"
       >
-        <div class="flex-1 flex justify-between">
-          <span>
-            {{ capitalizeFirstLetter(service.expand.specialtyService.name) }}
-          </span>
-          <span class="font-bold">
-            <template v-if="service.priceMin">
-              от {{ service.priceMin }} ₽
-            </template>
-            <template v-else>по договорённости</template>
-          </span>
-        </div>
-        <i
-          class="pi pi-pencil cursor-pointer"
-          @click="onEditContractorsService(service.id)"
-        />
+          <ContractorsServiceCard 
+            :name="service.expand.specialtyService.name"
+            :description="service.description"
+            :price-min="service.priceMin"
+            :price-max="service.priceMax"
+            :is-owner="isOwner"
+            @edit="onEditContractorsService(service.id)"
+          />
       </li>
     </ul>
     <NoItemsSection
@@ -104,6 +97,7 @@
     v-if="showAddServiceDialog"
     v-model:visible="showAddServiceDialog"
     :contractors-service="serviceToEdit"
+    :all-services-ids="services?.map((item) => item.specialtyService)"
     @save="onServiceSaved"
   />
 </template>

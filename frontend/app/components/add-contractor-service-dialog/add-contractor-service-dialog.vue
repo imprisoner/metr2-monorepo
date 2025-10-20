@@ -42,11 +42,20 @@
     <div class="flex">
       <label class="flex flex-col gap-2 w-full">
         <span>Описание услуги</span>
-        <TextArea v-model="description" :disabled="disableFields" maxlength="300"/>
+        <TextArea
+          v-model="description"
+          :disabled="disableFields"
+          maxlength="300"
+        />
       </label>
     </div>
     <div class="mt-8 flex gap-2 justify-end">
-      <Button v-if="mode === 'edit'" severity="danger" label="Удалить" @click="remove" />
+      <Button
+        v-if="mode === 'edit'"
+        severity="danger"
+        label="Удалить"
+        @click="remove"
+      />
       <Button label="Сохранить" :disabled="disableFields" @click="save" />
     </div>
   </Dialog>
@@ -62,10 +71,11 @@ import type {
   DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
 
-const { contractorsService = undefined } = defineProps<{
+const { contractorsService = undefined, allServicesIds = [] } = defineProps<{
   contractorsService?: ContractorsServicesResponse<{
     specialtyService: DictSpecialtyServicesRecord;
   }>;
+  allServicesIds?: string[];
 }>();
 
 const mode = computed(() => (contractorsService ? "edit" : "create"));
@@ -77,8 +87,8 @@ const dialogHeader = computed(() =>
       }`
 );
 
-const disableFields = computed(() =>
-  mode.value === "create" && !selectedService.value
+const disableFields = computed(
+  () => mode.value === "create" && !selectedService.value
 );
 
 const emit = defineEmits<{
@@ -125,17 +135,19 @@ const onUpdateSpecialty = async (specialty: DictSpecialtiesRecord) => {
     filter: `specialty="${specialty.id}"`,
   });
 
-  servicesResponse.value = response.map((item) => ({
-    ...item,
-    name: capitalizeFirstLetter(item.name),
-  }));
+  servicesResponse.value = response
+    .filter((item) => !allServicesIds.includes(item.id))
+    .map((item) => ({
+      ...item,
+      name: capitalizeFirstLetter(item.name),
+    }));
 
   selectedService.value = undefined;
 };
 
 const priceMin = ref(contractorsService?.priceMin ?? 0);
 const priceMax = ref(contractorsService?.priceMax ?? 0);
-const description = ref(contractorsService?.description ?? "")
+const description = ref(contractorsService?.description ?? "");
 
 const authStore = useAuthStore();
 
@@ -147,11 +159,14 @@ const save = async () => {
     contractor?: string;
     priceMin: number;
     priceMax: number;
+    description: string;
   } = {
-    specialtyService: selectedService.value?.id ?? contractorsService?.specialtyService,
+    specialtyService:
+      selectedService.value?.id ?? contractorsService?.specialtyService,
     contractor: authStore.userInfo!.id,
     priceMax: priceMax.value,
     priceMin: priceMin.value,
+    description: description.value,
   };
 
   if (mode.value === "create") {
@@ -166,9 +181,9 @@ const save = async () => {
 };
 
 const remove = async () => {
-  await pb.collection("contractors_services").delete(contractorsService!.id)
+  await pb.collection("contractors_services").delete(contractorsService!.id);
 
   emit("save");
-}
+};
 </script>
 
