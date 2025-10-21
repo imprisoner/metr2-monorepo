@@ -1,11 +1,23 @@
 <template>
-  <Card class="overflow-hidden">
+  <Card class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
     <template #header>
-      <NuxtImg
-        v-if="post.previewImage"
-        :src="post.previewImage"
-        class="w-full object-cover"
-      />
+      <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
+        <template v-if="post.previewImage">
+          <NuxtImg
+            :src="post.previewImage"
+            alt="post image"
+            class="w-full object-cover"
+          />
+          <Tag
+            v-if="imageCount"
+            class="absolute bottom-2 right-2"
+            severity="info"
+          >
+            {{ imageCount }} фото
+          </Tag>
+        </template>
+        <DefaultPostThumbnail v-else />
+      </div>
     </template>
     <template #title>
       <div class="flex justify-between">
@@ -18,12 +30,18 @@
 </template>
 
 <script setup lang="ts">
-import type { ContractorsBlogPostsRecord, UsersBlogPostsRecord } from "~/types/pocketbase-types";
+import type {
+  ContractorsBlogPostsRecord,
+  UsersBlogPostsRecord,
+} from "~/types/pocketbase-types";
 
-defineProps<{
+const { post } = defineProps<{
   post: (UsersBlogPostsRecord | ContractorsBlogPostsRecord) & {
     previewImage: string | undefined;
   };
   link: string;
 }>();
+
+const imageCount = post.images?.length;
 </script>
+

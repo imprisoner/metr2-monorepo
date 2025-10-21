@@ -1,17 +1,25 @@
 <template>
   <Card
-    class="mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+    class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
   >
     <!-- Header slot: Image -->
     <template #header>
-      <div class="relative">
-        <img :src="image" alt="post image" class="w-full rounded-t-lg" />
-        <div
-          v-if="imageCount"
-          class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-sm px-2 py-1 rounded-md"
-        >
-          {{ imageCount }} фото
-        </div>
+      <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
+        <template v-if="image">
+          <NuxtImg
+            :src="image"
+            alt="post image"
+            class="w-full object-cover"
+          />
+          <Tag
+            v-if="imageCount"
+            class="absolute bottom-2 right-2"
+            severity="info"
+          >
+            {{ imageCount }} фото
+          </Tag>
+        </template>
+        <DefaultPostThumbnail v-else />
       </div>
     </template>
 

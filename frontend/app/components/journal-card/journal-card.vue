@@ -1,16 +1,25 @@
 <template>
-  <Card class="max-w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+  <Card
+    class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+  >
     <!-- Header slot: Image -->
-    <template v-if="coverImageUrl" #header>
-      <div class="relative">
-        <NuxtImg :src="coverImageUrl" alt="post image" class="w-full rounded-t-lg h-[200px] object-cover" />
-        <Tag
-          v-if="imageCount"
-          class="absolute bottom-2 right-2"
-          severity="info"
-        >
-          {{ imageCount }} фото
-        </Tag>
+    <template #header>
+      <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
+        <template v-if="coverImageUrl">
+          <NuxtImg
+            :src="coverImageUrl"
+            alt="post image"
+            class="w-full object-cover"
+          />
+          <Tag
+            v-if="imageCount"
+            class="absolute bottom-2 right-2"
+            severity="info"
+          >
+            {{ imageCount }} фото
+          </Tag>
+        </template>
+        <DefaultPostThumbnail v-else />
       </div>
     </template>
 
@@ -27,7 +36,10 @@
         <span class="line-clamp-4">
           {{ journal.content }}
         </span>
-        <NuxtLink :to="`/journals/${journal.id}`" class="text-blue-600 font-medium cursor-pointer flex w-fit ms-auto">
+        <NuxtLink
+          :to="`/journals/${journal.id}`"
+          class="text-blue-600 font-medium cursor-pointer flex w-fit ms-auto"
+        >
           Читать дальше
         </NuxtLink>
       </p>
@@ -53,25 +65,28 @@
 </template>
 
 <script setup lang="ts">
-import { pb } from '~/api/pocketbase-client';
-import type { JournalsRecord } from '~/types/pocketbase-types';
+import { pb } from "~/api/pocketbase-client";
+import type { JournalsRecord } from "~/types/pocketbase-types";
 
 interface JournalCardProps {
-  journal: JournalsRecord
+  journal: JournalsRecord;
 }
 
-const {journal} = defineProps<JournalCardProps>();
+const { journal } = defineProps<JournalCardProps>();
 
-const publishDate = new Date(journal.created!).toLocaleDateString()
+const publishDate = new Date(journal.created!).toLocaleDateString();
 
-let coverImageUrl = undefined
+let coverImageUrl = undefined;
 
 if (journal.images && journal.images.length) {
-  coverImageUrl = pb.files.getURL(journal, journal.images[journal.previewImageIndex!]!)
+  coverImageUrl = pb.files.getURL(
+    journal,
+    journal.images[journal.previewImageIndex!]!
+  );
 }
 
-const imageCount = journal.images?.length ?? 0
+const imageCount = journal.images?.length ?? 0;
 
-const likes = 0
-const comments = 0
+const likes = 0;
+const comments = 0;
 </script>

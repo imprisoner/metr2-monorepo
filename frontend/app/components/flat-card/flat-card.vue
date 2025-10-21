@@ -1,12 +1,14 @@
 <template>
   <Card>
     <template #header>
-      <NuxtImg
-        v-for="(image, index) in flat.images"
-        :key="index"
-        :src="image"
-        class="w-full object-cover"
-      />
+      <div class="overflow-hidden rounded-t-lg">
+        <NuxtImg
+          v-if="flat.images.length"
+          :src="flat.images[0]"
+          class="w-full object-cover"
+        />
+        <DefaultPostThumbnail v-else/>
+      </div>
     </template>
     <template #title>
       <div class="flex justify-between">

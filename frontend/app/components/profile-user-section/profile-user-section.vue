@@ -26,7 +26,7 @@
     />
   </Panel>
   <!--  -->
-  <Panel class="shadow-md">
+  <Panel class="shadow-md" pt:content:class="flex flex-col gap-4">
     <template #header>
       <PanelHeaderWithControls
         text="Блог"

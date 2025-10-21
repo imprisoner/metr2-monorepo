@@ -97,6 +97,10 @@ export const getOneUser = async <E>(id: string) => {
       expand,
     });
 
+  if (response.avatar !== "") {
+    response.avatar = pb.files.getURL(response, response.avatar)
+  }
+
   return response;
 };
 
