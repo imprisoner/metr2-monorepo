@@ -1,11 +1,9 @@
 <template>
   <div class="flex justify-between items-start gap-8 flex-wrap">
     <div class="flex gap-2">
-      <Avatar
-        :label="userInfo.name[0]"
-        shape="circle"
-        :src="userInfo.avatar"
-        size="xlarge"
+      <UserAvatar 
+        :name="userInfo.name"
+        :avatar="userInfo.avatar"
       />
       <div class="flex flex-col gap-1">
         <div class="flex gap-2 items-baseline">
@@ -19,7 +17,7 @@
         <div v-if="flatLinks.length" class="text-sm">
           Я живу в
           <template v-for="(link, index) in flatLinks" :key="link.id">
-            <NuxtLink :to="`/category/flat/${link.id}`" class="font-semibold">
+            <NuxtLink :to="`/category/flat/${link.id}`" class="font-semibold hover:text-blue-500">
               {{ link.nickname}}
             </NuxtLink>
             <template v-if="index !== flatLinks.length - 1">, </template>

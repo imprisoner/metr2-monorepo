@@ -203,3 +203,10 @@ export const getAllCities = async () => {
   const response = await pb.collection("dict_cities").getFullList();
   return response;
 };
+
+export const saveUserAvatar = async (userId: string, collection: string, file: File) => {
+  const response = await pb.collection(collection).update(userId, {
+    avatar: file
+  });
+  return response;
+}

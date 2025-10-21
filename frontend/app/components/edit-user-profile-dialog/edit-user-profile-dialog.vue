@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="visible" header="Редактирование профиля" modal>
     <Fluid>
-      <div class="flex mt-8">
+      <div class="flex">
         <div class="card flex flex-col gap-4 w-full">
           <div class="flex flex-col md:flex-row gap-4">
             <label class="flex flex-wrap gap-2 w-full">

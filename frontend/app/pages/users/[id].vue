@@ -74,6 +74,11 @@ const getUserPageData = async () => {
       expand,
     });
 
+    
+  if (userData.avatar !== "") {
+    userData.avatar = pb.files.getURL(userData, userData.avatar)
+  }
+
   let flats: FlatsRecord[] = [];
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({

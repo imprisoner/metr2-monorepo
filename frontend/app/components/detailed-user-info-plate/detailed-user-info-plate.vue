@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex gap-2 relative">
-      <Avatar :label="name[0]" shape="circle" :src="avatar" size="xlarge" />
+      <UserAvatar 
+        :name="name"
+        :avatar="avatar"
+        :editable="isOwner"
+        @edit-avatar="onEditAvatarClick"
+      />
       <div class="flex flex-col gap-0.5">
         <span class="text-base font-semibold">{{ name }}</span>
         <span class="text-xs text-gray-400">Был {{ lastSeen }} назад</span>
@@ -27,27 +32,35 @@
       </template>
     </div>
   </div>
+  <AddAvatarDialog
+    v-if="isOwner && showAddAvatarDialog"
+    v-model:visible="showAddAvatarDialog"
+  />
 </template>
 
 <script setup lang="ts">
 const {
   name,
-  avatar,
+  avatar = undefined,
   location,
   lastSeen = "2 часа",
   isOwner = false,
 } = defineProps<{
   name: string;
-  avatar: string;
+  avatar?: string;
   location: string | undefined;
   lastSeen?: string;
   isOwner?: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'edit-profile'): void
-}>()
-</script>
+  (e: "edit-profile"): void;
+}>();
 
-<style></style>
+const showAddAvatarDialog = ref(false);
+
+const onEditAvatarClick = () => {
+  showAddAvatarDialog.value = true;
+};
+</script>
 

@@ -172,4 +172,3 @@ const getContractorsBlogPosts = async (contractorId: string) => {
 
 const blogArticles = await getContractorsBlogPosts(contractorResponse.value.id);
 </script>
-

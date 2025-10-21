@@ -85,3 +85,44 @@ export async function imageUrlToBase64Client(
   });
 }
 
+/**
+ * Converts a File (image) into a Base64 data URL.
+ * @param file - The image file to convert.
+ * @returns A Promise that resolves to the Base64 string (data URL).
+ */
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    // When reading is successful, resolve with the Base64 string
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        resolve(result);
+      } else {
+        reject(new Error("Failed to convert file to base64."));
+      }
+    };
+
+    // Handle errors
+    reader.onerror = (error) => reject(error);
+
+    // Read file as Data URL (base64)
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Converts a canvas element into a Base64 data URL.
+ * @param canvas - The HTMLCanvasElement to convert.
+ * @param type - The image MIME type (default is "image/png").
+ * @param quality - Image quality (only used for image/jpeg or image/webp, between 0 and 1).
+ * @returns A Base64-encoded data URL string.
+ */
+export function canvasToBase64(
+  canvas: HTMLCanvasElement,
+  type: string = "image/png",
+  quality?: number
+): string {
+  return canvas.toDataURL(type, quality);
+}
