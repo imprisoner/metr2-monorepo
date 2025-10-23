@@ -5,9 +5,9 @@
     <FlatFilters
       class="mb-8 shadow-md"
       :initial-filter="initialFilter"
-      @filters-updated="onFiltersUpdated"
+      @filters-updated="updateFilters"
     />
- <!--   -->
+    <!--   -->
     <Panel
       header="Бортжурналы"
       pt:content:class="grid grid-cols-3 gap-4 max-sm:grid-cols-1 max-lg:grid-cols-2"
@@ -20,9 +20,9 @@
       />
       <template #footer>
         <p
-          v-if="totalPages > currentPage"
-          class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2"
-          @click="onShowMoreClick"
+          v-if="!isLastPage"
+          class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2 mt-8"
+          @click="next()"
         >
           Показать ещё
         </p>
@@ -32,9 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ListResult } from "pocketbase";
-import { getJournalsResponse } from "~/api/functions";
-import type { JournalsResponse } from "~/types/pocketbase-types";
 import type { FlatDictionaryFields } from "~/types/common.types";
 
 const route = useRoute();
@@ -48,38 +45,8 @@ const initialFilter = {
   value: typedEntry[1],
 };
 
-const journalsList = ref<ListResult<JournalsResponse>>();
-const journals = ref<JournalsResponse[]>([]);
+const { journals, isLastPage, next, updateFilters, onPageChange } =
+  useJournalsList(`flat.${initialFilter.field}="${initialFilter.value}"`);
 
-const totalPages = computed(() => journalsList.value?.totalPages ?? 0)
-
-const currentPage = ref(1);
-const filter = ref(`${initialFilter.field}=${initialFilter.value}`);
-
-const fetchJournals = async () => {
-  journalsList.value = await getJournalsResponse({
-    isShortContent: true,
-    page: currentPage.value,
-    perPage: 6,
-    sortBy: ["-created"],
-    filter: filter.value,
-  });
-
-  journals.value = [...journals.value, ...journalsList.value.items]
-};
-
-const onFiltersUpdated = async (filterString: string) => {
-  currentPage.value = 1;
-  filter.value = filterString;
-  journals.value = []
-  await fetchJournals();
-};
-
-const onShowMoreClick = async () => {
-  currentPage.value += 1;
-  await fetchJournals();
-};
+await onPageChange({ currentPage: 1 });
 </script>
-
-<style></style>
-

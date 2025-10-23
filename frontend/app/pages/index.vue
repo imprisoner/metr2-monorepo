@@ -10,33 +10,31 @@
       <DailyFlat />
     </section> -->
     <section>
-      <Panel pt:content:class="grid grid-cols-3 gap-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4">
+      <Panel
+        pt:content:class="grid grid-cols-3 gap-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
+      >
         <JournalCard
           v-for="journal in journals"
           :key="journal.id"
           :journal="journal"
         />
+        <template #footer>
+          <p
+            v-if="!isLastPage"
+            class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2"
+            @click="next()"
+          >
+            Показать ещё
+          </p>
+        </template>
       </Panel>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getJournalsResponse } from "~/api/functions";
-import type { UsersRecord } from "~/types/pocketbase-types";
+const { isLastPage, journals, next, onPageChange } = useJournalsList();
 
-interface Expand {
-  user: UsersRecord;
-}
-
-const journalsList = await getJournalsResponse<Expand>({
-  isShortContent: true,
-  page: 1,
-  perPage: 9,
-  expand: ['user']
-});
-
-
-const journals = journalsList.items;
+onPageChange({currentPage: 1})
 </script>
 

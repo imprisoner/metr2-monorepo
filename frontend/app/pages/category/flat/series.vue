@@ -10,7 +10,7 @@
       class="mb-8 shadow-md"
       exclude-field="houseSeries"
       :initial-filter="initialFilter"
-      @filters-updated="onFiltersUpdated"
+      @filters-updated="updateFilters"
     />
 
     <Panel
@@ -18,20 +18,35 @@
       pt:content:class="grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
       class="shadow-md"
     >
-      <JournalCard
-        v-for="journal in journals"
-        :key="journal.id"
-        :journal="journal"
+      <template v-if="journals.length">
+        <JournalCard
+          v-for="journal in journals"
+          :key="journal.id"
+          :journal="journal"
+        />
+      </template>
+      <NoItemsSection
+        v-else
+        class="col-span-3"
+        text="Здесь ещё нет статей"
+        :controls-show-condition="false"
       />
+      <template #footer>
+        <p
+          v-if="!isLastPage"
+          class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2 mt-8"
+          @click="next()"
+        >
+          Показать ещё
+        </p>
+      </template>
     </Panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ListResult } from "pocketbase";
 import type { LocationQuery } from "vue-router";
-import { getJournalsResponse, getOneHouseSeriesCard } from "~/api/functions";
-import type { JournalsResponse } from "~/types/pocketbase-types";
+import { getOneHouseSeriesCard } from "~/api/functions";
 import type { FlatDictionaryFields } from "~/types/common.types";
 
 interface ILocalQueryParams extends LocationQuery {
@@ -58,20 +73,9 @@ const seriesCard = {
   title: houseSeriesCardResponse.expand.houseSeries.name,
 };
 
-const journalsList = ref<ListResult<JournalsResponse>>();
+const { isLastPage, journals, next, onPageChange, updateFilters } =
+  useJournalsList(`flat.${initialFilter.field}="${initialFilter.value}"`);
 
-const journals = computed(() => journalsList.value?.items);
-
-const onFiltersUpdated = async (filterString: string) => {
-  journalsList.value = await getJournalsResponse({
-    isShortContent: true,
-    page: 1,
-    perPage: 10,
-    sortBy: ["-created"],
-    filter: filterString,
-  });
-};
+onPageChange({ currentPage: 1 });
 </script>
-
-<style></style>
 

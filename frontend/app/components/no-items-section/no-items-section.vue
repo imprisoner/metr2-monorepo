@@ -3,7 +3,7 @@
     <span class="text-gray-500 mb-2">{{ text }}</span>
     <template v-if="controlsShowCondition">
       <ButtonLink
-        v-if="buttonLink"
+        v-if="buttonLink && buttonLabel"
         :label="buttonLabel"
         :to="buttonLink"
         :button-size="buttonSize"
@@ -25,13 +25,14 @@ withDefaults(
   defineProps<{
     text: string;
     controlsShowCondition: boolean;
-    buttonLabel: string;
+    buttonLabel?: string;
     buttonLink?: string;
     buttonSize?: ButtonProps["size"];
   }>(),
   {
     buttonSize: "small",
     buttonLink: undefined,
+    buttonLabel: undefined
   }
 );
 

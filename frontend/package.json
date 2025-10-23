@@ -36,6 +36,8 @@
   },
   "devDependencies": {
     "@primevue/nuxt-module": "^4.3.7",
+    "@vueuse/core": "^14.0.0",
+    "@vueuse/nuxt": "^14.0.0",
     "sass": "^1.90.0"
   }
 }

@@ -48,17 +48,26 @@
       </template>
       <NoItemsSection
         v-else
+        class="col-span-3"
         text="Здесь ещё нет статей"
         :controls-show-condition="isOwner"
         button-label="Добавить статью"
         :button-link="`/write/journals/flats/${flat.id}`"
       />
+      <template #footer>
+        <p
+          v-if="!isLastPage"
+          class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2 mt-8"
+          @click="next()"
+        >
+          Показать ещё
+        </p>
+      </template>
     </Panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getJournalsResponse } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
 import {
   Collections,
@@ -94,14 +103,8 @@ const images = flat.images.map((filename) => {
 
 const titleImageUrl = images[0];
 
-const journalsResponse = await getJournalsResponse({
-  filter: `flat="${flat.id}"`,
-  sortBy: ["-created"],
-  expand: ["user"],
-  isShortContent: true,
-});
-
-const journals = journalsResponse.items;
+const { journals, isLastPage, next, onPageChange } = useJournalsList(`flat="${flat.id}"`);
+onPageChange({currentPage: 1})
 
 const authStore = useAuthStore();
 
