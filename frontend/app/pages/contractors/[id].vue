@@ -11,8 +11,9 @@
           :portfolio="portfolio"
           :services="services"
           :contractor-info="contractorInfo"
+          :contractor-cities="contractorCities"
           :blog-articles="blogArticles"
-          @service-saved="onServiceSaved"
+          @new-data-saved="refreshPageData"
         />
       </template>
       <template #right>
@@ -44,31 +45,44 @@ import type { ContractorsPostsResponseWithExpand } from "~/types/api.types";
 import {
   Collections,
   type ContractorsBlogPostsResponse,
+  type ContractorsCitiesResponse,
   type ContractorsInfoRecord,
   type ContractorsRecord,
   type ContractorsResponse,
   type ContractorsServicesResponse,
+  type DictCitiesRecord,
   type DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
 
 const contractorId = useRoute().params.id as string;
 
-interface ExpandServices {
-  specialtyService: DictSpecialtyServicesRecord;
-}
+const authStore = useAuthStore();
+
+const isOwner = computed(() => {
+  if (authStore.userInfo?.collectionName === "contractors") {
+    return authStore.userInfo.hrid === contractorId;
+  }
+
+  return false;
+});
 
 interface ExpandContractor {
   contractors_info_via_contractor: ContractorsInfoRecord | undefined;
   contractors_services_via_contractor:
-    | ContractorsServicesResponse<ExpandServices>[]
+    | ContractorsServicesResponse<{
+        specialtyService: DictSpecialtyServicesRecord;
+      }>[]
     | undefined;
+  contractors_cities_via_contractor: ContractorsCitiesResponse<{
+    city: DictCitiesRecord;
+  }>[];
 }
 
 const getContractorInfoAndServices = async (id: string) => {
   const expand = [
     "contractors_info_via_contractor",
-    "contractors_services_via_contractor",
     "contractors_services_via_contractor.specialtyService",
+    "contractors_cities_via_contractor.city",
   ].join(",");
 
   const response = await pb
@@ -76,6 +90,10 @@ const getContractorInfoAndServices = async (id: string) => {
     .getFirstListItem<ContractorsResponse<ExpandContractor>>(`hrid = "${id}"`, {
       expand,
     });
+
+  if (response.avatar !== "") {
+    response.avatar = pb.files.getURL(response, response.avatar);
+  }
 
   return response;
 };
@@ -90,6 +108,10 @@ const services = computed(
 const contractorInfo = computed(
   () => contractorResponse.value.expand.contractors_info_via_contractor
 );
+
+const contractorCities = computed(
+  () => contractorResponse.value.expand.contractors_cities_via_contractor
+)
 
 const getContractorPortfolio = async (contractorId: string) => {
   const response = await pb
@@ -123,23 +145,13 @@ const portfolio: (ContractorsPostsResponseWithExpand & {
   previewImage: string | undefined;
 })[] = await getContractorPortfolio(contractorResponse.value.id);
 
-const authStore = useAuthStore();
-
-const isOwner = computed(() => {
-  if (authStore.userInfo?.collectionName === "contractors") {
-    return authStore.userInfo.hrid === contractorId;
-  }
-
-  return false;
-});
-
 const isEditProfileDialogVisible = ref(false);
 
 const onEditProfile = async () => {
   isEditProfileDialogVisible.value = true;
 };
 
-const onServiceSaved = async () => {
+const refreshPageData = async () => {
   contractorResponse.value = await getContractorInfoAndServices(contractorId);
 };
 
@@ -172,3 +184,4 @@ const getContractorsBlogPosts = async (contractorId: string) => {
 
 const blogArticles = await getContractorsBlogPosts(contractorResponse.value.id);
 </script>
+

@@ -13,6 +13,7 @@ export enum Collections {
 	Superusers = "_superusers",
 	Contractors = "contractors",
 	ContractorsBlogPosts = "contractors_blog_posts",
+	ContractorsCities = "contractors_cities",
 	ContractorsInfo = "contractors_info",
 	ContractorsPosts = "contractors_posts",
 	ContractorsServices = "contractors_services",
@@ -146,6 +147,14 @@ export type ContractorsBlogPostsRecord = {
 	publishDate?: IsoDateString
 	published?: boolean
 	title: string
+	updated?: IsoDateString
+}
+
+export type ContractorsCitiesRecord = {
+	city: RecordIdString
+	contractor: RecordIdString
+	created?: IsoDateString
+	id: string
 	updated?: IsoDateString
 }
 
@@ -354,7 +363,7 @@ export type JournalsRecord = {
 	created?: IsoDateString
 	flat: RecordIdString
 	id: string
-	images: string[]
+	images?: string[]
 	previewImageIndex?: number
 	publishDate?: IsoDateString
 	published?: boolean
@@ -425,6 +434,7 @@ export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemF
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type ContractorsResponse<Texpand = unknown> = Required<ContractorsRecord> & AuthSystemFields<Texpand>
 export type ContractorsBlogPostsResponse<Texpand = unknown> = Required<ContractorsBlogPostsRecord> & BaseSystemFields<Texpand>
+export type ContractorsCitiesResponse<Texpand = unknown> = Required<ContractorsCitiesRecord> & BaseSystemFields<Texpand>
 export type ContractorsInfoResponse<Texpand = unknown> = Required<ContractorsInfoRecord> & BaseSystemFields<Texpand>
 export type ContractorsPostsResponse<Texpand = unknown> = Required<ContractorsPostsRecord> & BaseSystemFields<Texpand>
 export type ContractorsServicesResponse<Texpand = unknown> = Required<ContractorsServicesRecord> & BaseSystemFields<Texpand>
@@ -467,6 +477,7 @@ export type CollectionRecords = {
 	_superusers: SuperusersRecord
 	contractors: ContractorsRecord
 	contractors_blog_posts: ContractorsBlogPostsRecord
+	contractors_cities: ContractorsCitiesRecord
 	contractors_info: ContractorsInfoRecord
 	contractors_posts: ContractorsPostsRecord
 	contractors_services: ContractorsServicesRecord
@@ -508,6 +519,7 @@ export type CollectionResponses = {
 	_superusers: SuperusersResponse
 	contractors: ContractorsResponse
 	contractors_blog_posts: ContractorsBlogPostsResponse
+	contractors_cities: ContractorsCitiesResponse
 	contractors_info: ContractorsInfoResponse
 	contractors_posts: ContractorsPostsResponse
 	contractors_services: ContractorsServicesResponse
@@ -552,6 +564,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
 	collection(idOrName: 'contractors'): RecordService<ContractorsResponse>
 	collection(idOrName: 'contractors_blog_posts'): RecordService<ContractorsBlogPostsResponse>
+	collection(idOrName: 'contractors_cities'): RecordService<ContractorsCitiesResponse>
 	collection(idOrName: 'contractors_info'): RecordService<ContractorsInfoResponse>
 	collection(idOrName: 'contractors_posts'): RecordService<ContractorsPostsResponse>
 	collection(idOrName: 'contractors_services'): RecordService<ContractorsServicesResponse>

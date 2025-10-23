@@ -1,6 +1,30 @@
 <template>
-  <Panel header="О подрядчике" class="shadow-md mb-8">
+  <Panel header="Города" class="shadow-md mb-8">
     <!-- {{ contractorInfo.experienceYears }} лет опыта -->
+  </Panel>
+  <Panel class="shadow-md mb-8" pt:content:class="flex gap-4">
+    <template #header>
+      <PanelHeaderWithControls
+        text="Локации"
+        button-label="Редактировать локации"
+        :controls-show-condition="!!(isOwner && contractorCities?.length)"
+        @button-click="showEditLocationsDialog = true"
+      />
+    </template>
+    <template v-if="contractorCities">
+      <Chip
+        v-for="location in contractorCities"
+        :key="location.id"
+        :label="location.expand.city.name"
+      />
+    </template>
+    <NoItemsSection
+      v-else
+      text="У подрядчика нет добавленных локаций"
+      button-label="Добавить локацию"
+      :controls-show-condition="!!isOwner"
+      @button-click="showEditLocationsDialog = true"
+    />
   </Panel>
   <Panel class="shadow-md mb-8">
     <template #header>
@@ -12,24 +36,20 @@
       />
     </template>
     <ul v-if="services">
-      <li
-        v-for="service in services"
-        :key="service.id"
-        class="mb-4"
-      >
-          <ContractorsServiceCard 
-            :name="service.expand.specialtyService.name"
-            :description="service.description"
-            :price-min="service.priceMin"
-            :price-max="service.priceMax"
-            :is-owner="isOwner"
-            @edit="onEditContractorsService(service.id)"
-          />
+      <li v-for="service in services" :key="service.id" class="mb-4">
+        <ContractorsServiceCard
+          :name="service.expand.specialtyService.name"
+          :description="service.description"
+          :price-min="service.priceMin"
+          :price-max="service.priceMax"
+          :is-owner="isOwner"
+          @edit="onEditContractorsService(service.id)"
+        />
       </li>
     </ul>
     <NoItemsSection
       v-else
-      text="У подярдчика нет добавленных услуг"
+      text="У подрядчика нет добавленных услуг"
       button-label="Добавить услугу"
       :controls-show-condition="!!isOwner"
       @button-click="showAddServiceDialog = true"
@@ -100,14 +120,22 @@
     :all-services-ids="services?.map((item) => item.specialtyService)"
     @save="onServiceSaved"
   />
+  <EditContractorLocationsDialog
+    v-if="showEditLocationsDialog"
+    v-model:visible="showEditLocationsDialog"
+    :contractor-cities="contractorCities"
+    @save="onLocationsSaved"
+  />
 </template>
 
 <script setup lang="ts">
 import type { ContractorsPostsResponseWithExpand } from "~/types/api.types";
 import type {
   ContractorsBlogPostsRecord,
+  ContractorsCitiesResponse,
   ContractorsInfoRecord,
   ContractorsServicesResponse,
+  DictCitiesRecord,
   DictSpecialtyServicesRecord,
 } from "~/types/pocketbase-types";
 
@@ -125,17 +153,22 @@ const { services } = defineProps<{
   blogArticles: (ContractorsBlogPostsRecord & {
     previewImage: string | undefined;
   })[];
+  contractorCities:
+    | ContractorsCitiesResponse<{
+        city: DictCitiesRecord;
+      }>[]
+    | undefined;
 }>();
 
 const showAddServiceDialog = ref(false);
 
 const emit = defineEmits<{
-  (e: "service-saved"): void;
+  (e: "new-data-saved"): void;
 }>();
 
 const onServiceSaved = async () => {
   showAddServiceDialog.value = false;
-  emit("service-saved");
+  emit("new-data-saved");
 };
 
 const serviceToEdit = ref<
@@ -151,8 +184,15 @@ const onEditContractorsService = (serviceId: string) => {
 };
 
 const onAddServiceClick = () => {
-  serviceToEdit.value = undefined
-  showAddServiceDialog.value = true
+  serviceToEdit.value = undefined;
+  showAddServiceDialog.value = true;
+};
+
+const showEditLocationsDialog = ref(false);
+
+const onLocationsSaved = () => {
+  showEditLocationsDialog.value = false
+  emit('new-data-saved')
 }
 </script>
 
