@@ -2,6 +2,7 @@
   <div class="w-full">
     <h1>{{ categoryName }}</h1>
     <ContractorsSpecialtiesCards
+      v-if="category.expand.dict_specialties_via_serviceCategory.length > 1"
       :specialties="category.expand.dict_specialties_via_serviceCategory"
       class="mb-8"
     />
