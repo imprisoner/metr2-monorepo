@@ -23,12 +23,41 @@ import { pb } from "~/api/pocketbase-client";
 import type { ContractorWithUserInfoAndServices } from "~/types/api.types";
 import { Collections } from "~/types/pocketbase-types";
 
-const contractors = await pb
-  .collection(Collections.Contractors)
-  .getFullList<ContractorWithUserInfoAndServices>({
-    expand: "contractors_services_via_contractor.specialtyService",
-  });
+const authStore = useAuthStore();
+const currentUserId = authStore.userInfo?.id;
+
+const getCurrentUserLocation = async () => {
+  if (!currentUserId) return;
+
+  try {
+    const userInfo = await pb
+      .collection("users_info")
+      .getFirstListItem(`user = "${currentUserId}"`);
+  
+    return userInfo.location;
+  } catch {
+    return ""
+  }
+};
+
+const location = ref(await getCurrentUserLocation());
+
+const locationQuery = (cityId: string) => {
+  return `contractors_cities_via_contractor.city = "${cityId}"`;
+};
+
+const getContractorsList = async () => {
+  const response = await pb
+    .collection(Collections.Contractors)
+    .getFullList<ContractorWithUserInfoAndServices>({
+      expand: "contractors_services_via_contractor.specialtyService",
+      filter: `${locationQuery(location.value || "")}`,
+    });
+
+  return response;
+};
+
+const contractors = ref<Awaited<ReturnType<typeof getContractorsList>>>(
+  await getContractorsList()
+);
 </script>
-
-<style scoped></style>
-
