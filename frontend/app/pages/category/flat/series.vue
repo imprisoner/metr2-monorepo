@@ -76,6 +76,6 @@ const seriesCard = {
 const { isLastPage, journals, next, onPageChange, updateFilters } =
   useJournalsList(`flat.${initialFilter.field}="${initialFilter.value}"`);
 
-onPageChange({ currentPage: 1 });
+await onPageChange({ currentPage: 1 });
 </script>
 

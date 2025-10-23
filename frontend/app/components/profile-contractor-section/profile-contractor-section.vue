@@ -1,7 +1,4 @@
 <template>
-  <Panel header="Города" class="shadow-md mb-8">
-    <!-- {{ contractorInfo.experienceYears }} лет опыта -->
-  </Panel>
   <Panel class="shadow-md mb-8" pt:content:class="flex gap-4">
     <template #header>
       <PanelHeaderWithControls

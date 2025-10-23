@@ -5,10 +5,6 @@
       <QuickFilters />
     </section>
     <CategoryCardsSection />
-    <!-- <section>
-      <h3 class="text-lg font-bold">Квартира дня</h3>
-      <DailyFlat />
-    </section> -->
     <section>
       <Panel
         pt:content:class="grid grid-cols-3 gap-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
@@ -35,6 +31,6 @@
 <script setup lang="ts">
 const { isLastPage, journals, next, onPageChange } = useJournalsList();
 
-onPageChange({currentPage: 1})
+await onPageChange({ currentPage: 1 });
 </script>
 

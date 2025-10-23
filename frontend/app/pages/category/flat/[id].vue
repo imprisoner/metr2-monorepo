@@ -2,7 +2,7 @@
   <div class="w-full flex flex-col gap-4">
     <h1>{{ flat.nickname }}</h1>
     <NuxtImg :src="titleImageUrl" class="w-full object-cover rounded-md" />
-    <Panel header="Секция со счётчиками" class="shadow-md"></Panel>
+    <Panel header="Секция со счётчиками" class="shadow-md" />
     <Panel header="Альбом" class="shadow-md" />
     <Panel class="shadow-md">
       <SmallUserInfoPlate :user-id="flat.user" />
@@ -104,7 +104,7 @@ const images = flat.images.map((filename) => {
 const titleImageUrl = images[0];
 
 const { journals, isLastPage, next, onPageChange } = useJournalsList(`flat="${flat.id}"`);
-onPageChange({currentPage: 1})
+await onPageChange({currentPage: 1})
 
 const authStore = useAuthStore();
 
