@@ -45,6 +45,3 @@ const authStore = useAuthStore();
 
 const isOwner = blogPost.user === authStore.userInfo?.id;
 </script>
-
-<style></style>
-

@@ -32,6 +32,3 @@ const authStore = useAuthStore();
 
 const isOwner = journal.user === authStore.userInfo?.id;
 </script>
-
-<style></style>
-

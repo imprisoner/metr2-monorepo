@@ -32,6 +32,3 @@ const authStore = useAuthStore();
 
 const isOwner = post.contractor === authStore.userInfo?.id;
 </script>
-
-<style></style>
-

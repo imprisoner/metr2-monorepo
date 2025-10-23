@@ -13,31 +13,36 @@
         </div>
       </div>
     </Panel>
-    <Panel
-      header="Подрядчики"
-      :pt="{ content: { class: 'flex flex-col gap-4' } }"
-    >
-      <template v-if="contractorsResponse && contractorsResponse.items.length">
+    <Panel header="Подрядчики" pt:content:class="flex flex-col gap-4">
+      <template v-if="contractors.length">
         <ContractorCard
-          v-for="contractor in contractorsResponse.items"
+          v-for="contractor in contractors"
           :key="contractor.id"
           :contractor-info="contractor"
           :services="contractor.expand.contractors_services_via_contractor"
           class="mb-8"
         />
       </template>
-      <template v-else>
-        <p>Пока здесь ничего нет</p>
+      <NoItemsSection
+        v-else
+        :controls-show-condition="false"
+        text="Пока здесь ничего нет"
+      />
+      <template #footer>
+        <p
+          v-if="!isLastPage"
+          class="col-span-3 text-center text-blue-600 font-semibold cursor-pointer max-sm:grid-span-1 max-lg:grid-span-2 mt-8"
+          @click="next()"
+        >
+          Показать ещё
+        </p>
       </template>
     </Panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  getFilteredContractorsList,
-  getOneSpecialtyWithServices,
-} from "~/api/functions";
+import { getOneSpecialtyWithServices } from "~/api/functions";
 import ContractorCard from "~/components/contractor-card/contractor-card.vue";
 
 const specialtyId = useRoute().params.id as string;
@@ -48,9 +53,11 @@ const services = specialtyRecord.expand.dict_specialty_services_via_specialty;
 
 const chosenFilters = ref<string[]>([]);
 
+const initialFilter = `contractors_services_via_contractor.specialtyService.specialty?="${specialtyId}"`;
+
 const filterString = computed(() => {
   if (chosenFilters.value.length === 0) {
-    return `contractors_services_via_contractor.specialtyService.specialty?="${specialtyId}"`;
+    return initialFilter;
   }
 
   return chosenFilters.value
@@ -60,18 +67,16 @@ const filterString = computed(() => {
     .join(" || ");
 });
 
-type FilteredContractorsResponseType = Awaited<
-  ReturnType<typeof getFilteredContractorsList>
->;
+const { contractors, isLastPage, next, onPageChange, updateFilters } =
+  useContractorsList(initialFilter);
 
-const contractorsResponse = ref<FilteredContractorsResponseType>();
+await onPageChange({ currentPage: 1 });
 
-watchEffect(async () => {
-  contractorsResponse.value = await getFilteredContractorsList(
-    filterString.value
-  );
-});
+watch(
+  () => filterString.value,
+  () => {
+    updateFilters(filterString.value);
+  }
+);
 </script>
-
-<style scoped></style>
 

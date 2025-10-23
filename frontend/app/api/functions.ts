@@ -1,10 +1,7 @@
 import {
   Collections,
-  // type AvailableSpecialtiesViewRecord,
   type ContractorsServicesResponse,
-  // type ContractorsSpecialtiesCardsResponse,
   type DictHouseSeriesRecord,
-  // type DictSpecialtiesRecord,
   type HouseSeriesCardsResponse,
   type JournalsResponse,
   type UsersResponse,
@@ -124,34 +121,6 @@ export const getOneContractorsPost = async (id: string) => {
   return response;
 };
 
-// export const getAvailableContractorsSpecialtiesCards = async () => {
-//   const response = await pb
-//     .collection(Collections.AvailableSpecialtiesView)
-//     .getFullList<AvailableSpecialtiesViewRecord>();
-
-//   const recordsWithFullImageLink = response.map((record) => ({
-//     ...record,
-//     image: pb.files.getURL(record, record.image!),
-//   }));
-
-//   return recordsWithFullImageLink;
-// };
-
-// export const getAllContractorsSpecialtiesCards = async () => {
-//   const response = await pb
-//     .collection(Collections.ContractorsSpecialtiesCards)
-//     .getFullList<
-//       ContractorsSpecialtiesCardsResponse<{ specialty: DictSpecialtiesRecord }>
-//     >({ expand: "specialty" });
-
-//   const recordsWithFullImageLink = response.map((record) => ({
-//     ...record,
-//     image: pb.files.getURL(record, record.image),
-//   }));
-
-//   return recordsWithFullImageLink;
-// };
-
 export const getAllContractorsServicesCategoriesWithSpecialties = async () => {
   const response = await pb
     .collection(Collections.DictServiceCategories)
@@ -177,13 +146,33 @@ export const getOneServiceCategoryWithSpecialties = async (id: string) => {
   return response;
 };
 
-export const getFilteredContractorsList = async (filter: string) => {
+export const getContractorsResponse = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = undefined,
+  expand = undefined,
+  fields = ["*"],
+  filter = undefined,
+}: {
+  page?: number;
+  perPage?: number;
+  sortBy?: string[];
+  expand?: string[];
+  fields?: string[];
+  filter?: string;
+}) => {
+  const expandWithDefaults = ["user", "contractors_services_via_contractor.specialtyService"].concat(expand ?? [])
+
+  const params = {
+    sort: sortBy?.join(","),
+    expand: expandWithDefaults.join(","),
+    fields: fields?.join(","),
+    filter,
+  };
+
   const response = await pb
     .collection(Collections.Contractors)
-    .getList<ContractorWithUserInfoAndServices>(1, 10, {
-      filter: filter,
-      expand: "user,contractors_services_via_contractor.specialtyService",
-    });
+    .getList<ContractorWithUserInfoAndServices>(page, perPage, params);
 
   return response;
 };
