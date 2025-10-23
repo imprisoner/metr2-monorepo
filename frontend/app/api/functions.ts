@@ -161,7 +161,7 @@ export const getContractorsResponse = async ({
   fields?: string[];
   filter?: string;
 }) => {
-  const expandWithDefaults = ["user", "contractors_services_via_contractor.specialtyService"].concat(expand ?? [])
+  const expandWithDefaults = ["contractors_services_via_contractor.specialtyService"].concat(expand ?? [])
 
   const params = {
     sort: sortBy?.join(","),

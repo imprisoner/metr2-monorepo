@@ -60,24 +60,36 @@
 import { SelectButton } from "#components";
 import { getAllCities } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
-import type { UsersInfoRecord } from "~/types/pocketbase-types";
+import type {
+  ContractorsInfoRecord,
+  UsersInfoRecord,
+} from "~/types/pocketbase-types";
 
 const visible = defineModel<boolean>("visible");
 
-const { userInfo } =
-  defineProps<{userInfo: UsersInfoRecord | undefined}>();
+const { userInfo } = defineProps<{
+  userInfo: UsersInfoRecord | ContractorsInfoRecord | undefined;
+}>();
 
 const emit = defineEmits<{
   (e: "save"): void;
 }>();
 
-const citiesResponse = await getAllCities()
-const locationOptions = citiesResponse.map((city) => ({ name: city.name, value: city.id }))
+const citiesResponse = await getAllCities();
+const locationOptions = citiesResponse.map((city) => ({
+  name: city.name,
+  value: city.id,
+}));
 
 const genderOptions = [
   { label: "мужской", value: "male" },
   { label: "женский", value: "female" },
 ];
+
+const authStore = useAuthStore();
+
+const collection = authStore.userInfo!.collectionName;
+const userFieldName = collection === "users" ? "user" : "contractor";
 
 const form = reactive({
   displayName: userInfo?.displayName || "",
@@ -86,20 +98,19 @@ const form = reactive({
   location: userInfo?.location || "",
   gender: userInfo?.gender || "",
   age: userInfo?.age || 18,
+  [userFieldName]: authStore.userInfo!.id,
 });
 
 const save = async () => {
+  console.log("save");
   if (userInfo) {
-    await pb
-      .collection("users_info")
-      .update(userInfo.id, { ...form });
+    await pb.collection(collection).update(userInfo.id, { ...form });
   } else {
-    await pb
-      .collection("users_info")
-      .create({ ...form, user: useAuthStore().userInfo!.id });
+    console.log(form);
+    await pb.collection(collection).create({ ...form });
   }
 
   emit("save");
 };
-
 </script>
+

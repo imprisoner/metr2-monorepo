@@ -95,7 +95,7 @@ const save = async () => {
   } else {
     await pb
       .collection("contractors_info")
-      .create({ ...form, user: useAuthStore().userInfo!.id });
+      .create({ ...form, contractor: useAuthStore().userInfo!.id });
   }
 
   emit("save");

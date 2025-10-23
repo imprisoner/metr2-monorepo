@@ -109,11 +109,11 @@ const getUserPageData = async () => {
   return { userData, flats, blogArticles };
 };
 
-const userPageData = await getUserPageData();
+const userPageData = ref(await getUserPageData());
 
-const userData = ref(userPageData.userData);
-const flats = ref(userPageData.flats);
-const blogArticles = ref(userPageData.blogArticles);
+const userData = computed(() => userPageData.value.userData)
+const flats = computed(() => userPageData.value.flats);
+const blogArticles = computed(() => userPageData.value.blogArticles);
 
 const authStore = useAuthStore();
 
@@ -133,8 +133,7 @@ const showEditProfileDialog = () => {
 
 const onSaveProfile = async () => {
   editProfileDialogVisibility.value = false;
-  userData.value = (await getUserPageData()).userData;
-  flats.value = (await getUserPageData()).flats;
+  userPageData.value = await getUserPageData()
 };
 </script>
 

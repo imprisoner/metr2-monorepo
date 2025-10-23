@@ -6,7 +6,11 @@
       <template #header>
         <div class="flex justify-between w-full">
           <span class="font-bold block">Топ подрядчиков недели</span>
-          <SelectButton v-if="location" v-model="switchValue" :options="switchOptions" />
+          <SelectButton
+            v-if="location"
+            v-model="switchValue"
+            :options="switchOptions"
+          />
         </div>
       </template>
       <template v-if="contractors.length">
@@ -39,6 +43,7 @@
 <script setup lang="ts">
 import { pb } from "~/api/pocketbase-client";
 import type {
+  ContractorsInfoResponse,
   DictCitiesRecord,
   UsersInfoResponse,
 } from "~/types/pocketbase-types";
@@ -50,12 +55,22 @@ const getCurrentUserLocation = async () => {
   if (!currentUserId) return;
 
   try {
-    const userInfo = await pb
-      .collection("users_info")
-      .getFirstListItem<UsersInfoResponse<{ location: DictCitiesRecord }>>(
-        `user = "${currentUserId}"`,
-        { expand: "location" }
-      );
+    const collection =
+      authStore.userInfo!.collectionName === "contractors"
+        ? "contractors_info"
+        : "users_info";
+
+    const field =
+      authStore.userInfo!.collectionName === "contractors"
+        ? "contractor"
+        : "user";
+        
+    const userInfo = await pb.collection(collection).getFirstListItem<
+      | UsersInfoResponse<{ location: DictCitiesRecord }>
+      | ContractorsInfoResponse<{
+          location: DictCitiesRecord;
+        }>
+    >(`${field} = "${currentUserId}"`, { expand: "location" });
 
     return userInfo.expand.location;
   } catch {
@@ -83,12 +98,16 @@ await onPageChange({ currentPage: 1 });
 
 // TODO experimental stuff just to show filtering by location works
 
-const switchOptions = ref([location.value?.name, 'Все'])
-const switchValue = ref(switchOptions.value[0])
+const switchOptions = ref([location.value?.name, "Все"]);
+const switchValue = ref(switchOptions.value[0]);
 
-watch(() => switchValue.value, (nv) => {
-  const filter = nv === 'Все' ? "" : locationQuery(location.value?.id ?? "")
+watch(
+  () => switchValue.value,
+  (nv) => {
+    const filter = nv === "Все" ? "" : locationQuery(location.value?.id ?? "");
 
-  updateFilters(filter)
-})
+    updateFilters(filter);
+  }
+);
 </script>
+

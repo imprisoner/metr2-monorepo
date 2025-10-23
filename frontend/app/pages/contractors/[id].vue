@@ -33,8 +33,9 @@
     </TwoSectionContainer>
     <EditContractorsProfileDialog
       v-if="isOwner"
-      v-model:visible="isEditProfileDialogVisible"
+      v-model:visible="editProfileDialogVisibility"
       :contractor-info="contractorInfo"
+      @save="onSaveProfile"
     />
   </div>
 </template>
@@ -94,7 +95,6 @@ const getContractorInfoAndServices = async (id: string) => {
   if (response.avatar !== "") {
     response.avatar = pb.files.getURL(response, response.avatar);
   }
-
   return response;
 };
 
@@ -118,7 +118,7 @@ const getContractorPortfolio = async (contractorId: string) => {
     .collection(Collections.ContractorsPosts)
     .getList<ContractorsPostsResponseWithExpand>(1, 10, {
       filter: `contractor="${contractorId}"`,
-      expand: "contractorServices,contractorServices.specialtyService",
+      expand: "contractorServices",
       fields: "*,content:excerpt(100,true)",
     });
 
@@ -145,10 +145,10 @@ const portfolio: (ContractorsPostsResponseWithExpand & {
   previewImage: string | undefined;
 })[] = await getContractorPortfolio(contractorResponse.value.id);
 
-const isEditProfileDialogVisible = ref(false);
+const editProfileDialogVisibility = ref(false);
 
 const onEditProfile = async () => {
-  isEditProfileDialogVisible.value = true;
+  editProfileDialogVisibility.value = true;
 };
 
 const refreshPageData = async () => {
@@ -183,5 +183,10 @@ const getContractorsBlogPosts = async (contractorId: string) => {
 };
 
 const blogArticles = await getContractorsBlogPosts(contractorResponse.value.id);
+
+const onSaveProfile = async () => {
+  editProfileDialogVisibility.value = false;
+  contractorResponse.value = await getContractorInfoAndServices(contractorId)
+};
 </script>
 
