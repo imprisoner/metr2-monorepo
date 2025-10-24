@@ -19,6 +19,7 @@
       v-else
       text="У подрядчика нет добавленных локаций"
       button-label="Добавить локацию"
+      class="mx-auto"
       :controls-show-condition="!!isOwner"
       @button-click="showEditLocationsDialog = true"
     />

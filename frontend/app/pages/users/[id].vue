@@ -30,6 +30,7 @@
       </template>
     </TwoSectionContainer>
     <EditUserProfileDialog
+      v-if="editProfileDialogVisibility"
       v-model:visible="editProfileDialogVisibility"
       :user-info="userData.expand.users_info_via_user"
       @save="onSaveProfile"
@@ -74,9 +75,8 @@ const getUserPageData = async () => {
       expand,
     });
 
-    
   if (userData.avatar !== "") {
-    userData.avatar = pb.files.getURL(userData, userData.avatar)
+    userData.avatar = pb.files.getURL(userData, userData.avatar);
   }
 
   let flats: FlatsRecord[] = [];
@@ -111,7 +111,7 @@ const getUserPageData = async () => {
 
 const userPageData = ref(await getUserPageData());
 
-const userData = computed(() => userPageData.value.userData)
+const userData = computed(() => userPageData.value.userData);
 const flats = computed(() => userPageData.value.flats);
 const blogArticles = computed(() => userPageData.value.blogArticles);
 
@@ -133,7 +133,7 @@ const showEditProfileDialog = () => {
 
 const onSaveProfile = async () => {
   editProfileDialogVisibility.value = false;
-  userPageData.value = await getUserPageData()
+  userPageData.value = await getUserPageData();
 };
 </script>
 

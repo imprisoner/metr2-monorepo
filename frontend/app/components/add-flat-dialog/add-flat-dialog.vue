@@ -85,8 +85,6 @@
 
 <script setup lang="ts">
 import type { FlatsRecord } from "~/types/pocketbase-types";
-import { z } from "zod";
-import { zodResolver } from "@primevue/forms/resolvers/zod";
 import type { FormSubmitEvent } from "@primevue/forms/form";
 import { getFlatFilters } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
@@ -94,6 +92,7 @@ import type {
   FileUploadRemoveEvent,
   FileUploadSelectEvent,
 } from "primevue/fileupload";
+import { flatResolver } from "~/schemas";
 
 const { flat } = defineProps<{
   flat: FlatsRecord | undefined;
@@ -130,20 +129,7 @@ const initialValues = ref<FormFields>({
   buildingCategory: flat?.buildingCategory ?? "",
 });
 
-const resolver = zodResolver(
-  z.object({
-    nickname: z.string().min(1, { message: "Никнейм квартиры обязателен" }),
-    description: z
-      .string()
-      .nonempty({ message: "Описание квартиры обязательно" }),
-    houseSeries: z.string().nonempty({ message: "Серия дома обязательна" }),
-    flatType: z.string().nonempty({ message: "Тип квартиры обязателен" }),
-    squareM2: z.string().nonempty({ message: "Площадь квартиры обязательна" }),
-    finishing: z.string().nonempty({ message: "Отделка квартиры обязательна" }),
-    objectStatus: z.string().nonempty({ message: "Статус объекта обязателен" }),
-    buildingCategory: z.string().nonempty({ message: "Тип здания обязателен" }),
-  })
-);
+const resolver = flatResolver
 
 const authStore = useAuthStore();
 

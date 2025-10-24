@@ -20,7 +20,8 @@
         <Panel class="shadow-md h-fit">
           <DetailedUserInfoPlate
             :avatar="contractorResponse.avatar"
-            :location="contractorInfo?.location"
+            :location="contractorInfo?.expand.location?.name ||
+              'Нет локации'"
             :name="contractorResponse.name"
             :is-owner="isOwner"
             @edit-profile="onEditProfile"
@@ -47,7 +48,7 @@ import {
   Collections,
   type ContractorsBlogPostsResponse,
   type ContractorsCitiesResponse,
-  type ContractorsInfoRecord,
+  type ContractorsInfoResponse,
   type ContractorsRecord,
   type ContractorsResponse,
   type ContractorsServicesResponse,
@@ -68,7 +69,9 @@ const isOwner = computed(() => {
 });
 
 interface ExpandContractor {
-  contractors_info_via_contractor: ContractorsInfoRecord | undefined;
+  contractors_info_via_contractor: ContractorsInfoResponse<{
+    location: DictCitiesRecord | undefined
+  }> | undefined;
   contractors_services_via_contractor:
     | ContractorsServicesResponse<{
         specialtyService: DictSpecialtyServicesRecord;
@@ -81,7 +84,7 @@ interface ExpandContractor {
 
 const getContractorInfoAndServices = async (id: string) => {
   const expand = [
-    "contractors_info_via_contractor",
+    "contractors_info_via_contractor.location",
     "contractors_services_via_contractor.specialtyService",
     "contractors_cities_via_contractor.city",
   ].join(",");
