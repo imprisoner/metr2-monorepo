@@ -2,7 +2,7 @@
   <div class="w-full">
     <h1>{{ capitalizeFirstLetter(seriesCard.title) }}</h1>
 
-    <Panel class="mb-8 shadow-md">
+    <Panel v-if="seriesCard.description" class="mb-8 shadow-md">
       {{ seriesCard.description }}
     </Panel>
 

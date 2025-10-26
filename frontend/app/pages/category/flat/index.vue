@@ -5,7 +5,9 @@
       Выберите тип дома, чтобы найти похожие квартиры и истории ремонтов
     </p>
     <Panel class="mb-8 shadow-md" pt:content:class="text-center ">
-      <div class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-8 mb-8">
+      <div
+        class="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-8 mb-8"
+      >
         <NuxtLink
           v-for="card in houseSeriesCards"
           :key="card.id"
@@ -31,7 +33,18 @@
           </Card>
         </NuxtLink>
       </div>
-      <NuxtLink class="font-semibold">Не нашёл свой дом</NuxtLink>
+      <NuxtLink
+        v-if="noSeriesItem"
+        :to="{
+          path: '/category/flat/series',
+          query: {
+            series: noSeriesItem.houseSeries,
+            category: noSeriesItem.id,
+          },
+        }"
+        class="font-semibold"
+        >Не нашёл свой дом</NuxtLink
+      >
     </Panel>
     <QuickFilters
       heading="Если тип дома Вам не важен, то выберите фильтры ниже"
@@ -42,8 +55,12 @@
 <script setup lang="ts">
 import { getAllHouseSeriesCards } from "~/api/functions";
 
-const houseSeriesCards = await getAllHouseSeriesCards();
-</script>
+const houseSeriesCardsData = await getAllHouseSeriesCards();
 
-<style></style>
+const houseSeriesCards = houseSeriesCardsData.filter((item) => {
+  return item.image !== "";
+});
+
+const noSeriesItem = houseSeriesCardsData.find((item) => item.image === "");
+</script>
 
