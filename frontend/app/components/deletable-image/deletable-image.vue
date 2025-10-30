@@ -13,7 +13,7 @@
       class="pi pi-trash absolute top-4 right-4 cursor-pointer text-white"
       @click="$emit('delete', src)"
     />
-    <NuxtImg :src="src" class="w-full h-full object-cover" />
+    <img :src="src" class="w-full h-full object-cover" />
   </div>
 </template>
 

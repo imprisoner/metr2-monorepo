@@ -96,7 +96,7 @@ const getContractorInfoAndServices = async (id: string) => {
     });
 
   if (response.avatar !== "") {
-    response.avatar = pb.files.getURL(response, response.avatar);
+    response.avatar = getPocketbaseFilePath(response, response.avatar);
   }
   return response;
 };
@@ -129,7 +129,7 @@ const getContractorPortfolio = async (contractorId: string) => {
     let previewImage;
 
     if (article.images) {
-      previewImage = pb.files.getURL(
+      previewImage = getPocketbaseFilePath(
         article,
         article.images[article.previewImageIndex]!
       );
@@ -170,7 +170,7 @@ const getContractorsBlogPosts = async (contractorId: string) => {
     let previewImage;
 
     if (article.images) {
-      previewImage = pb.files.getURL(
+      previewImage = getPocketbaseFilePath(
         article,
         article.images[article.previewImageIndex]!
       );

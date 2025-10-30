@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col gap-4">
     <h1>{{ flat.nickname }}</h1>
-    <NuxtImg :src="titleImageUrl" class="w-full object-cover rounded-md" />
+    <img :src="titleImageUrl" class="w-full object-cover rounded-md" />
     <Panel header="Секция со счётчиками" class="shadow-md" />
     <Panel header="Альбом" class="shadow-md" />
     <Panel class="shadow-md">
@@ -98,7 +98,7 @@ const flat = await pb
   });
 
 const images = flat.images.map((filename) => {
-  return pb.files.getURL(flat, filename);
+  return getPocketbaseFilePath(flat, filename);
 });
 
 const titleImageUrl = images[0];

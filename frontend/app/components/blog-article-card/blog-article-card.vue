@@ -3,7 +3,7 @@
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
         <template v-if="post.previewImage">
-          <NuxtImg
+          <img
             :src="post.previewImage"
             alt="post image"
             class="w-full object-cover"

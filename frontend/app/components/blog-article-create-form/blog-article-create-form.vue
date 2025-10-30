@@ -112,7 +112,7 @@ const save = async () => {
   const contentWithReplacedImages = replaceAllImageSrcs(
     content.value,
     (_, index) => {
-      return pb.files.getURL(response, response.images[index]!);
+      return getPocketbaseFilePath(response, response.images[index]!);
     }
   );
 

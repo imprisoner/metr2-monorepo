@@ -1,6 +1,6 @@
 <template>
   <Button variant="text" raised rounded>
-    <NuxtImg :src="icon" width="32" height="32"/>
+    <img :src="icon" width="32" height="32"/>
   </Button>
 </template>
 

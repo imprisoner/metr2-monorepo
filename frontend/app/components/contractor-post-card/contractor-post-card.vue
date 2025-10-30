@@ -6,7 +6,7 @@
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
         <template v-if="image">
-          <NuxtImg
+          <img
             :src="image"
             alt="post image"
             class="w-full object-cover"

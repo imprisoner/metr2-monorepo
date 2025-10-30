@@ -8,7 +8,7 @@
       }"
       class="flex overflow-hidden rounded-xl relative h-20 p-2 bg-green-200 hover:bg-green-300"
     >
-      <!-- <NuxtImg
+      <!-- <img
       :src="card.image"
       class="w-full h-full object-cover brightness-70 absolute top-0 right-0 left-0 bottom-0"
     /> -->

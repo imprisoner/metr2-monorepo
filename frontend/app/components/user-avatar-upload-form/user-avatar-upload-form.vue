@@ -49,7 +49,6 @@ const onFileUpload = async (e: FileUploadSelectEvent) => {
 const croppedBase64Image = ref<string>();
 
 const onCropHandler = (base64String: string) => {
-  console.log("Cropped Image Base64:", base64String.slice(0, 20));
   croppedBase64Image.value = base64String;
 
   saveAvatar()

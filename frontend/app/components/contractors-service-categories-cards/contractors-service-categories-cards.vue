@@ -11,7 +11,7 @@
         <span class="text-sm font-semibold">
           {{ capitalizeFirstLetter(card.name) }}
         </span>
-        <NuxtImg
+        <img
           :src="card.image"
           class="w-12 h-12 ms-auto absolute right-2 bottom-2"
         />
@@ -24,7 +24,7 @@
       <span class="text-sm font-semibold">
         Все услуги
       </span>
-      <!-- <NuxtImg
+      <!-- <img
         :src="card.image"
         class="w-12 h-12 ms-auto absolute right-2 bottom-2"
       /> -->

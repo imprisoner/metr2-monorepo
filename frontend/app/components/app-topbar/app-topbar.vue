@@ -8,7 +8,7 @@
         <i class="pi pi-bars" />
       </button>
       <NuxtLink to="/" class="layout-topbar-logo">
-        <NuxtImg src="/images/logo.png" width="40" height="40" />
+        <img src="/images/logo.png" width="40" height="40" />
         <span class="font-semibold">МЕТР2</span>
       </NuxtLink>
     </div>

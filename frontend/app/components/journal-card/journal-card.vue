@@ -6,7 +6,7 @@
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
         <template v-if="coverImageUrl">
-          <NuxtImg
+          <img
             :src="coverImageUrl"
             alt="post image"
             class="w-full object-cover"
@@ -65,7 +65,6 @@
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
 import type { JournalsRecord } from "~/types/pocketbase-types";
 
 interface JournalCardProps {
@@ -79,7 +78,7 @@ const publishDate = new Date(journal.created!).toLocaleDateString();
 let coverImageUrl = undefined;
 
 if (journal.images && journal.images.length) {
-  coverImageUrl = pb.files.getURL(
+  coverImageUrl = getPocketbaseFilePath(
     journal,
     journal.images[journal.previewImageIndex!]!
   );

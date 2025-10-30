@@ -1,3 +1,5 @@
+import type { FileOptions } from "pocketbase";
+
 export const capitalizeFirstLetter = (str: string) => {
   return str.trim().charAt(0).toUpperCase() + str.slice(1);
 };
@@ -126,3 +128,40 @@ export function canvasToBase64(
 ): string {
   return canvas.toDataURL(type, quality);
 }
+
+export const getPocketbaseFilePath = (
+  record: { [key: string]: any },
+  filename: string,
+  queryParams: FileOptions = {}
+) => {
+  if (
+    !filename ||
+    !record?.id ||
+    !(record?.collectionId || record?.collectionName)
+  ) {
+    return "";
+  }
+
+  const parts = [];
+  parts.push("api");
+  parts.push("files");
+  parts.push(encodeURIComponent(record.collectionId || record.collectionName));
+  parts.push(encodeURIComponent(record.id));
+  parts.push(encodeURIComponent(filename));
+
+  
+  let result = '/' + parts.join("/");
+
+  if (Object.keys(queryParams).length) {
+    // normalize the download query param for consistency with the Dart sdk
+    if (queryParams.download === false) {
+      delete queryParams.download;
+    }
+
+    const params = new URLSearchParams(queryParams);
+
+    result += (result.includes("?") ? "&" : "?") + params;
+  }
+
+  return result;
+};

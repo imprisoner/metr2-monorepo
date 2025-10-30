@@ -22,7 +22,7 @@
             pt:body:class="hidden!"
           >
             <template #header>
-              <NuxtImg
+              <img
                 :src="card.image"
                 class="flex absolute object-cover w-full h-full brightness-80"
               />

@@ -76,14 +76,14 @@ const getUserPageData = async () => {
     });
 
   if (userData.avatar !== "") {
-    userData.avatar = pb.files.getURL(userData, userData.avatar);
+    userData.avatar = getPocketbaseFilePath(userData, userData.avatar);
   }
 
   let flats: FlatsRecord[] = [];
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({
       ...flat,
-      images: flat.images.map((filename) => pb.files.getURL(flat, filename)),
+      images: flat.images.map((filename) => getPocketbaseFilePath(flat, filename)),
     }));
   }
 
@@ -96,7 +96,7 @@ const getUserPageData = async () => {
       let previewImage;
 
       if (article.images) {
-        previewImage = pb.files.getURL(article, article.images[0]!);
+        previewImage = getPocketbaseFilePath(article, article.images[0]!);
       }
 
       return {
