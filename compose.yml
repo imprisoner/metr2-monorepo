@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: metr2-backend
+    volumes:
+      - ./backend/pb_data:/pb/pb_data
+    networks:
+      - metr2-net
+    ports:
+     - "${BACKEND_PORT}:8080"
+
+  frontend:
+    depends_on: 
+      - backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - API_URL=${FRONTEND_API_URL}
+    container_name: metr2-frontend
+    networks:
+      - metr2-net
+
+  nginx:
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+      args:
+      - NGINX_BASIC_AUTH_USER=${NGINX_BASIC_AUTH_USER}
+      - NGINX_BASIC_AUTH_PASS=${NGINX_BASIC_AUTH_PASS}
+    container_name: metr2-nginx
+    ports:
+      - "${NGINX_PORT}:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - metr2-net
+    env_file: ./.env
+
+networks:
+  metr2-net:
+    name: metr2_net
+    external: true

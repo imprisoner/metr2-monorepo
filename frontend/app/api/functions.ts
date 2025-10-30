@@ -65,7 +65,7 @@ export const getAllHouseSeriesCards = async () => {
 
   const recordsWithFullImageLink = response.map((record) => ({
     ...record,
-    image: pb.files.getURL(record, record.image),
+    image: getPocketbaseFilePath(record, record.image),
   }));
 
   return recordsWithFullImageLink;
@@ -95,7 +95,7 @@ export const getOneUser = async <E>(id: string) => {
     });
 
   if (response.avatar !== "") {
-    response.avatar = pb.files.getURL(response, response.avatar)
+    response.avatar = getPocketbaseFilePath(response, response.avatar)
   }
 
   return response;
@@ -130,7 +130,7 @@ export const getAllContractorsServicesCategoriesWithSpecialties = async () => {
 
   const recordsWithFullImageLink = response.map((record) => ({
     ...record,
-    image: pb.files.getURL(record, record.image),
+    image: getPocketbaseFilePath(record, record.image),
   }));
 
   return recordsWithFullImageLink;
