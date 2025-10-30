@@ -17,7 +17,7 @@ ARG NGINX_BASIC_AUTH_PASS
 RUN htpasswd -bc /etc/nginx/auth/.htpasswd $NGINX_BASIC_AUTH_USER $NGINX_BASIC_AUTH_PASS
 
 # Copy your custom Nginx configuration
-COPY ./default.conf /etc/nginx/conf.d/default.conf
+COPY ./default.conf.template /etc/nginx/templates
 
 # Expose port 80
 EXPOSE 80
