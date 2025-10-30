@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: metr2-backend
+    volumes:
+      - ./backend/pb_data:/pb/pb_data
+    networks:
+      - metr2-net
+    ports:
+     - "${BACKEND_PORT}:8080"
+
+  frontend:
+    depends_on: 
+      - backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - API_URL=${FRONTEND_API_URL}
+    container_name: metr2-frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - metr2-net
+
+networks:
+  metr2-net:
+    name: metr2_net
+    external: true

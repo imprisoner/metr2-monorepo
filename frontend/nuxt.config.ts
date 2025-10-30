@@ -28,6 +28,9 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css", "~/assets/scss/main.scss"],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ["nuxtjs_upstream"],
+    },
   },
   image: {
     format: ["webp"],
