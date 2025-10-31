@@ -29,7 +29,7 @@
           />
         </Panel>
         <Panel toggleable header="Обо мне">
-          Я люблю путешествовать и открывать новые места в свободное время
+          {{ contractorInfo?.about }}
         </Panel>
       </template>
     </TwoSectionContainer>

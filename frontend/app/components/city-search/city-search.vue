@@ -7,6 +7,7 @@
     fluid
     :multiple="multiple"
     placeholder="Введите название города"
+    empty-search-message="Ничего не найдено"
     @complete="search"
     @option-select="onOptionSelect"
     @option-unselect="onOptionUnselect"
