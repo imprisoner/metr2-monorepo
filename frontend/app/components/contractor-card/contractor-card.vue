@@ -2,7 +2,7 @@
   <Card
     class="hover:shadow-xl transition-all duration-300"
     pt:content:class="flex justify-between items-start gap-8 flex-wrap"
-    pt:footer:class="flex gap-2 flex-wrap"
+    pt:footer:class="flex gap-2 flex-wrap pt-2 md:pt-0"
   >
     <template #content>
       <div class="flex gap-2">

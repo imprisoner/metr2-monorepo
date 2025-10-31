@@ -30,7 +30,7 @@
         </li>
       </ul>
     </Panel>
-    <Panel pt:content:class="flex flex-col gap-4">
+    <Panel pt:content:class="grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4">
       <template #header>
         <PanelHeaderWithControls
           text="Бортжурналы"

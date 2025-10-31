@@ -1,6 +1,6 @@
 <template>
   <Card
-    class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+    class="w-full mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
   >
     <!-- Header slot: Image -->
     <template #header>
@@ -25,9 +25,9 @@
 
     <!-- Title slot -->
     <template #title>
-      <h2 class="font-bold text-base/5 line-clamp-2 h-[40px]">
+      <h6 class="font-bold text-base/5 line-clamp-2 h-[40px]">
         {{ journal.title }}
-      </h2>
+      </h6>
     </template>
 
     <!-- Content slot -->

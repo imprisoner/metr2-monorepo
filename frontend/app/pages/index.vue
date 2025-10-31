@@ -7,7 +7,7 @@
     <CategoryCardsSection />
     <section>
       <Panel
-        pt:content:class="grid grid-cols-3 gap-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
+        pt:content:class="xl:grid xl:grid-cols-3 md:grid md:grid-cols-2 gap-4 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
       >
         <JournalCard
           v-for="journal in journals"

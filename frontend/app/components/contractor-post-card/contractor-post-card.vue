@@ -1,6 +1,6 @@
 <template>
   <Card
-    class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+    class="w-full mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
   >
     <!-- Header slot: Image -->
     <template #header>

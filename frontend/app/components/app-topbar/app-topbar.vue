@@ -14,50 +14,29 @@
     </div>
 
     <div class="layout-topbar-actions">
-      <!-- <div class="layout-config-menu">
-        <button
-          type="button"
-          class="layout-topbar-action"
-          @click="toggleDarkMode"
-        >
-          <i
-            :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"
-          />
-        </button>
-        <div class="relative">
-          <button
-            v-styleclass="{
-              selector: '@next',
-              enterFromClass: 'hidden',
-              enterActiveClass: 'animate-scalein',
-              leaveToClass: 'hidden',
-              leaveActiveClass: 'animate-fadeout',
-              hideOnOutsideClick: true,
-            }"
-            type="button"
-            class="layout-topbar-action layout-topbar-action-highlight"
+      <Button
+        v-if="!store.isAuthorized"
+        label="Войти"
+        variant="text"
+        severity="contrast"
+        @click="showLoginDialog = true"
+      />
+      <template v-else>
+        <Button v-slot="slotProps" as-child variant="text">
+          <NuxtLink
+            :to="profileLink"
+            :class="slotProps.class"
+            class="layout-topbar-action"
           >
-            <i class="pi pi-palette" />
-          </button>
-          <AppConfigurator />
-        </div>
-      </div> -->
-
-      <!-- <button
-          class="layout-topbar-menu-button layout-topbar-action"
-          v-styleclass="{
-            selector: '@next',
-            enterFromClass: 'hidden',
-            enterActiveClass: 'animate-scalein',
-            leaveToClass: 'hidden',
-            leaveActiveClass: 'animate-fadeout',
-            hideOnOutsideClick: true,
-          }"
+            <i class="pi pi-user" />
+            <span>Профиль</span>
+          </NuxtLink>
+        </Button>
+        <Button variant="text" severity="contrast" class="ms-2" @click="logout"
+          >Выйти</Button
         >
-          <i class="pi pi-ellipsis-v" />
-        </button> -->
-
-      <div class="layout-topbar-menu hidden lg:block">
+      </template>
+      <!-- <div class="layout-topbar-menu">
         <div class="layout-topbar-menu-content">
           <Button
             v-if="!store.isAuthorized"
@@ -86,7 +65,7 @@
             >
           </template>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <LoginDialog v-model:visible="showLoginDialog" />

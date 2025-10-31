@@ -1,5 +1,5 @@
 <template>
-  <Card class="w-md mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+  <Card class="w-full mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
         <template v-if="post.previewImage">
