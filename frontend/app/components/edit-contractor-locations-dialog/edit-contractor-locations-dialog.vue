@@ -8,7 +8,7 @@
     :style="{ width: '600px' }"
   >
     <div class="flex flex-col gap- mb-8">
-      <CitySearch
+      <CitySearchMultiple
         :initial-cities="contractorCities?.map((item) => item.expand.city)"
         multiple
         @change="onCitiesChange"

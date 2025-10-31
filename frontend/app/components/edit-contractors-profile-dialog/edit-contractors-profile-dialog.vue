@@ -43,14 +43,9 @@
             <div class="flex flex-col md:flex-row gap-4">
               <label class="flex flex-wrap gap-2 w-full">
                 <span>Город</span>
-                <Select
-                  id="state"
-                  name="location"
-                  :options="locationOptions"
-                  option-label="name"
-                  option-value="value"
-                  placeholder="Ваш город"
-                  class="w-full"
+                <CitySearchSingle
+                  :initial-city="contractorInfo?.expand.location"
+                  @change="onCityChange"
                 />
               </label>
               <label class="flex flex-col gap-2 w-full">
@@ -86,26 +81,24 @@
 <script setup lang="ts">
 import { SelectButton } from "#components";
 import type { FormSubmitEvent } from "@primevue/forms/form";
-import { getAllCities } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
 import { getProfileInfoResolver } from "~/schemas";
-import type { ContractorsInfoRecord } from "~/types/pocketbase-types";
+import type {
+  ContractorsInfoResponse,
+  DictCitiesRecord,
+} from "~/types/pocketbase-types";
 
 const visible = defineModel<boolean>("visible");
 
 const { contractorInfo } = defineProps<{
-  contractorInfo: ContractorsInfoRecord | undefined;
+  contractorInfo:
+    | ContractorsInfoResponse<{ location: DictCitiesRecord }>
+    | undefined;
 }>();
 
 const emit = defineEmits<{
   (e: "save"): void;
 }>();
-
-const citiesResponse = await getAllCities();
-const locationOptions = citiesResponse.map((city) => ({
-  name: city.name,
-  value: city.id,
-}));
 
 const genderOptions = [
   { label: "мужской", value: "male" },
@@ -122,6 +115,12 @@ const initialValues = reactive({
   experienceYears: contractorInfo?.experienceYears,
 });
 
+const cityId = ref<string>(contractorInfo?.location ?? "");
+
+const onCityChange = (id: string) => {
+  cityId.value = id;
+};
+
 const save = async ({ valid, states }: FormSubmitEvent) => {
   if (!valid) return;
 
@@ -135,7 +134,7 @@ const save = async ({ valid, states }: FormSubmitEvent) => {
 
   await pb
     .collection("contractors_info")
-    .update(contractorInfo!.id, { ...newValues });
+    .update(contractorInfo!.id, { ...newValues, location: cityId.value });
 
   emit("save");
 };
