@@ -64,7 +64,7 @@
               </label>
               <label class="flex flex-wrap gap-2 w-full">
                 <span>Опыт</span>
-                <InputNumber name="experienceYears" :min="18" :max="100" />
+                <InputNumber name="experienceYears" :min="0" :max="100" />
               </label>
             </div>
 
