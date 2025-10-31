@@ -191,9 +191,11 @@ const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
 
   toast.add({
     severity: "success",
-    summary: "Form is submitted.",
+    summary: "Квартира успешно добавлена",
     life: 3000,
   });
+
+  visible.value = false
 };
 </script>
 
