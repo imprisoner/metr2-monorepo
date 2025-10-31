@@ -16,7 +16,7 @@
             @success="onSuccess"
             @error="onError('Не удалось аутентифицироваться', $event)"
           />
-          <span class="d-block mx-auto my-2">или</span>
+          <p class="text-center mx-auto my-2!">или</p>
           <Button
             label="Зарегистрироваться"
             class="w-full"

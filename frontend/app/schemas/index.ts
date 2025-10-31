@@ -89,18 +89,17 @@ export type LoginSchema = z.infer<typeof loginSchema> & Record<string, any>;
 
 export const loginFormResolver = zodResolver(loginSchema);
 
-const registerSchema = z.object({
-  email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
-  password: z.string(wrongValueMessage).nonempty(requiredFieldMessage),
-  passwordConfirm: z
-    .string(wrongValueMessage)
-    .nonempty(requiredFieldMessage)
-    .superRefine((data, ctx) => {
-      ctx.addIssue("Пароль не совпадает");
-    }),
-  name: z.string(wrongValueMessage).min(2, 'Не менее 2-х символов')
-});
+const registerSchema = z
+  .object({
+    email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
+    password: latinOnlyWithNumbersSchema.min(8, 'Минимум 8 символов'),
+    passwordConfirm: z.string(),
+    name: z.string(wrongValueMessage).min(2, "Не менее 2-х символов"),
+  }).refine((data) => data.password === data.passwordConfirm, {
+    message: 'Неверный повторный ввод',
+    path: ['passwordConfirm'],
+  });
 
-export type RegisterSchema = z.infer<typeof registerSchema>
+export type RegisterSchema = z.infer<typeof registerSchema>;
 
-export const registerFormResolver = zodResolver(registerSchema)
+export const registerFormResolver = zodResolver(registerSchema);

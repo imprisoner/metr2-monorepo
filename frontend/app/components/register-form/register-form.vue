@@ -15,7 +15,7 @@
         >{{ $form.email.error?.message }}</Message
       >
     </div>
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1 mb-2">
       <label
         for="password"
         class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
@@ -71,11 +71,11 @@
         :feedback="false"
       />
       <Message
-        v-if="$form.passwordConfirm?.invalid"
+        v-if="$form.name?.invalid"
         severity="error"
         size="small"
         variant="simple"
-        >{{ $form.passwordConfirm.error?.message }}</Message
+        >{{ $form.name.error?.message }}</Message
       >
     </div>
 
