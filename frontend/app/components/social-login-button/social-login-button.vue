@@ -5,9 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import type { OAUTH_PROVIDERS } from '~/constants';
 
 const { provider } = defineProps<{
-  provider: "google" | "yandex" | "vk";
+  provider: typeof OAUTH_PROVIDERS[number];
 }>();
 
 const iconMap: Record<typeof provider, string> = {

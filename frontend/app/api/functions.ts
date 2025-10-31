@@ -14,6 +14,8 @@ import type {
   SpecialtyRecordWithServices,
 } from "~/types/api.types";
 import type { FlatFilter } from "~/types/common.types";
+import type { LoginSchema, RegisterSchema } from "~/schemas";
+import type { OAUTH_PROVIDERS } from "~/constants";
 
 export const getJournalsResponse = async <E>({
   page = 1,
@@ -87,7 +89,7 @@ export const getOneUser = async <E>(id: string) => {
     "users_info_via_user",
     "users_info_via_user.location",
   ].join(",");
-  
+
   const response = await pb
     .collection(Collections.Users)
     .getOne<UsersResponse<E>>(id, {
@@ -95,7 +97,7 @@ export const getOneUser = async <E>(id: string) => {
     });
 
   if (response.avatar !== "") {
-    response.avatar = getPocketbaseFilePath(response, response.avatar)
+    response.avatar = getPocketbaseFilePath(response, response.avatar);
   }
 
   return response;
@@ -161,7 +163,9 @@ export const getContractorsResponse = async ({
   fields?: string[];
   filter?: string;
 }) => {
-  const expandWithDefaults = ["contractors_services_via_contractor.specialtyService"].concat(expand ?? [])
+  const expandWithDefaults = [
+    "contractors_services_via_contractor.specialtyService",
+  ].concat(expand ?? []);
 
   const params = {
     sort: sortBy?.join(","),
@@ -197,9 +201,43 @@ export const getAllCities = async () => {
   return response;
 };
 
-export const saveUserAvatar = async (userId: string, collection: string, file: File) => {
+export const saveUserAvatar = async (
+  userId: string,
+  collection: string,
+  file: File
+) => {
   const response = await pb.collection(collection).update(userId, {
-    avatar: file
+    avatar: file,
   });
   return response;
-}
+};
+
+export const authenticateWithEmail = async (
+  collection: string,
+  { email, password }: LoginSchema
+) => {
+  await pb.collection(collection).authWithPassword(email, password);
+};
+
+export const authenticateWithProvider = async (
+  collection: string,
+  provider: (typeof OAUTH_PROVIDERS)[number]
+) => {
+  await pb.collection(collection).authWithOAuth2({
+    provider,
+  });
+};
+
+export const registerWithEmailAndPassword = async (collection: string, {
+  email,
+  name,
+  password,
+  passwordConfirm: repeatPassword,
+}: RegisterSchema) => {
+  await pb.collection(collection).create({
+    email: email,
+    name: name,
+    password: password,
+    passwordConfirm: repeatPassword,
+  });
+};

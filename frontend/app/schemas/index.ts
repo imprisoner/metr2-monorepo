@@ -3,6 +3,7 @@ import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { pb } from "~/api/pocketbase-client";
 
 const requiredFieldMessage = "Поле обязательно";
+const wrongValueMessage = "Неверное значение";
 
 const latinOnlyWithNumbersSchema = z
   .string()
@@ -17,8 +18,9 @@ export const userNicknameSchema = latinOnlyWithNumbersSchema.superRefine(
           ? "users_info"
           : "contractors_info";
 
-      const userId = pb.authStore!.record!.id
-      const userFieldName = pb.authStore!.record!.collectionName === "users"
+      const userId = pb.authStore!.record!.id;
+      const userFieldName =
+        pb.authStore!.record!.collectionName === "users"
           ? "user"
           : "contractor";
 
@@ -55,9 +57,9 @@ export const getProfileInfoResolver = (collection: "users" | "contractors") => {
     age: z.number(),
     experienceYears: experienceYearsSchema,
   };
-  
+
   if (!experienceYearsSchema) {
-    delete schemaObj.experienceYears
+    delete schemaObj.experienceYears;
   }
 
   return zodResolver(z.object(schemaObj));
@@ -78,3 +80,27 @@ export const flatResolver = zodResolver(
   })
 );
 
+const loginSchema = z.object({
+  email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
+  password: z.string(wrongValueMessage).nonempty(requiredFieldMessage),
+});
+
+export type LoginSchema = z.infer<typeof loginSchema> & Record<string, any>;
+
+export const loginFormResolver = zodResolver(loginSchema);
+
+const registerSchema = z.object({
+  email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
+  password: z.string(wrongValueMessage).nonempty(requiredFieldMessage),
+  passwordConfirm: z
+    .string(wrongValueMessage)
+    .nonempty(requiredFieldMessage)
+    .superRefine((data, ctx) => {
+      ctx.addIssue("Пароль не совпадает");
+    }),
+  name: z.string(wrongValueMessage).min(2, 'Не менее 2-х символов')
+});
+
+export type RegisterSchema = z.infer<typeof registerSchema>
+
+export const registerFormResolver = zodResolver(registerSchema)
