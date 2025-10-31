@@ -89,10 +89,26 @@ export type LoginSchema = z.infer<typeof loginSchema> & Record<string, any>;
 
 export const loginFormResolver = zodResolver(loginSchema);
 
+const passwordSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9!@#$%^&*]+$/, "Только латинские буквы")
+  .min(8, { message: 'Минимум 8 символов' })
+  .max(20, { message: 'Максимум 20 символов' })
+  .refine((password) => /[A-Z]/.test(password), {
+    message: 'Минимум одна заглавная буква',
+  })
+  .refine((password) => /[a-z]/.test(password), {
+    message: 'Минимум одна строчная буква',
+  })
+  .refine((password) => /[0-9]/.test(password), { message: 'Минимум одна цифра' })
+  .refine((password) => /[!@#$%^&*]/.test(password), {
+    message: "Минимум один специальный символ",
+  })
+
 const registerSchema = z
   .object({
     email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
-    password: latinOnlyWithNumbersSchema.min(8, 'Минимум 8 символов'),
+    password: passwordSchema,
     passwordConfirm: z.string(),
     name: z.string(wrongValueMessage).min(2, "Не менее 2-х символов"),
   }).refine((data) => data.password === data.passwordConfirm, {
