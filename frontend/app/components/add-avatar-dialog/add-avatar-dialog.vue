@@ -17,13 +17,17 @@
     @show="maximize"
   >
     <div class="lg:w-[50vw] w-full mx-auto">
-      <UserAvatarUploadForm />
+      <UserAvatarUploadForm @save="$emit('save')"/>
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
 import Dialog from 'primevue/dialog';
+
+defineEmits<{
+  (e: 'save'): void
+}>();
 
 const dialog = ref<InstanceType<typeof Dialog> | null>(null);
 const visible = defineModel<boolean>("visible");

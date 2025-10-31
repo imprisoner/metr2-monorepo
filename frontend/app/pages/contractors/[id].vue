@@ -25,6 +25,7 @@
             :name="contractorResponse.name"
             :is-owner="isOwner"
             @edit-profile="onEditProfile"
+            @save-avatar="onSaveAvatar"
           />
         </Panel>
         <Panel toggleable header="Обо мне">
@@ -191,5 +192,9 @@ const onSaveProfile = async () => {
   editProfileDialogVisibility.value = false;
   contractorResponse.value = await getContractorInfoAndServices(contractorId)
 };
+
+const onSaveAvatar = async () => {
+  contractorResponse.value = await getContractorInfoAndServices(contractorId)
+}
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex gap-2 relative">
-      <UserAvatar 
+      <UserAvatar
         :name="name"
         :avatar="avatar"
         :editable="isOwner"
@@ -35,6 +35,7 @@
   <AddAvatarDialog
     v-if="isOwner && showAddAvatarDialog"
     v-model:visible="showAddAvatarDialog"
+    @save="onAvatarSave"
   />
 </template>
 
@@ -54,13 +55,18 @@ const {
 }>();
 
 const emit = defineEmits<{
-  (e: "edit-profile"): void;
+  (e: "edit-profile" | "save-avatar"): void;
 }>();
 
 const showAddAvatarDialog = ref(false);
 
 const onEditAvatarClick = () => {
   showAddAvatarDialog.value = true;
+};
+
+const onAvatarSave = () => {
+  emit("save-avatar");
+  showAddAvatarDialog.value = false;
 };
 </script>
 

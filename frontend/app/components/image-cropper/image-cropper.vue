@@ -28,7 +28,7 @@
       </div>
       <div class="flex gap-2 mt-4 justify-end">
         <Button label="Назад" severity="secondary" @click="$emit('cancel')" />
-        <Button label="Сохранить" @click="onCropConfirm" />
+        <Button label="Сохранить" @click="onCropConfirm" :loading="isLoading" />
       </div>
     </div>
   </ClientOnly>
@@ -61,8 +61,11 @@ const handleCropChange = async (e: CropperResult) => {
   result.value = e;
 };
 
+const isLoading = ref(false);
+
 const onCropConfirm = () => {
   if (result.value) {
+    isLoading.value = true;
     emit("crop", canvasToBase64(result.value.canvas!));
   }
 };

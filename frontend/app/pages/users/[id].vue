@@ -23,6 +23,7 @@
             :name="userData.name"
             :is-owner="isOwner"
             @edit-profile="showEditProfileDialog"
+            @save-avatar="onSaveAvatar"
           />
         </Panel>
         <Panel toggleable header="Обо мне" class="shadow-md">
@@ -140,10 +141,11 @@ const onSaveProfile = async () => {
 };
 
 const onSaveFlat = async () => {
-  console.log('onSaveFlat')
   userPageData.value = await getUserPageData();
-
-  console.log(userPageData.value.flats)
 };
+
+const onSaveAvatar = async () => {
+  userPageData.value = await getUserPageData();
+}
 </script>
 
