@@ -55,6 +55,7 @@
     v-if="showAddFlatDialog"
     v-model:visible="showAddFlatDialog"
     :flat="flatToEdit"
+    @save="onFlatSave"
   />
 </template>
 
@@ -63,6 +64,10 @@ import type {
   FlatsRecord,
   UsersBlogPostsRecord,
 } from "~/types/pocketbase-types";
+
+const emit = defineEmits<{
+  (e: 'save-flat'): void
+}>();
 
 const { blogArticles = [], flats } = defineProps<{
   flats: FlatsRecord[];
@@ -86,5 +91,10 @@ watchEffect(() => {
     flatToEdit.value = undefined;
   }
 });
+
+const onFlatSave = () => {
+  showAddFlatDialog.value = false
+  emit('save-flat')
+}
 </script>
 

@@ -98,6 +98,10 @@ const { flat } = defineProps<{
   flat: FlatsRecord | undefined;
 }>();
 
+const emit = defineEmits<{
+  (e: "save"): void;
+}>();
+
 const headerString = computed(() =>
   flat ? "Редактировать квартиру" : "Добавить квартиру"
 );
@@ -129,7 +133,7 @@ const initialValues = ref<FormFields>({
   buildingCategory: flat?.buildingCategory ?? "",
 });
 
-const resolver = flatResolver
+const resolver = flatResolver;
 
 const authStore = useAuthStore();
 
@@ -183,19 +187,27 @@ const editFlat = async (id: string, values: FormFields) => {
 const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
   if (!valid) return;
 
-  if (flat?.id) {
-    editFlat(flat.id, values as FormFields);
-  } else {
-    createNewFlat(values as FormFields);
+  try {
+    if (flat?.id) {
+      await editFlat(flat.id, values as FormFields);
+    } else {
+      await createNewFlat(values as FormFields);
+    }
+    toast.add({
+      severity: "success",
+      summary: "Квартира успешно добавлена",
+      life: 3000,
+    });
+
+    emit("save");
+  } catch (error) {
+    console.error(error);
+    toast.add({
+      severity: "error",
+      summary: "Не удалось создать квартиру",
+      life: 3000,
+    });
   }
-
-  toast.add({
-    severity: "success",
-    summary: "Квартира успешно добавлена",
-    life: 3000,
-  });
-
-  visible.value = false
 };
 </script>
 

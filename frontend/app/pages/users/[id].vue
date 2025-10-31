@@ -9,6 +9,7 @@
           :flats="flats"
           :is-owner="isOwner"
           :blog-articles="blogArticles"
+          @save-flat="onSaveFlat"
         />
       </template>
       <template #right>
@@ -83,7 +84,9 @@ const getUserPageData = async () => {
   if (userData.expand.flats_via_user) {
     flats = userData.expand.flats_via_user.map((flat) => ({
       ...flat,
-      images: flat.images.map((filename) => getPocketbaseFilePath(flat, filename)),
+      images: flat.images.map((filename) =>
+        getPocketbaseFilePath(flat, filename)
+      ),
     }));
   }
 
@@ -134,6 +137,13 @@ const showEditProfileDialog = () => {
 const onSaveProfile = async () => {
   editProfileDialogVisibility.value = false;
   userPageData.value = await getUserPageData();
+};
+
+const onSaveFlat = async () => {
+  console.log('onSaveFlat')
+  userPageData.value = await getUserPageData();
+
+  console.log(userPageData.value.flats)
 };
 </script>
 
