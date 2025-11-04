@@ -54,7 +54,12 @@
         button-severity="secondary"
         :to="cancelButtonLink"
       />
-      <Button label="Сохранить" @click="save" />
+      <Button
+        label="Сохранить"
+        :loading="isLoading"
+        :disabled="isLoading"
+        @click="save"
+      />
     </div>
   </Panel>
 </template>
@@ -124,8 +129,12 @@ const body = computed(() => ({
 
 const router = useRouter();
 
+const isLoading = ref(false);
+
 const save = async () => {
   let response;
+
+  isLoading.value = true;
 
   if (mode.value === "create") {
     response = await pb.collection(collection).create(body.value);
@@ -143,6 +152,8 @@ const save = async () => {
   await pb.collection(collection).update(response.id, {
     content: contentWithReplacedImages,
   });
+
+  isLoading.value = false;
 
   router.push(`/contractors/${authStore.userInfo!.hrid}`);
 };

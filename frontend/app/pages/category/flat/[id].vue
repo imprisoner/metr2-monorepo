@@ -35,7 +35,7 @@
         <PanelHeaderWithControls
           text="Бортжурналы"
           button-label="Добавить статью"
-          button-link="/write"
+          :button-link="`/write/journals/flats/${flat.id}`"
           :controls-show-condition="!!(isOwner && journals.length)"
         />
       </template>

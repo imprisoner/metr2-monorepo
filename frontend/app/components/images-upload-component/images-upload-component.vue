@@ -3,7 +3,6 @@
     <FileUpload
       name="images"
       accept="image/*"
-      :max-file-size="1000000"
       custom-upload
       @remove="onRemoveUploadedFile"
       @select="onSelectFile"
