@@ -1,4 +1,4 @@
-import type AuthRecord from "pocketbase";
+import type { AuthRecord } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
 import { useAuthStore } from "~/stores/auth";
 // import type { TypedPocketBase } from "~/types/pocketbase-types";
@@ -9,7 +9,7 @@ export default defineNuxtPlugin(async () => {
   const cookie = useCookie<{ token: string; record: AuthRecord }>("pb_auth", {
     path: "/",
     secure: true,
-    sameSite: "strict",
+    sameSite: "lax",
     httpOnly: false, // change to "true" if you want only server-side access
     maxAge: 604800,
   });
@@ -19,7 +19,7 @@ export default defineNuxtPlugin(async () => {
 
   // send back the default 'pb_auth' cookie to the client with the latest store state
 
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
 
   pb.authStore.onChange(() => {
     cookie.value = {
@@ -27,8 +27,8 @@ export default defineNuxtPlugin(async () => {
       record: pb.authStore.record,
     };
 
-    authStore.isAuthorized = pb.authStore.isValid
-    authStore.userInfo = pb.authStore.record
+    authStore.isAuthorized = pb.authStore.isValid;
+    authStore.userInfo = pb.authStore.record;
   });
 
   try {
@@ -40,9 +40,5 @@ export default defineNuxtPlugin(async () => {
     // clear the auth store on failed refresh
     pb.authStore.clear();
   }
-
-  // return {
-  //   provide: { pb },
-  // };
 });
 
