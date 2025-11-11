@@ -15,7 +15,7 @@
         <div class="flex flex-col gap-0.5">
           <div class="flex gap-2 items-baseline">
             <NuxtLink
-              :to="`/contractors/${contractorInfo.hrid}`"
+              :to="`/contractors/${contractorInfo.username}`"
               class="text-base font-semibold"
               >{{ contractorInfo.name }}</NuxtLink
             >
@@ -43,15 +43,15 @@
 
 <script setup lang="ts">
 import type {
-  ContractorsRecord,
   ContractorsServicesResponse,
   DictSpecialtyServicesRecord,
+  UsersRecord,
 } from "~/types/pocketbase-types";
 
 const lastSeen = "2 часа";
 
 defineProps<{
-  contractorInfo: ContractorsRecord;
+  contractorInfo: UsersRecord;
   services?: ContractorsServicesResponse<{
     specialtyService: DictSpecialtyServicesRecord;
   }>[];

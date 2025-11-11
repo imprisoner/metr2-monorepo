@@ -43,27 +43,21 @@
 <script setup lang="ts">
 const authStore = useAuthStore();
 
-// const getLocation = async () => {
-//   const userLocationId = authStore.userInfo?.location;
-
-//   if (!userLocationId) return;
-
-//   const response = await pb.collection("dict_cities").getOne(userLocationId);
-
-//   return response;
-// };
-
 const location = ref(authStore.userInfo?.expand.location);
 
 watch(
   () => location.value,
   () => {
-    updateFilters(locationQuery(location.value?.id ?? ""));
+    updateFilters(locationQuery(location.value?.id));
   }
 );
 
-const locationQuery = (cityId: string) => {
-  return `contractors_cities_via_user.city = "${cityId}"`;
+const locationQuery = (cityId?: string) => {
+  if (cityId) {
+    return `contractors_cities_via_user.city = "${cityId}"`;
+  }
+
+  return '';
 };
 
 const { contractors, isLastPage, next, onPageChange, updateFilters } =

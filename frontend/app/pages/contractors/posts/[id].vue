@@ -12,7 +12,7 @@
         </div>
       </template>
       <div class="mb-8">
-        <SmallContractorsInfoPlate :contractor="post.expand.contractor" class="mb-8"/>
+        <SmallContractorsInfoPlate :contractor="post.expand.user" class="mb-8"/>
       </div>
       <div class="content" v-html="post.content" />
     </Panel>

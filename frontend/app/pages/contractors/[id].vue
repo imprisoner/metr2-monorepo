@@ -49,50 +49,50 @@ import {
   Collections,
   type ContractorsBlogPostsResponse,
   type ContractorsCitiesResponse,
-  type ContractorsInfoResponse,
-  type ContractorsRecord,
-  type ContractorsResponse,
   type ContractorsServicesResponse,
   type DictCitiesRecord,
   type DictSpecialtyServicesRecord,
+  type UserProfilesResponse,
+  type UsersRecord,
+  type UsersResponse,
 } from "~/types/pocketbase-types";
 
-const contractorId = useRoute().params.id as string;
+const username = useRoute().params.id as string;
 
 const authStore = useAuthStore();
 
 const isOwner = computed(() => {
-  if (authStore.userInfo?.collectionName === "contractors") {
-    return authStore.userInfo.hrid === contractorId;
+  if (authStore.isAuthorized) {
+    return authStore.userInfo?.username === username;
   }
 
   return false;
 });
 
 interface ExpandContractor {
-  contractors_info_via_contractor: ContractorsInfoResponse<{
+  user_profiles_via_user: UserProfilesResponse<{
     location: DictCitiesRecord | undefined
   }> | undefined;
-  contractors_services_via_contractor:
+  contractors_services_via_user:
     | ContractorsServicesResponse<{
         specialtyService: DictSpecialtyServicesRecord;
       }>[]
     | undefined;
-  contractors_cities_via_contractor: ContractorsCitiesResponse<{
+  contractors_cities_via_user: ContractorsCitiesResponse<{
     city: DictCitiesRecord;
   }>[];
 }
 
-const getContractorInfoAndServices = async (id: string) => {
+const getContractorInfoAndServices = async (username: string) => {
   const expand = [
-    "contractors_info_via_contractor.location",
-    "contractors_services_via_contractor.specialtyService",
-    "contractors_cities_via_contractor.city",
+    "user_profiles_via_user.location",
+    "contractors_services_via_user.specialtyService",
+    "contractors_cities_via_user.city",
   ].join(",");
 
   const response = await pb
-    .collection(Collections.Contractors)
-    .getFirstListItem<ContractorsResponse<ExpandContractor>>(`hrid = "${id}"`, {
+    .collection(Collections.Users)
+    .getFirstListItem<UsersResponse<ExpandContractor>>(`username = "${username}"`, {
       expand,
     });
 
@@ -103,25 +103,25 @@ const getContractorInfoAndServices = async (id: string) => {
 };
 
 const contractorResponse = ref(
-  await getContractorInfoAndServices(contractorId)
+  await getContractorInfoAndServices(username)
 );
 
 const services = computed(
-  () => contractorResponse.value.expand.contractors_services_via_contractor
+  () => contractorResponse.value.expand.contractors_services_via_user
 );
 const contractorInfo = computed(
-  () => contractorResponse.value.expand.contractors_info_via_contractor
+  () => contractorResponse.value.expand.user_profiles_via_user
 );
 
 const contractorCities = computed(
-  () => contractorResponse.value.expand.contractors_cities_via_contractor
+  () => contractorResponse.value.expand.contractors_cities_via_user
 )
 
-const getContractorPortfolio = async (contractorId: string) => {
+const getContractorPortfolio = async (id: string) => {
   const response = await pb
     .collection(Collections.ContractorsPosts)
     .getList<ContractorsPostsResponseWithExpand>(1, 10, {
-      filter: `contractor="${contractorId}"`,
+      filter: `user="${id}"`,
       expand: "contractorServices",
       fields: "*,content:excerpt(100,true)",
     });
@@ -156,15 +156,15 @@ const onEditProfile = async () => {
 };
 
 const refreshPageData = async () => {
-  contractorResponse.value = await getContractorInfoAndServices(contractorId);
+  contractorResponse.value = await getContractorInfoAndServices(username);
 };
 
-const getContractorsBlogPosts = async (contractorId: string) => {
+const getContractorsBlogPosts = async (id: string) => {
   const response = await pb
     .collection("contractors_blog_posts")
-    .getFullList<ContractorsBlogPostsResponse<ContractorsRecord>>({
-      expand: "contractors_via_contractor",
-      filter: `contractor="${contractorId}"`,
+    .getFullList<ContractorsBlogPostsResponse<UsersRecord>>({
+      expand: "users_via_user",
+      filter: `user="${id}"`,
     });
 
   const withPreviewImages = response.map((article) => {
@@ -190,11 +190,11 @@ const blogArticles = await getContractorsBlogPosts(contractorResponse.value.id);
 
 const onSaveProfile = async () => {
   editProfileDialogVisibility.value = false;
-  contractorResponse.value = await getContractorInfoAndServices(contractorId)
+  contractorResponse.value = await getContractorInfoAndServices(username)
 };
 
 const onSaveAvatar = async () => {
-  contractorResponse.value = await getContractorInfoAndServices(contractorId)
+  contractorResponse.value = await getContractorInfoAndServices(username)
 }
 </script>
 
