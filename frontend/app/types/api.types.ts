@@ -1,26 +1,25 @@
 import type {
   ContractorsPostsResponse,
-  ContractorsRecord,
-  ContractorsResponse,
   ContractorsServicesResponse,
   DictServiceCategoriesResponse,
   DictSpecialtiesRecord,
   DictSpecialtiesResponse,
   DictSpecialtyServicesRecord,
   UsersRecord,
+  UsersResponse,
 } from "./pocketbase-types";
 
 export type ContractorsPostWithContractor = ContractorsPostsResponse<{
-  contractor: ContractorsRecord;
+  user: UsersRecord;
 }>;
 
 export type ServiceCategorysWithSpecialties = DictServiceCategoriesResponse<{
   dict_specialties_via_serviceCategory: DictSpecialtiesRecord[];
 }>;
 
-export type ContractorWithUserInfoAndServices = ContractorsResponse<{
+export type ContractorWithUserInfoAndServices = UsersResponse<{
   user: UsersRecord;
-  contractors_services_via_contractor: ContractorsServicesResponse<{
+  contractors_services_via_user: ContractorsServicesResponse<{
     specialtyService: DictSpecialtyServicesRecord;
   }>[];
 }>;

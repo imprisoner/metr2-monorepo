@@ -18,7 +18,7 @@
           v-for="contractor in contractors"
           :key="contractor.id"
           :contractor-info="contractor"
-          :services="contractor.expand.contractors_services_via_contractor"
+          :services="contractor.expand.contractors_services_via_user"
           class="mb-8"
         />
       </template>
@@ -41,44 +41,19 @@
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
-import type {
-  ContractorsInfoResponse,
-  DictCitiesRecord,
-  UsersInfoResponse,
-} from "~/types/pocketbase-types";
-
 const authStore = useAuthStore();
-const currentUserId = authStore.userInfo?.id;
 
-const getCurrentUserLocation = async () => {
-  if (!currentUserId) return;
+// const getLocation = async () => {
+//   const userLocationId = authStore.userInfo?.location;
 
-  try {
-    const collection =
-      authStore.userInfo!.collectionName === "contractors"
-        ? "contractors_info"
-        : "users_info";
+//   if (!userLocationId) return;
 
-    const field =
-      authStore.userInfo!.collectionName === "contractors"
-        ? "contractor"
-        : "user";
-        
-    const userInfo = await pb.collection(collection).getFirstListItem<
-      | UsersInfoResponse<{ location: DictCitiesRecord }>
-      | ContractorsInfoResponse<{
-          location: DictCitiesRecord;
-        }>
-    >(`${field} = "${currentUserId}"`, { expand: "location" });
+//   const response = await pb.collection("dict_cities").getOne(userLocationId);
 
-    return userInfo.expand.location;
-  } catch {
-    return undefined;
-  }
-};
+//   return response;
+// };
 
-const location = ref(await getCurrentUserLocation());
+const location = ref(authStore.userInfo?.expand.location);
 
 watch(
   () => location.value,
@@ -88,7 +63,7 @@ watch(
 );
 
 const locationQuery = (cityId: string) => {
-  return `contractors_cities_via_contractor.city = "${cityId}"`;
+  return `contractors_cities_via_user.city = "${cityId}"`;
 };
 
 const { contractors, isLastPage, next, onPageChange, updateFilters } =

@@ -164,18 +164,21 @@ export const getContractorsResponse = async ({
   filter?: string;
 }) => {
   const expandWithDefaults = [
-    "contractors_services_via_contractor.specialtyService",
+    "contractors_services_via_user.specialtyService",
   ].concat(expand ?? []);
 
+  const computedFilter =
+    'role = "contractor"' + (filter ? ` && ${filter}` : "");
+  console.log(computedFilter);
   const params = {
     sort: sortBy?.join(","),
     expand: expandWithDefaults.join(","),
     fields: fields?.join(","),
-    filter,
+    filter: computedFilter,
   };
 
   const response = await pb
-    .collection(Collections.Contractors)
+    .collection(Collections.Users)
     .getList<ContractorWithUserInfoAndServices>(page, perPage, params);
 
   return response;
@@ -216,7 +219,9 @@ export const authenticateWithEmail = async (
   collection: string,
   { email, password }: LoginSchema
 ) => {
-  await pb.collection(collection).authWithPassword(email, password);
+  await pb
+    .collection(collection)
+    .authWithPassword(email, password, { expand: "location" });
 };
 
 export const authenticateWithProvider = async (
@@ -225,15 +230,16 @@ export const authenticateWithProvider = async (
 ) => {
   await pb.collection(collection).authWithOAuth2({
     provider,
+    query: {
+      expand: "location",
+    },
   });
 };
 
-export const registerWithEmailAndPassword = async (collection: string, {
-  email,
-  name,
-  password,
-  passwordConfirm: repeatPassword,
-}: RegisterSchema) => {
+export const registerWithEmailAndPassword = async (
+  collection: string,
+  { email, name, password, passwordConfirm: repeatPassword }: RegisterSchema
+) => {
   await pb.collection(collection).create({
     email: email,
     name: name,
@@ -241,3 +247,4 @@ export const registerWithEmailAndPassword = async (collection: string, {
     passwordConfirm: repeatPassword,
   });
 };
+

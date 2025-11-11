@@ -1,7 +1,7 @@
 import type { AuthRecord } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
 import { useAuthStore } from "~/stores/auth";
-// import type { TypedPocketBase } from "~/types/pocketbase-types";
+import type { DictCitiesRecord, UsersResponse } from "~/types/pocketbase-types";
 
 export default defineNuxtPlugin(async () => {
   // const pb = new PocketBase("http://127.0.0.1:8090") as TypedPocketBase;
@@ -28,12 +28,16 @@ export default defineNuxtPlugin(async () => {
     };
 
     authStore.isAuthorized = pb.authStore.isValid;
-    authStore.userInfo = pb.authStore.record;
+    authStore.userInfo = pb.authStore.record as unknown as UsersResponse<{
+      location: DictCitiesRecord;
+    }>;
   });
 
   try {
     if (pb.authStore.isValid) {
-      await pb.collection(pb.authStore.record!.collectionName).authRefresh();
+      await pb
+        .collection(pb.authStore.record!.collectionName)
+        .authRefresh({ expand: "location" });
     }
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
   } catch {
