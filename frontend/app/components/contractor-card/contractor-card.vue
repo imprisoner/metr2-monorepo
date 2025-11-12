@@ -15,7 +15,7 @@
         <div class="flex flex-col gap-0.5">
           <div class="flex gap-2 items-baseline">
             <NuxtLink
-              :to="`/contractors/${contractorInfo.username}`"
+              :to="`/users/${contractorInfo.username}`"
               class="text-base font-semibold"
               >{{ contractorInfo.name }}</NuxtLink
             >
@@ -57,6 +57,3 @@ defineProps<{
   }>[];
 }>();
 </script>
-
-<style></style>
-

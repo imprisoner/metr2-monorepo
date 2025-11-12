@@ -1,129 +1,87 @@
 <template>
   <div>
     <div class="flex items-center gap-8">
-      <h1>{{ userData.name }}</h1>
+      <h1>{{ userResponse.name }}</h1>
     </div>
     <TwoSectionContainer>
       <template #left>
-        <ProfileUserSection
-          :flats="flats"
+        <template v-if="userResponse.role === 'contractor'">
+          <ProfileContractorCitiesSection
+            :user-id="userResponse.id"
+            :is-owner="isOwner"
+          />
+          <!--  -->
+          <ProfileContractorServicesSection
+            :user-id="userResponse.id"
+            :is-owner="isOwner"
+          />
+          <!--  -->
+          <ProfileContractorPortfolioSection
+            :user-id="userResponse.id"
+            :is-owner="isOwner"
+          />
+        </template>
+        <!--  -->
+        <ProfileFlatsSection
+          :user-id="userResponse.id"
           :is-owner="isOwner"
-          :blog-articles="blogArticles"
-          @save-flat="onSaveFlat"
         />
+        <ProfileBlogSection
+          :user-id="userResponse.id"
+          :is-owner="isOwner"
+          :role="userResponse.role"
+        />
+        <!--  -->
       </template>
       <template #right>
         <Panel class="shadow-md h-fit">
           <DetailedUserInfoPlate
-            :avatar="userData.avatar"
-            :location="
-              userData.expand.users_info_via_user?.expand.location?.name ||
-              'Нет локации'
-            "
-            :name="userData.name"
+            :avatar="userResponse.avatar"
+            :location="userProfile.location?.name || 'Нет локации'"
+            :name="userResponse.name"
             :is-owner="isOwner"
             @edit-profile="showEditProfileDialog"
-            @save-avatar="onSaveAvatar"
+            @save-avatar="onNewData"
           />
         </Panel>
         <Panel toggleable header="Обо мне" class="shadow-md">
-          {{ userData.expand.users_info_via_user?.about }}
+          {{ userProfile?.about }}
         </Panel>
       </template>
     </TwoSectionContainer>
     <EditUserProfileDialog
       v-if="editProfileDialogVisibility"
       v-model:visible="editProfileDialogVisibility"
-      :user-info="userData.expand.users_info_via_user"
-      @save="onSaveProfile"
+      :user-info="userProfile"
+      @save="onNewData"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { pb } from "~/api/pocketbase-client";
-import {
-  Collections,
-  type DictCitiesRecord,
-  type FlatsRecord,
-  type UsersBlogPostsRecord,
-  type UsersInfoResponse,
-  type UsersResponse,
-} from "~/types/pocketbase-types";
+import { getUserProfile } from "~/api/functions";
 
-const userId = useRoute().params.id as string;
+const username = useRoute().params.id as string;
 
-interface Expand {
-  flats_via_user: FlatsRecord[] | undefined;
-  users_info_via_user:
-    | UsersInfoResponse<{
-        location: DictCitiesRecord | undefined;
-      }>
-    | undefined;
-  users_blog_posts_via_user: UsersBlogPostsRecord[] | undefined;
+const userResponse = ref(await getUserProfile(username));
+
+const userProfile = computed(() => ({
+  ...userResponse.value.expand.user_profiles_via_user,
+  location: userResponse.value.expand.location,
+}));
+
+if (import.meta.server) {
+  console.log('Server: ', userProfile.value)
 }
-
-const getUserPageData = async () => {
-  const expand = [
-    "flats_via_user",
-    "users_info_via_user",
-    "users_blog_posts_via_user",
-    "users_info_via_user.location",
-  ].join(",");
-
-  const userData = await pb
-    .collection(Collections.Users)
-    .getFirstListItem<UsersResponse<Expand>>(`hrid = "${userId}"`, {
-      expand,
-    });
-
-  if (userData.avatar !== "") {
-    userData.avatar = getPocketbaseFilePath(userData, userData.avatar);
-  }
-
-  let flats: FlatsRecord[] = [];
-  if (userData.expand.flats_via_user) {
-    flats = userData.expand.flats_via_user.map((flat) => ({
-      ...flat,
-      images: flat.images.map((filename) =>
-        getPocketbaseFilePath(flat, filename)
-      ),
-    }));
-  }
-
-  let blogArticles: (UsersBlogPostsRecord & {
-    previewImage: string | undefined;
-  })[] = [];
-
-  if (userData.expand.users_blog_posts_via_user) {
-    blogArticles = userData.expand.users_blog_posts_via_user.map((article) => {
-      let previewImage;
-
-      if (article.images) {
-        previewImage = getPocketbaseFilePath(article, article.images[0]!);
-      }
-
-      return {
-        ...article,
-        previewImage,
-      };
-    });
-  }
-
-  return { userData, flats, blogArticles };
-};
-
-const userPageData = ref(await getUserPageData());
-
-const userData = computed(() => userPageData.value.userData);
-const flats = computed(() => userPageData.value.flats);
-const blogArticles = computed(() => userPageData.value.blogArticles);
+if (import.meta.client) {
+  console.log('Client: ', userProfile.value)
+}
 
 const authStore = useAuthStore();
 
 const isOwner = computed(() => {
-  if (authStore.userInfo?.collectionName === "users") {
-    return authStore.userInfo.hrid === userId;
+  if (authStore.isAuthorized) {
+    return authStore.userInfo!.username === username;
   }
 
   return false;
@@ -135,17 +93,8 @@ const showEditProfileDialog = () => {
   editProfileDialogVisibility.value = true;
 };
 
-const onSaveProfile = async () => {
-  editProfileDialogVisibility.value = false;
-  userPageData.value = await getUserPageData();
+const onNewData = async () => {
+  userResponse.value = await getUserProfile(username);
 };
-
-const onSaveFlat = async () => {
-  userPageData.value = await getUserPageData();
-};
-
-const onSaveAvatar = async () => {
-  userPageData.value = await getUserPageData();
-}
 </script>
 

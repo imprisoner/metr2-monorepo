@@ -404,7 +404,7 @@ export type UsersRecord = {
 	location?: RecordIdString
 	name: string
 	password: string
-	role?: UsersRoleOptions
+	role: UsersRoleOptions
 	tokenKey: string
 	updated?: IsoDateString
 	username: string

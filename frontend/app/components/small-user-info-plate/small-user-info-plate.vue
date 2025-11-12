@@ -8,7 +8,7 @@
       <div class="flex flex-col gap-1">
         <div class="flex gap-2 items-baseline">
           <NuxtLink
-            :to="`/users/${userInfo.hrid}`"
+            :to="`/users/${userInfo.username}`"
             class="text-base font-semibold"
             >{{ userInfo.name }}</NuxtLink
           >
@@ -40,7 +40,7 @@ import { getOneUser } from "~/api/functions";
 import type {
   DictCitiesRecord,
   FlatsRecord,
-  UsersInfoResponse,
+  UserProfilesResponse,
 } from "~/types/pocketbase-types";
 
 const lastSeen = "2 часа";
@@ -50,7 +50,7 @@ const { userId } = defineProps<{ userId: string }>();
 interface Expand {
   flats_via_user: FlatsRecord[] | undefined;
   users_info_via_user:
-    | UsersInfoResponse<{ location: DictCitiesRecord | undefined }>
+    | UserProfilesResponse<{ location: DictCitiesRecord | undefined }>
     | undefined;
 }
 

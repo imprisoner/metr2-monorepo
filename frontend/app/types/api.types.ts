@@ -1,10 +1,14 @@
 import type {
   ContractorsPostsResponse,
   ContractorsServicesResponse,
+  DictCitiesRecord,
   DictServiceCategoriesResponse,
   DictSpecialtiesRecord,
   DictSpecialtiesResponse,
   DictSpecialtyServicesRecord,
+  FlatsRecord,
+  UserProfilesRecord,
+  UsersBlogPostsRecord,
   UsersRecord,
   UsersResponse,
 } from "./pocketbase-types";
@@ -32,4 +36,21 @@ export type ContractorsPostsResponseWithExpand = ContractorsPostsResponse<{
   contractorServices: ContractorsServicesResponse<
     DictSpecialtyServicesRecord[]
   >;
+}>;
+
+export type UsersPageResponse = UsersResponse<{
+  location: DictCitiesRecord | undefined;
+  flats_via_user: FlatsRecord[] | undefined;
+  user_profiles_via_user: UserProfilesRecord;
+  users_blog_posts_via_user: UsersBlogPostsRecord[] | undefined;
+}>;
+
+export type UserProfileExpandLocation = UsersResponse<{
+  user_profiles_via_user: UserProfilesRecord;
+  location: DictCitiesRecord;
+}>;
+
+export type ContractorProfile = UsersResponse<{
+  location: DictCitiesRecord | undefined;
+  user_profiles_via_user: UserProfilesRecord;
 }>;

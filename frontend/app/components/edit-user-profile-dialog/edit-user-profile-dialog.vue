@@ -78,8 +78,7 @@
 import { SelectButton } from "#components";
 import { pb } from "~/api/pocketbase-client";
 import type {
-  DictCitiesRecord,
-  UsersInfoResponse,
+  UserProfilesRecord,
 } from "~/types/pocketbase-types";
 import type { FormSubmitEvent } from "@primevue/forms/form";
 import { getProfileInfoResolver } from "~/schemas";
@@ -87,7 +86,7 @@ import { getProfileInfoResolver } from "~/schemas";
 const visible = defineModel<boolean>("visible");
 
 const { userInfo } = defineProps<{
-  userInfo: UsersInfoResponse<{ location: DictCitiesRecord }> | undefined;
+  userInfo: UserProfilesRecord | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -130,6 +129,7 @@ const save = async ({ valid, states }: FormSubmitEvent) => {
     .update(userInfo!.id, { ...newValues, location: cityId.value });
 
   emit("save");
+  visible.value = false
 };
 
 const resolver = getProfileInfoResolver("users");
