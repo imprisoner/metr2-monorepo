@@ -2,8 +2,8 @@
   <div>
     <h1>{{ blogPost.title }}</h1>
     <Panel class="mb-8">
-      <SmallContractorsInfoPlate
-        :contractor="blogPost.expand.contractor"
+      <SmallUserInfoPlate
+        :user-id="blogPost.user"
         class="mb-8"
       />
     </Panel>
@@ -24,23 +24,13 @@
 
 <script setup lang="ts">
 import { pb } from "~/api/pocketbase-client";
-import type {
-  ContractorsBlogPostsResponse,
-  ContractorsRecord,
-} from "~/types/pocketbase-types";
 
 const route = useRoute();
 
 const blogPostId = route.params.id as string;
 
 const getOneBlogPost = async (id: string) => {
-  const response = await pb.collection("contractors_blog_posts").getOne<
-    ContractorsBlogPostsResponse<{
-      contractor: ContractorsRecord;
-    }>
-  >(id, {
-    expand: "contractor",
-  });
+  const response = await pb.collection("contractors_blog_posts").getOne(id);
 
   return response;
 };
@@ -49,6 +39,6 @@ const blogPost = await getOneBlogPost(blogPostId);
 
 const authStore = useAuthStore();
 
-const isOwner = blogPost.contractor === authStore.userInfo?.id;
+const isOwner = blogPost.user === authStore.userInfo?.id;
 </script>
 

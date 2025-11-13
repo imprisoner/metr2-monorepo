@@ -12,7 +12,7 @@
         </div>
       </template>
       <div class="mb-8">
-        <SmallContractorsInfoPlate :contractor="post.expand.user" class="mb-8"/>
+        <SmallUserInfoPlate :user-id="post.user" class="mb-8"/>
       </div>
       <div class="content" v-html="post.content" />
     </Panel>
@@ -30,5 +30,5 @@ const post = await getOneContractorsPost(postId)
 
 const authStore = useAuthStore();
 
-const isOwner = post.contractor === authStore.userInfo?.id;
+const isOwner = post.user === authStore.userInfo?.id;
 </script>
