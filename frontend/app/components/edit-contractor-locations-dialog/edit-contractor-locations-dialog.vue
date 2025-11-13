@@ -73,7 +73,7 @@ const save = async () => {
   newCitiesIds.value?.forEach((cityId) => {
     batch.collection(coll).create({
       city: cityId,
-      contractor: authStore.userInfo?.id
+      user: authStore.userInfo?.id
     })
   })
 

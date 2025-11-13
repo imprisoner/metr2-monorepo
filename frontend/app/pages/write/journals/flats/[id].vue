@@ -9,7 +9,7 @@ import { pb } from '~/api/pocketbase-client';
 const route = useRoute();
 
 definePageMeta({
-  middleware: ['auth', 'is-user'],
+  middleware: ['auth'],
 })
 
 const flatId = route.params.id as string;

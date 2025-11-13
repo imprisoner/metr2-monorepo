@@ -140,7 +140,7 @@ const save = async () => {
 
 const cancelButtonLink =
   mode.value === "create"
-    ? `/users/${authStore.userInfo?.hrid}`
+    ? `/users/${authStore.userInfo?.username}`
     : `/journals/${articleId}`;
 </script>
 

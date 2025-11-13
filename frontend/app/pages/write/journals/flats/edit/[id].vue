@@ -12,7 +12,7 @@ import { getOneJournal } from "~/api/functions";
 import type { JournalsRecord } from "~/types/pocketbase-types";
 
 definePageMeta({
-  middleware: ['auth', 'is-user'],
+  middleware: ['auth'],
 })
 
 const articleId = useRoute().params.id as string;

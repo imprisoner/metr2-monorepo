@@ -156,14 +156,14 @@ const save = async () => {
 
   const body: {
     specialtyService?: string;
-    contractor?: string;
+    user?: string;
     priceMin: number;
     priceMax: number;
     description: string;
   } = {
     specialtyService:
       selectedService.value?.id ?? contractorsService?.specialtyService,
-    contractor: authStore.userInfo!.id,
+    user: authStore.userInfo!.id,
     priceMax: priceMax.value,
     priceMin: priceMin.value,
     description: description.value,

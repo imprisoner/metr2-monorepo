@@ -84,10 +84,7 @@ const logout = () => {
 const showLoginDialog = ref(false);
 
 const profileLink = computed(() => {
-  const collection = store.userInfo?.collectionName;
-  const id = store.userInfo?.hrid;
-
-  return `/${collection}/${id}`;
+  return `/users/${store.userInfo?.username}`;
 });
 </script>
 

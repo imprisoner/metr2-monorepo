@@ -131,12 +131,12 @@ const save = async () => {
 
   isLoading.value = false;
 
-  router.push(`/${authStore.userInfo?.collectionName}/${authStore.userInfo!.hrid}`)
+  router.push(`/${authStore.userInfo?.collectionName}/${authStore.userInfo!.username}`)
 };
 
 const cancelButtonLink =
   mode.value === "create"
-    ? `/${authStore.userInfo!.collectionName}/${authStore.userInfo?.hrid}`
+    ? `/users/${authStore.userInfo!.username}`
     : `/${authStore.userInfo!.collectionName}/blog/${articleId}`;
 </script>
 

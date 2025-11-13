@@ -116,14 +116,13 @@ const onImagesUpdatedInTextEditor = (base64images: string[]) => {
 const authStore = useAuthStore();
 
 const collection = "contractors_posts";
-const authorFieldName = "contractor";
 
 const body = computed(() => ({
   title: title.value || "Без названия",
   content: content.value,
   previewImageIndex: previewImageIndex.value || 0,
   images: imageFiles.value,
-  [authorFieldName]: authStore.userInfo!.id,
+  user: authStore.userInfo!.id,
   contractorServices: selectedServices.value,
 }));
 
@@ -155,7 +154,7 @@ const save = async () => {
 
   isLoading.value = false;
 
-  router.push(`/contractors/${authStore.userInfo!.hrid}`);
+  router.push(`/users/${authStore.userInfo!.username}`);
 };
 
 const getAvailableContractorsServicesOptions = async () => {
@@ -213,7 +212,7 @@ const onRemoveDeletedService = (id: string) => {
 
 const cancelButtonLink =
   mode.value === "create"
-    ? `/contractors/${authStore.userInfo?.hrid}`
+    ? `/users/${authStore.userInfo?.username}`
     : `/contractors/posts/${articleId}`;
 </script>
 
