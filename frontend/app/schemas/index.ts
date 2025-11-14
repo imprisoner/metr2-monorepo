@@ -76,7 +76,7 @@ export type LoginSchema = z.infer<typeof loginSchema> & Record<string, unknown>;
 export const loginFormResolver = zodResolver(loginSchema);
 
 const passwordSchema = z
-  .string()
+  .string(requiredFieldMessage)
   .regex(/^[a-zA-Z0-9!@#$%^&*]+$/, "Только латинские буквы")
   .min(8, { message: 'Минимум 8 символов' })
   .max(20, { message: 'Максимум 20 символов' })
@@ -95,8 +95,9 @@ const registerSchema = z
   .object({
     email: z.email(wrongValueMessage).nonempty(requiredFieldMessage),
     password: passwordSchema,
-    passwordConfirm: z.string(),
+    passwordConfirm: z.string(requiredFieldMessage),
     name: z.string(wrongValueMessage).min(2, "Не менее 2-х символов"),
+    role: z.string()
   }).refine((data) => data.password === data.passwordConfirm, {
     message: 'Неверный повторный ввод',
     path: ['passwordConfirm'],

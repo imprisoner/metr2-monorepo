@@ -1,6 +1,6 @@
 <template>
   <Form v-slot="$form" :resolver @submit="onFormSubmit">
-    <div class="flex flex-col gap-1 mb-2">
+    <div class="flex flex-col gap-1 mb-4">
       <label
         for="email"
         class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
@@ -15,7 +15,7 @@
         >{{ $form.email.error?.message }}</Message
       >
     </div>
-    <div class="flex flex-col gap-1 mb-2">
+    <div class="flex flex-col gap-1 mb-4">
       <label
         for="password"
         class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
@@ -36,7 +36,7 @@
         >{{ $form.password.error?.message }}</Message
       >
     </div>
-    <div class="flex flex-col gap-1 mb-2">
+    <div class="flex flex-col gap-1 mb-4">
       <label
         class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
         >Повторите пароль</label
@@ -45,7 +45,6 @@
         name="passwordConfirm"
         placeholder="Пароль"
         :toggle-mask="true"
-        class="mb-4"
         fluid
         :feedback="false"
       />
@@ -57,7 +56,7 @@
         >{{ $form.passwordConfirm.error?.message }}</Message
       >
     </div>
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1 mb-4">
       <label
         class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
         >Ваше имя</label
@@ -66,7 +65,6 @@
         name="name"
         placeholder="Введите имя"
         :toggle-mask="true"
-        class="mb-4"
         fluid
         :feedback="false"
       />
@@ -77,6 +75,22 @@
         variant="simple"
         >{{ $form.name.error?.message }}</Message
       >
+    </div>
+    <div class="flex gap-1 items-center justify-between mb-4">
+      <label
+        class="block text-surface-900 dark:text-surface-0 font-medium text-xl"
+        >Я подрядчик</label
+      >
+      <Checkbox
+        name="role"
+        binary
+        size="large"
+        placeholder="Я подрядчик"
+        :toggle-mask="true"
+        :feedback="false"
+        :true-value="UsersRoleOptions.contractor"
+        :false-value="UsersRoleOptions.owner"
+      />
     </div>
 
     <div class="flex flex-col gap-4 items-center">
@@ -101,10 +115,7 @@ import {
   registerFormResolver as resolver,
   type RegisterSchema,
 } from "~/schemas";
-
-const { collection } = defineProps<{
-  collection: "contractors" | "users";
-}>();
+import { UsersRoleOptions } from "~/types/pocketbase-types";
 
 const emit = defineEmits<{
   (e: "success"): void;
@@ -117,8 +128,8 @@ const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
   const data = values as RegisterSchema;
 
   try {
-    await registerWithEmailAndPassword(collection, data);
-    await authenticateWithEmail(collection, {
+    await registerWithEmailAndPassword(data);
+    await authenticateWithEmail({
       email: data.email,
       password: data.password,
     });

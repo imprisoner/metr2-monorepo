@@ -5,11 +5,6 @@
         class="w-full bg-surface-0 dark:bg-surface-900 p-8 sm:px-20"
         style="border-radius: 53px"
       >
-        <SelectButton
-          v-model="userType"
-          :options="userTypeOptions"
-          class="mb-8"
-        />
         <template v-if="!showRegister">
           <LoginForm
             :collection="collection"
@@ -47,7 +42,6 @@ import type { ClientResponseError } from "pocketbase";
 const visible = defineModel<boolean>("visible", { required: true });
 
 const userType = ref("Я владелец");
-const userTypeOptions = ref(["Я владелец", "Я подрядчик"]);
 
 const collection = computed(() => {
   return userType.value === "Я владелец" ? "users" : "contractors";

@@ -224,19 +224,17 @@ export const saveUserAvatar = async (
 };
 
 export const authenticateWithEmail = async (
-  collection: string,
   { email, password }: LoginSchema
 ) => {
   await pb
-    .collection(collection)
+    .collection("users")
     .authWithPassword(email, password, { expand: "location" });
 };
 
 export const authenticateWithProvider = async (
-  collection: string,
   provider: (typeof OAUTH_PROVIDERS)[number]
 ) => {
-  await pb.collection(collection).authWithOAuth2({
+  await pb.collection("users").authWithOAuth2({
     provider,
     query: {
       expand: "location",
@@ -245,14 +243,14 @@ export const authenticateWithProvider = async (
 };
 
 export const registerWithEmailAndPassword = async (
-  collection: string,
-  { email, name, password, passwordConfirm: repeatPassword }: RegisterSchema
+  { email, name, password, passwordConfirm: repeatPassword, role }: RegisterSchema
 ) => {
-  await pb.collection(collection).create({
+  await pb.collection("users").create({
     email: email,
     name: name,
     password: password,
     passwordConfirm: repeatPassword,
+    role
   });
 };
 
