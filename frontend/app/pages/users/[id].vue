@@ -22,10 +22,7 @@
           />
         </template>
         <!--  -->
-        <ProfileFlatsSection
-          :user-id="userResponse.id"
-          :is-owner="isOwner"
-        />
+        <ProfileFlatsSection :user-id="userResponse.id" :is-owner="isOwner" />
         <ProfileBlogSection
           :user-id="userResponse.id"
           :is-owner="isOwner"
@@ -66,16 +63,11 @@ const username = useRoute().params.id as string;
 const userResponse = ref(await getUserProfile(username));
 
 const userProfile = computed(() => ({
+  username: userResponse.value.username,
+  name: userResponse.value.name,
   ...userResponse.value.expand.user_profiles_via_user,
   location: userResponse.value.expand.location,
 }));
-
-if (import.meta.server) {
-  console.log('Server: ', userProfile.value)
-}
-if (import.meta.client) {
-  console.log('Client: ', userProfile.value)
-}
 
 const authStore = useAuthStore();
 
@@ -93,8 +85,16 @@ const showEditProfileDialog = () => {
   editProfileDialogVisibility.value = true;
 };
 
+const { push } = useRouter();
+
 const onNewData = async () => {
-  userResponse.value = await getUserProfile(username);
+  userResponse.value = await getUserProfile(authStore.userInfo!.username);
+  console.log(userResponse.value.username !== username);
+  // redirect if username has changed
+  if (userResponse.value.username !== username) {
+    console.log("redirect");
+    push(`/users/${userResponse.value.username}`);
+  }
 };
 </script>
 

@@ -10,25 +10,18 @@ const latinOnlyWithNumbersSchema = z
   .regex(/^[a-zA-Z0-9]+$/, "Недопустимый символ")
   .nonempty(requiredFieldMessage);
 
-export const userNicknameSchema = latinOnlyWithNumbersSchema.superRefine(
+export const usernameSchema = latinOnlyWithNumbersSchema.superRefine(
   async (userInput, ctx) => {
     try {
-      const collection =
-        pb.authStore!.record!.collectionName === "users"
-          ? "users_info"
-          : "contractors_info";
+      const collection = "users"
 
       const userId = pb.authStore!.record!.id;
-      const userFieldName =
-        pb.authStore!.record!.collectionName === "users"
-          ? "user"
-          : "contractor";
 
       const response = await pb
         .collection(collection)
-        .getFirstListItem(`nickname = "${userInput}"`);
+        .getFirstListItem(`username = "${userInput}"`);
 
-      if (response[userFieldName] !== userId) {
+      if (response.id !== userId) {
         ctx.addIssue("Никнейм уже занят");
       }
     } catch (err) {
@@ -45,14 +38,7 @@ export const getProfileInfoResolver = (collection: "users" | "contractors") => {
     collection === "contractors" ? z.number() : undefined;
 
   const schemaObj = {
-    displayName: z
-      .string()
-      .regex(/^[^0-9]*$/, { message: "Цифры запрещены" })
-      .nonempty({ message: requiredFieldMessage })
-      .min(1, { message: requiredFieldMessage }),
-    nickname: userNicknameSchema,
     about: z.string(),
-    location: z.string(),
     gender: z.string(),
     age: z.number(),
     experienceYears: experienceYearsSchema,
@@ -85,7 +71,7 @@ const loginSchema = z.object({
   password: z.string(wrongValueMessage).nonempty(requiredFieldMessage),
 });
 
-export type LoginSchema = z.infer<typeof loginSchema> & Record<string, any>;
+export type LoginSchema = z.infer<typeof loginSchema> & Record<string, unknown>;
 
 export const loginFormResolver = zodResolver(loginSchema);
 

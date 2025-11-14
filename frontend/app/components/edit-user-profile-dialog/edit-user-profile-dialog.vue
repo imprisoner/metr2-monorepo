@@ -13,24 +13,24 @@
             <div class="flex flex-col md:flex-row gap-4">
               <label class="flex flex-wrap gap-2 w-full">
                 <span>Имя</span>
-                <InputText type="text" name="displayName" />
+                <InputText type="text" name="name" />
                 <Message
-                  v-if="$form.displayName?.invalid"
+                  v-if="$form.name?.invalid"
                   severity="error"
                   size="small"
                   variant="simple"
-                  >{{ $form.displayName.error?.message }}</Message
+                  >{{ $form.name.error?.message }}</Message
                 >
               </label>
               <label class="flex flex-wrap gap-2 w-full">
                 <span>Никнейм</span>
-                <InputText name="nickname" type="text" />
+                <InputText name="username" type="text" />
                 <Message
-                  v-if="$form.nickname?.invalid"
+                  v-if="$form.username?.invalid"
                   severity="error"
                   size="small"
                   variant="simple"
-                  >{{ $form.nickname.error?.message }}</Message
+                  >{{ $form.username.error?.message }}</Message
                 >
               </label>
             </div>
@@ -44,7 +44,7 @@
               <label class="flex flex-wrap gap-2 w-full">
                 <span>Город</span>
                 <CitySearchSingle
-                  :initial-city="userInfo?.expand.location"
+                  :initial-city="userInfo?.location"
                   @change="onCityChange"
                 />
               </label>
@@ -78,6 +78,7 @@
 import { SelectButton } from "#components";
 import { pb } from "~/api/pocketbase-client";
 import type {
+  DictCitiesRecord,
   UserProfilesRecord,
 } from "~/types/pocketbase-types";
 import type { FormSubmitEvent } from "@primevue/forms/form";
@@ -86,7 +87,11 @@ import { getProfileInfoResolver } from "~/schemas";
 const visible = defineModel<boolean>("visible");
 
 const { userInfo } = defineProps<{
-  userInfo: UserProfilesRecord | undefined;
+  userInfo: UserProfilesRecord & {
+    username: string;
+    name: string;
+    location: DictCitiesRecord | undefined;
+  };
 }>();
 
 const emit = defineEmits<{
@@ -99,37 +104,62 @@ const genderOptions = [
 ];
 
 const initialValues = reactive({
-  displayName: userInfo?.displayName || "",
-  nickname: userInfo?.nickname || "",
-  about: userInfo?.about || "",
-  location: userInfo?.location || "",
-  gender: userInfo?.gender || "",
-  age: userInfo?.age,
+  about: userInfo.about || "",
+  gender: userInfo.gender || "",
+  age: userInfo.age,
+  name: userInfo.name || "",
+  username: userInfo.username || "",
 });
 
-const cityId = ref<string>(userInfo?.location ?? "");
+const cityId = ref<string>(userInfo?.location?.id ?? "");
 
 const onCityChange = (id: string) => {
   cityId.value = id;
 };
 
+const accountFields = ["username", "name", "location"];
+
 const save = async ({ valid, states }: FormSubmitEvent) => {
   if (!valid) return;
 
-  const newValues = Object.keys(states).reduce((acc, field) => {
-    if (states[field]?.dirty) {
-      acc[field] = states[field].value;
+  const newValues = Object.keys(states).reduce(
+    (acc, field) => {
+      if (!states[field]?.dirty) {
+        return acc;
+      }
+
+      if (accountFields.includes(field)) {
+        acc.accountData[field] = states[field].value;
+      } else {
+        acc.profileData[field] = states[field].value;
+      }
+
+      return acc;
+    },
+    { accountData: {}, profileData: {} } as {
+      accountData: Record<string, unknown>;
+      profileData: Record<string, unknown>;
     }
+  );
 
-    return acc;
-  }, {} as Record<string, unknown>);
+  const { accountData, profileData } = newValues;
+  
+  if (cityId.value !== userInfo.location?.id) {
+    accountData.location = cityId.value
+  }
 
-  await pb
-    .collection("users_info")
-    .update(userInfo!.id, { ...newValues, location: cityId.value });
+  if (Object.keys(accountData).length !== 0) {
+    await pb.collection("users").update(userInfo.user, { ...accountData });
+  }
+
+  if (Object.keys(profileData).length !== 0) {
+    await pb
+      .collection("user_profiles")
+      .update(userInfo!.id, { ...profileData, location: cityId.value });
+  }
 
   emit("save");
-  visible.value = false
+  visible.value = false;
 };
 
 const resolver = getProfileInfoResolver("users");
