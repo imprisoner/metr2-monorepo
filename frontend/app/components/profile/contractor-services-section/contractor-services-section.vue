@@ -8,7 +8,7 @@
         @button-click="onAddServiceClick"
       />
     </template>
-    <ul v-if="services">
+    <ul v-if="services.length">
       <li v-for="service in services" :key="service.id" class="mb-4">
         <ContractorsServiceCard
           :name="service.expand.specialtyService.name"

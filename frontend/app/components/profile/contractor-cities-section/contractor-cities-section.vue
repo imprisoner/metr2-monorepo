@@ -8,7 +8,7 @@
         @button-click="showEditLocationsDialog = true"
       />
     </template>
-    <template v-if="contractorCities">
+    <template v-if="contractorCities.length">
       <Chip
         v-for="location in contractorCities"
         :key="location.id"
