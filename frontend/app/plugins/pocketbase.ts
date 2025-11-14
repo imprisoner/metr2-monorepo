@@ -1,4 +1,5 @@
 import type { AuthRecord } from "pocketbase";
+import { tryToRefreshToken } from "~/api/functions";
 import { pb } from "~/api/pocketbase-client";
 import { useAuthStore } from "~/stores/auth";
 import type { DictCitiesRecord, UsersResponse } from "~/types/pocketbase-types";
@@ -34,11 +35,7 @@ export default defineNuxtPlugin(async () => {
   });
 
   try {
-    if (pb.authStore.isValid) {
-      await pb
-        .collection(pb.authStore.record!.collectionName)
-        .authRefresh({ expand: "location" });
-    }
+    tryToRefreshToken()
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
   } catch {
     // clear the auth store on failed refresh

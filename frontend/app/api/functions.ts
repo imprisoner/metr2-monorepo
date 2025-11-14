@@ -223,9 +223,10 @@ export const saveUserAvatar = async (
   return response;
 };
 
-export const authenticateWithEmail = async (
-  { email, password }: LoginSchema
-) => {
+export const authenticateWithEmail = async ({
+  email,
+  password,
+}: LoginSchema) => {
   await pb
     .collection("users")
     .authWithPassword(email, password, { expand: "location" });
@@ -234,7 +235,7 @@ export const authenticateWithEmail = async (
 export const authenticateWithProvider = async (
   provider: (typeof OAUTH_PROVIDERS)[number]
 ) => {
-  await pb.collection("users").authWithOAuth2({
+  await pb.collection("_pb_users_auth_").authWithOAuth2({
     provider,
     query: {
       expand: "location",
@@ -242,15 +243,19 @@ export const authenticateWithProvider = async (
   });
 };
 
-export const registerWithEmailAndPassword = async (
-  { email, name, password, passwordConfirm: repeatPassword, role }: RegisterSchema
-) => {
+export const registerWithEmailAndPassword = async ({
+  email,
+  name,
+  password,
+  passwordConfirm: repeatPassword,
+  role,
+}: RegisterSchema) => {
   await pb.collection("users").create({
     email: email,
     name: name,
     password: password,
     passwordConfirm: repeatPassword,
-    role
+    role,
   });
 };
 
@@ -373,12 +378,11 @@ export const getFlatsByUser = async (userId: string) => {
   });
 
   const withImages = response.map((flat) => ({
-      ...flat,
-      images: flat.images?.map((filename) =>
-        getPocketbaseFilePath(flat, filename)
-      ),
-    }))
-
+    ...flat,
+    images: flat.images?.map((filename) =>
+      getPocketbaseFilePath(flat, filename)
+    ),
+  }));
 
   return withImages;
 };
@@ -408,5 +412,17 @@ export const getUsersBlogPosts = async (userId: string) => {
   });
 
   return withPreviewImages;
+};
+
+export const updateUser = async (id: string, data: Partial<UsersRecord>) => {
+  const response = await pb.collection("users").update(id, { ...data });
+
+  return response;
+};
+
+export const tryToRefreshToken = async () => {
+  if (pb.authStore.isValid) {
+    await pb.collection("users").authRefresh({ expand: "location" });
+  }
 };
 

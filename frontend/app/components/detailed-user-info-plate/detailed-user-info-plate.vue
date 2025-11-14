@@ -19,13 +19,21 @@
       <li><b>7</b> подписчиков</li>
     </ul>
     <div class="flex gap-4">
-      <Button
-        v-if="isOwner"
-        size="small"
-        severity="success"
-        label="Редактировать профиль"
-        @click="emit('edit-profile')"
-      />
+      <template v-if="isOwner">
+        <Button
+          size="small"
+          severity="success"
+          label="Редактировать профиль"
+          @click="emit('edit-profile')"
+        />
+        <Button
+          v-if="role === 'owner'"
+          size="small"
+          severity="info"
+          label="Стать подрядчиком"
+          @click="emit('become-contractor')"
+        />
+      </template>
       <template v-else>
         <Button size="small" severity="info" label="Подписаться" />
         <Button size="small" severity="info" label="Сообщение" />
@@ -40,6 +48,8 @@
 </template>
 
 <script setup lang="ts">
+import type { UsersRoleOptions } from '~/types/pocketbase-types';
+
 const {
   name,
   avatar = undefined,
@@ -52,10 +62,11 @@ const {
   location: string | undefined;
   lastSeen?: string;
   isOwner?: boolean;
+  role: UsersRoleOptions;
 }>();
 
 const emit = defineEmits<{
-  (e: "edit-profile" | "save-avatar"): void;
+  (e: "edit-profile" | "save-avatar" | "become-contractor"): void;
 }>();
 
 const showAddAvatarDialog = ref(false);

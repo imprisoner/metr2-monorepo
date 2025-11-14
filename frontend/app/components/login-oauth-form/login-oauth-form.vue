@@ -17,10 +17,6 @@ import type { ClientResponseError } from "pocketbase";
 import { authenticateWithProvider } from "~/api/functions";
 import { OAUTH_PROVIDERS } from "~/constants";
 
-const { collection } = defineProps<{
-  collection: "contractors" | "users";
-}>();
-
 const emit = defineEmits<{
   (e: "success"): void;
   (e: "error", error: ClientResponseError): void;
@@ -30,7 +26,7 @@ const signInWithProvider = async (
   provider: (typeof OAUTH_PROVIDERS)[number]
 ) => {
   try {
-    authenticateWithProvider(collection, provider);
+    authenticateWithProvider(provider);
     emit("success");
   } catch (error) {
     emit("error", error as ClientResponseError);

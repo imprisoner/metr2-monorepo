@@ -53,15 +53,7 @@
       >
     </div>
 
-    <!-- <div class="flex flex-col gap-4 items-center"> -->
     <Button label="Войти" class="w-full" type="submit" />
-    <!-- <span>или</span>
-      <Button
-        label="Зарегистрироваться"
-        class="w-full"
-        severity="secondary"
-      />
-    </div> -->
   </Form>
 </template>
 
@@ -73,10 +65,6 @@ import { loginFormResolver as resolver, type LoginSchema } from "~/schemas";
 
 const checked = ref(false);
 
-const { collection } = defineProps<{
-  collection: "contractors" | "users";
-}>();
-
 const emit = defineEmits<{
   (e: "success"): void;
   (e: "error", error: ClientResponseError): void;
@@ -85,7 +73,7 @@ const emit = defineEmits<{
 const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
   if (!valid) return;
   try {
-    await authenticateWithEmail(collection, values as LoginSchema);
+    await authenticateWithEmail( values as LoginSchema);
     emit("success");
   } catch (error) {
     emit("error", error as ClientResponseError);

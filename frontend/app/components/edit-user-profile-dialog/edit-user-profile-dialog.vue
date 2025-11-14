@@ -83,6 +83,7 @@ import type {
 } from "~/types/pocketbase-types";
 import type { FormSubmitEvent } from "@primevue/forms/form";
 import { getProfileInfoResolver } from "~/schemas";
+import { updateUser } from "~/api/functions";
 
 const visible = defineModel<boolean>("visible");
 
@@ -149,7 +150,7 @@ const save = async ({ valid, states }: FormSubmitEvent) => {
   }
 
   if (Object.keys(accountData).length !== 0) {
-    await pb.collection("users").update(userInfo.user, { ...accountData });
+    await updateUser(userInfo.user, accountData)
   }
 
   if (Object.keys(profileData).length !== 0) {

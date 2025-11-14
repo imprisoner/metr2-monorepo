@@ -7,7 +7,6 @@
       >
         <template v-if="!showRegister">
           <LoginForm
-            :collection="collection"
             @success="onSuccess"
             @error="onError('Не удалось аутентифицироваться', $event)"
           />
@@ -19,14 +18,12 @@
             @click="showRegister = true"
           />
           <LoginOauthForm
-            :collection="collection"
             @success="onSuccess"
             @error="onError('Не удалось аутентифицироваться', $event)"
           />
         </template>
         <template v-else>
           <RegisterForm
-            :collection="collection"
             @success="onSuccess"
             @error="onError('Не удалось зарегистрироваться', $event)"
           />
@@ -40,12 +37,6 @@
 import type { ClientResponseError } from "pocketbase";
 
 const visible = defineModel<boolean>("visible", { required: true });
-
-const userType = ref("Я владелец");
-
-const collection = computed(() => {
-  return userType.value === "Я владелец" ? "users" : "contractors";
-});
 
 const toast = useToast();
 

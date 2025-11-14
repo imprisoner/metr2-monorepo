@@ -37,8 +37,10 @@
             :location="userProfile.location?.name || 'Нет локации'"
             :name="userResponse.name"
             :is-owner="isOwner"
+            :role="userResponse.role"
             @edit-profile="showEditProfileDialog"
             @save-avatar="onNewData"
+            @become-contractor="onBecomeContractor"
           />
         </Panel>
         <Panel toggleable header="Обо мне" class="shadow-md">
@@ -56,7 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import { getUserProfile } from "~/api/functions";
+import { getUserProfile, tryToRefreshToken, updateUser } from "~/api/functions";
+import { UsersRoleOptions } from "~/types/pocketbase-types";
 
 const username = useRoute().params.id as string;
 
@@ -89,12 +92,16 @@ const { push } = useRouter();
 
 const onNewData = async () => {
   userResponse.value = await getUserProfile(authStore.userInfo!.username);
-  console.log(userResponse.value.username !== username);
   // redirect if username has changed
   if (userResponse.value.username !== username) {
-    console.log("redirect");
     push(`/users/${userResponse.value.username}`);
   }
+};
+
+const onBecomeContractor = async () => {
+  await updateUser(authStore.userInfo!.id, { role: UsersRoleOptions.contractor });
+  await tryToRefreshToken()
+  window.location.reload()
 };
 </script>
 
