@@ -11,12 +11,10 @@ export enum Collections {
 	Mfas = "_mfas",
 	Otps = "_otps",
 	Superusers = "_superusers",
-	ContractorsBlogPosts = "contractors_blog_posts",
+	BlogPosts = "blog_posts",
 	ContractorsCities = "contractors_cities",
 	ContractorsPosts = "contractors_posts",
 	ContractorsServices = "contractors_services",
-	DeprecatedContractor = "deprecated_contractor",
-	DeprecatedContractorsInfo = "deprecated_contractors_info",
 	DictBalcony = "dict_balcony",
 	DictBuildYear = "dict_build_year",
 	DictBuildingCategory = "dict_building_category",
@@ -43,7 +41,6 @@ export enum Collections {
 	Journals = "journals",
 	UserProfiles = "user_profiles",
 	Users = "users",
-	UsersBlogPosts = "users_blog_posts",
 }
 
 // Alias types for improved usability
@@ -122,9 +119,8 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
-export type ContractorsBlogPostsRecord = {
+export type BlogPostsRecord = {
 	content: HTMLString
-	contractor: RecordIdString
 	created?: IsoDateString
 	id: string
 	images?: string[]
@@ -138,7 +134,6 @@ export type ContractorsBlogPostsRecord = {
 
 export type ContractorsCitiesRecord = {
 	city: RecordIdString
-	contractor: RecordIdString
 	created?: IsoDateString
 	id: string
 	updated?: IsoDateString
@@ -147,7 +142,6 @@ export type ContractorsCitiesRecord = {
 
 export type ContractorsPostsRecord = {
 	content: HTMLString
-	contractor?: RecordIdString
 	contractorServices?: RecordIdString[]
 	created?: IsoDateString
 	id: string
@@ -161,46 +155,12 @@ export type ContractorsPostsRecord = {
 }
 
 export type ContractorsServicesRecord = {
-	contractor?: RecordIdString
 	created?: IsoDateString
 	description?: string
 	id: string
 	priceMax?: number
 	priceMin?: number
 	specialtyService: RecordIdString
-	updated?: IsoDateString
-	user: RecordIdString
-}
-
-export type DeprecatedContractorRecord = {
-	avatar?: string
-	created?: IsoDateString
-	email: string
-	emailVisibility?: boolean
-	hrid: string
-	id: string
-	name: string
-	password: string
-	tokenKey: string
-	updated?: IsoDateString
-	verified?: boolean
-}
-
-export enum DeprecatedContractorsInfoGenderOptions {
-	"male" = "male",
-	"female" = "female",
-}
-export type DeprecatedContractorsInfoRecord = {
-	about?: string
-	age?: number
-	contractor: RecordIdString
-	created?: IsoDateString
-	displayName?: string
-	experienceYears?: number
-	gender?: DeprecatedContractorsInfoGenderOptions
-	id: string
-	location?: RecordIdString
-	nickname: string
 	updated?: IsoDateString
 	user: RecordIdString
 }
@@ -397,31 +357,17 @@ export enum UsersRoleOptions {
 export type UsersRecord = {
 	avatar?: string
 	created?: IsoDateString
-	duplicated_temp?: boolean
 	email: string
 	emailVisibility?: boolean
 	id: string
 	location?: RecordIdString
 	name: string
 	password: string
-	role: UsersRoleOptions
+	role?: UsersRoleOptions
 	tokenKey: string
 	updated?: IsoDateString
 	username: string
 	verified?: boolean
-}
-
-export type UsersBlogPostsRecord = {
-	content: HTMLString
-	created?: IsoDateString
-	id: string
-	images?: string[]
-	previewImageIndex?: number
-	publishDate?: IsoDateString
-	published?: boolean
-	title: string
-	updated?: IsoDateString
-	user: RecordIdString
 }
 
 // Response types include system fields and match responses from the PocketBase API
@@ -430,12 +376,10 @@ export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRec
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type ContractorsBlogPostsResponse<Texpand = unknown> = Required<ContractorsBlogPostsRecord> & BaseSystemFields<Texpand>
+export type BlogPostsResponse<Texpand = unknown> = Required<BlogPostsRecord> & BaseSystemFields<Texpand>
 export type ContractorsCitiesResponse<Texpand = unknown> = Required<ContractorsCitiesRecord> & BaseSystemFields<Texpand>
 export type ContractorsPostsResponse<Texpand = unknown> = Required<ContractorsPostsRecord> & BaseSystemFields<Texpand>
 export type ContractorsServicesResponse<Texpand = unknown> = Required<ContractorsServicesRecord> & BaseSystemFields<Texpand>
-export type DeprecatedContractorResponse<Texpand = unknown> = Required<DeprecatedContractorRecord> & AuthSystemFields<Texpand>
-export type DeprecatedContractorsInfoResponse<Texpand = unknown> = Required<DeprecatedContractorsInfoRecord> & BaseSystemFields<Texpand>
 export type DictBalconyResponse<Texpand = unknown> = Required<DictBalconyRecord> & BaseSystemFields<Texpand>
 export type DictBuildYearResponse<Texpand = unknown> = Required<DictBuildYearRecord> & BaseSystemFields<Texpand>
 export type DictBuildingCategoryResponse<Texpand = unknown> = Required<DictBuildingCategoryRecord> & BaseSystemFields<Texpand>
@@ -462,7 +406,6 @@ export type HouseSeriesCardsResponse<Texpand = unknown> = Required<HouseSeriesCa
 export type JournalsResponse<Texpand = unknown> = Required<JournalsRecord> & BaseSystemFields<Texpand>
 export type UserProfilesResponse<Texpand = unknown> = Required<UserProfilesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
-export type UsersBlogPostsResponse<Texpand = unknown> = Required<UsersBlogPostsRecord> & BaseSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -472,12 +415,10 @@ export type CollectionRecords = {
 	_mfas: MfasRecord
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
-	contractors_blog_posts: ContractorsBlogPostsRecord
+	blog_posts: BlogPostsRecord
 	contractors_cities: ContractorsCitiesRecord
 	contractors_posts: ContractorsPostsRecord
 	contractors_services: ContractorsServicesRecord
-	deprecated_contractor: DeprecatedContractorRecord
-	deprecated_contractors_info: DeprecatedContractorsInfoRecord
 	dict_balcony: DictBalconyRecord
 	dict_build_year: DictBuildYearRecord
 	dict_building_category: DictBuildingCategoryRecord
@@ -504,7 +445,6 @@ export type CollectionRecords = {
 	journals: JournalsRecord
 	user_profiles: UserProfilesRecord
 	users: UsersRecord
-	users_blog_posts: UsersBlogPostsRecord
 }
 
 export type CollectionResponses = {
@@ -513,12 +453,10 @@ export type CollectionResponses = {
 	_mfas: MfasResponse
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
-	contractors_blog_posts: ContractorsBlogPostsResponse
+	blog_posts: BlogPostsResponse
 	contractors_cities: ContractorsCitiesResponse
 	contractors_posts: ContractorsPostsResponse
 	contractors_services: ContractorsServicesResponse
-	deprecated_contractor: DeprecatedContractorResponse
-	deprecated_contractors_info: DeprecatedContractorsInfoResponse
 	dict_balcony: DictBalconyResponse
 	dict_build_year: DictBuildYearResponse
 	dict_building_category: DictBuildingCategoryResponse
@@ -545,7 +483,6 @@ export type CollectionResponses = {
 	journals: JournalsResponse
 	user_profiles: UserProfilesResponse
 	users: UsersResponse
-	users_blog_posts: UsersBlogPostsResponse
 }
 
 // Type for usage with type asserted PocketBase instance
@@ -557,12 +494,10 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: '_mfas'): RecordService<MfasResponse>
 	collection(idOrName: '_otps'): RecordService<OtpsResponse>
 	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
-	collection(idOrName: 'contractors_blog_posts'): RecordService<ContractorsBlogPostsResponse>
+	collection(idOrName: 'blog_posts'): RecordService<BlogPostsResponse>
 	collection(idOrName: 'contractors_cities'): RecordService<ContractorsCitiesResponse>
 	collection(idOrName: 'contractors_posts'): RecordService<ContractorsPostsResponse>
 	collection(idOrName: 'contractors_services'): RecordService<ContractorsServicesResponse>
-	collection(idOrName: 'deprecated_contractor'): RecordService<DeprecatedContractorResponse>
-	collection(idOrName: 'deprecated_contractors_info'): RecordService<DeprecatedContractorsInfoResponse>
 	collection(idOrName: 'dict_balcony'): RecordService<DictBalconyResponse>
 	collection(idOrName: 'dict_build_year'): RecordService<DictBuildYearResponse>
 	collection(idOrName: 'dict_building_category'): RecordService<DictBuildingCategoryResponse>
@@ -589,5 +524,4 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'journals'): RecordService<JournalsResponse>
 	collection(idOrName: 'user_profiles'): RecordService<UserProfilesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
-	collection(idOrName: 'users_blog_posts'): RecordService<UsersBlogPostsResponse>
 }

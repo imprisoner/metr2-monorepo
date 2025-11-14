@@ -1,6 +1,6 @@
 import {
   Collections,
-  type ContractorsBlogPostsResponse,
+  type BlogPostsResponse,
   type ContractorsCitiesResponse,
   type ContractorsServicesResponse,
   type DictCitiesRecord,
@@ -8,7 +8,6 @@ import {
   type DictSpecialtyServicesRecord,
   type HouseSeriesCardsResponse,
   type JournalsResponse,
-  type UsersBlogPostsResponse,
   type UsersRecord,
   type UsersResponse,
 } from "~/types/pocketbase-types";
@@ -177,7 +176,7 @@ export const getContractorsResponse = async ({
 
   const computedFilter =
     'role = "contractor"' + (filter ? ` && ${filter}` : "");
-  console.log(computedFilter);
+
   const params = {
     sort: sortBy?.join(","),
     expand: expandWithDefaults.join(","),
@@ -330,33 +329,6 @@ export const getContractorPortfolio = async (userId: string) => {
   return withPreviewImages;
 };
 
-export const getContractorsBlogPosts = async (userId: string) => {
-  const response = await pb
-    .collection("contractors_blog_posts")
-    .getFullList<ContractorsBlogPostsResponse<UsersRecord>>({
-      expand: "users_via_user",
-      filter: `user="${userId}"`,
-    });
-
-  const withPreviewImages = response.map((article) => {
-    let previewImage;
-
-    if (article.images) {
-      previewImage = getPocketbaseFilePath(
-        article,
-        article.images[article.previewImageIndex]!
-      );
-    }
-
-    return {
-      ...article,
-      previewImage,
-    };
-  });
-
-  return withPreviewImages;
-};
-
 export const getUserProfile = async (username: string) => {
   const expand = ["location", "user_profiles_via_user"].join(",");
 
@@ -387,10 +359,10 @@ export const getFlatsByUser = async (userId: string) => {
   return withImages;
 };
 
-export const getUsersBlogPosts = async (userId: string) => {
+export const getBlogPosts = async (userId: string) => {
   const response = await pb
-    .collection("users_blog_posts")
-    .getFullList<UsersBlogPostsResponse<{ users_via_user: UsersRecord }>>({
+    .collection("blog_posts")
+    .getFullList<BlogPostsResponse<{ users_via_user: UsersRecord }>>({
       expand: "users_via_user",
       filter: `user="${userId}"`,
     });

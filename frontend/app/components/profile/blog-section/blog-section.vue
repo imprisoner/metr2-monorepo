@@ -27,17 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { getContractorsBlogPosts, getUsersBlogPosts } from "~/api/functions";
-import type { UsersRecord } from "~/types/pocketbase-types";
+import { getBlogPosts } from "~/api/functions";
 
-const { role, userId } = defineProps<{
+const {  userId } = defineProps<{
   userId: string;
-  role: UsersRecord['role'] 
   isOwner: boolean;
 }>();
 
-const getPostLink = (id: string) => role == 'owner' ? `/users/blog/${id}` : `/contractors/blog/${id}`
+const getPostLink = (id: string) => `/users/blog/${id}`
 
-const blogArticles = await (role === 'owner' ? getUsersBlogPosts(userId) : getContractorsBlogPosts(userId))
+const blogArticles = await getBlogPosts(userId)
 </script>
 

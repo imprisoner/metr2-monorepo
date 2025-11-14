@@ -3,7 +3,7 @@
     <template #header>
       <div class="overflow-hidden rounded-t-lg">
         <img
-          v-if="flat.images.length"
+          v-if="flat.images?.length"
           :src="flat.images[0]"
           class="w-full object-cover"
         />

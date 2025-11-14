@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import type { ClientResponseError } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
-import type { ContractorsBlogPostsRecord, UsersBlogPostsRecord } from "~/types/pocketbase-types";
+import type { BlogPostsRecord } from "~/types/pocketbase-types";
 
 definePageMeta({
   middleware: ["auth"],
@@ -18,17 +18,10 @@ definePageMeta({
 
 const articleId = useRoute().params.id as string;
 
-const authStore = useAuthStore();
-
-const collection =
-  authStore.userInfo!.collectionName === "users"
-    ? "users_blog_posts"
-    : "contractors_blog_posts";
-
-let articleRecord: UsersBlogPostsRecord | ContractorsBlogPostsRecord;
+let articleRecord: BlogPostsRecord;
 
 try {
-  articleRecord = await pb.collection(collection).getOne(articleId);
+  articleRecord = await pb.collection("blog_posts").getOne(articleId);
 } catch (err) {
   throw createError(err as ClientResponseError);
 }

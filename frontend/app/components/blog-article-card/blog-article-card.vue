@@ -1,5 +1,7 @@
 <template>
-  <Card class="w-full mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+  <Card
+    class="w-full mx-auto shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+  >
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
         <template v-if="post.previewImage">
@@ -30,13 +32,10 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ContractorsBlogPostsRecord,
-  UsersBlogPostsRecord,
-} from "~/types/pocketbase-types";
+import type { BlogPostsRecord } from "~/types/pocketbase-types";
 
 const { post } = defineProps<{
-  post: (UsersBlogPostsRecord | ContractorsBlogPostsRecord) & {
+  post: BlogPostsRecord & {
     previewImage: string | undefined;
   };
   link: string;

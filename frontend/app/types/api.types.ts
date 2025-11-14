@@ -8,7 +8,7 @@ import type {
   DictSpecialtyServicesRecord,
   FlatsRecord,
   UserProfilesRecord,
-  UsersBlogPostsRecord,
+  BlogPostsRecord,
   UsersRecord,
   UsersResponse,
 } from "./pocketbase-types";
@@ -42,7 +42,7 @@ export type UsersPageResponse = UsersResponse<{
   location: DictCitiesRecord | undefined;
   flats_via_user: FlatsRecord[] | undefined;
   user_profiles_via_user: UserProfilesRecord;
-  users_blog_posts_via_user: UsersBlogPostsRecord[] | undefined;
+  blog_posts_via_user: BlogPostsRecord[] | undefined;
 }>;
 
 export type UserProfileExpandLocation = UsersResponse<{

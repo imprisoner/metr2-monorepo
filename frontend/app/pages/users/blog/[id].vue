@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { pb } from "~/api/pocketbase-client";
 import type {
-  UsersBlogPostsResponse,
+  BlogPostsResponse,
   UsersRecord,
 } from "~/types/pocketbase-types";
 
@@ -32,8 +32,8 @@ const blogPostId = route.params.id as string;
 
 const getOneBlogPost = async (id: string) => {
   const response = await pb
-    .collection("users_blog_posts")
-    .getOne<UsersBlogPostsResponse<UsersRecord>>(id, {
+    .collection("blog_posts")
+    .getOne<BlogPostsResponse<UsersRecord>>(id, {
       expand: "user",
     });
   return response;

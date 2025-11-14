@@ -90,15 +90,12 @@ const onImagesUpdatedInTextEditor = (base64images: string[]) => {
 
 const authStore = useAuthStore()
 
-const collection = authStore.userInfo!.collectionName === 'users' ? 'users_blog_posts' : 'contractors_blog_posts'
-const authorFieldName = authStore.userInfo!.collectionName === 'users' ? 'user' : 'contractor'
-
 const body = computed(() => ({
   title: title.value || "Без названия",
   content: content.value,
   previewImageIndex: previewImageIndex.value || 0,
   images: imageFiles.value,
-  [authorFieldName]: authStore.userInfo!.id
+  user: authStore.userInfo!.id
 }));
 
 const router = useRouter();
@@ -111,10 +108,10 @@ const save = async () => {
   isLoading.value = true;
 
   if (mode.value === 'create') {
-    response = await pb.collection(collection).create(body.value);
+    response = await pb.collection("blog_posts").create(body.value);
   } else {
     response = await pb
-      .collection(collection)
+      .collection("blog_posts")
       .update(articleId!, body.value);
   }
 
@@ -125,18 +122,18 @@ const save = async () => {
     }
   );
 
-  await pb.collection(collection).update(response.id, {
+  await pb.collection("blog_posts").update(response.id, {
     content: contentWithReplacedImages,
   });
 
   isLoading.value = false;
 
-  router.push(`/${authStore.userInfo?.collectionName}/${authStore.userInfo!.username}`)
+  router.push(`/users/${authStore.userInfo!.username}`)
 };
 
 const cancelButtonLink =
   mode.value === "create"
     ? `/users/${authStore.userInfo!.username}`
-    : `/${authStore.userInfo!.collectionName}/blog/${articleId}`;
+    : `/users/blog/${articleId}`;
 </script>
 

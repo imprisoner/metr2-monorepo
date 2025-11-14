@@ -19,7 +19,7 @@
           v-for="contractor in contractors"
           :key="contractor.id"
           :contractor-info="contractor"
-          :services="contractor.expand.contractors_services_via_contractor"
+          :services="contractor.expand.contractors_services_via_user"
           class="mb-8"
         />
       </template>
