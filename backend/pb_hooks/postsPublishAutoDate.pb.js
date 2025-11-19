@@ -12,4 +12,4 @@ onRecordUpdateRequest((e) => {
   }
 
   e.next()
-}, "journals", "users_blog_posts", "contractors_blog_posts", "contractors_posts")
+}, "posts")
