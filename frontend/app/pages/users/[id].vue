@@ -15,20 +15,14 @@
             :user-id="userResponse.id"
             :is-owner="isOwner"
           />
-          <!--  -->
-          <ProfileContractorPortfolioSection
-            :user-id="userResponse.id"
-            :is-owner="isOwner"
-          />
         </template>
         <!--  -->
         <ProfileFlatsSection :user-id="userResponse.id" :is-owner="isOwner" />
-        <ProfileBlogSection
+        <ProfilePostsSection
           :user-id="userResponse.id"
           :is-owner="isOwner"
-          :role="userResponse.role"
+          :user-role="userResponse.role"
         />
-        <!--  -->
       </template>
       <template #right>
         <Panel class="shadow-md h-fit">
@@ -99,9 +93,11 @@ const onNewData = async () => {
 };
 
 const onBecomeContractor = async () => {
-  await updateUser(authStore.userInfo!.id, { role: UsersRoleOptions.contractor });
-  await tryToRefreshToken()
-  window.location.reload()
+  await updateUser(authStore.userInfo!.id, {
+    role: UsersRoleOptions.contractor,
+  });
+  await tryToRefreshToken();
+  window.location.reload();
 };
 </script>
 

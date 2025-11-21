@@ -13,11 +13,7 @@
       pt:content:class="grid grid-cols-3 gap-4 max-sm:grid-cols-1 max-lg:grid-cols-2"
       class="shadow-md"
     >
-      <JournalCard
-        v-for="journal in journals"
-        :key="journal.id"
-        :journal="journal"
-      />
+      <PostCard v-for="post in posts" :key="post.id" :post="post" />
       <template #footer>
         <p
           v-if="!isLastPage"
@@ -45,8 +41,11 @@ const initialFilter = {
   value: typedEntry[1],
 };
 
-const { journals, isLastPage, next, updateFilters, onPageChange } =
-  useJournalsList(`flat.${initialFilter.field}="${initialFilter.value}"`);
+const { posts, isLastPage, next, updateFilters, onPageChange } = usePostsList(
+  "journal",
+  `post_flats_via_post.flat.${initialFilter.field}="${initialFilter.value}"`
+);
 
 await onPageChange({ currentPage: 1 });
 </script>
+

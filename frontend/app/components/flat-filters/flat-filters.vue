@@ -62,7 +62,7 @@ const filterString = computed(() => {
     .map(([field, values]) => {
       if (values.length === 0) return null;
       const orConditions = values
-        .map((value) => `flat.${field}="${value}"`)
+        .map((value) => `post_flats_via_post.flat.${field}="${value}"`)
         .join(" || ");
       return `(${orConditions})`;
     })
@@ -82,6 +82,3 @@ watch(
   { deep: true, immediate: true }
 );
 </script>
-
-<style></style>
-

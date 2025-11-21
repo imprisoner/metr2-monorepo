@@ -1,4 +1,5 @@
 import type {
+  CollectionResponses,
   DictBuildingCategoryRecord,
   DictFinishingRecord,
   DictFlatTypeRecord,
@@ -67,3 +68,4 @@ export interface FlatFilter {
   )[];
 }
 
+export type CollectionName = keyof CollectionResponses

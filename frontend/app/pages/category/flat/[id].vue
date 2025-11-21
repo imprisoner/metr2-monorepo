@@ -30,21 +30,19 @@
         </li>
       </ul>
     </Panel>
-    <Panel pt:content:class="grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4">
+    <Panel
+      pt:content:class="grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
+    >
       <template #header>
         <PanelHeaderWithControls
           text="Бортжурналы"
           button-label="Добавить статью"
           :button-link="`/write/journals/flats/${flat.id}`"
-          :controls-show-condition="!!(isOwner && journals.length)"
+          :controls-show-condition="!!(isOwner && posts.length)"
         />
       </template>
-      <template v-if="journals.length">
-        <JournalCard
-          v-for="journal in journals"
-          :key="journal.id"
-          :journal="journal"
-        />
+      <template v-if="posts.length">
+        <PostCard v-for="post in posts" :key="post.id" :post="post" />
       </template>
       <NoItemsSection
         v-else
@@ -76,7 +74,7 @@ import {
   type DictHouseSeriesRecord,
   type DictSquareM2Record,
   type FlatsResponse,
-  type JournalsRecord,
+  type PostFlatsRecord,
   type UsersRecord,
 } from "~/types/pocketbase-types";
 
@@ -88,13 +86,22 @@ interface Expand {
   flatType: DictFlatTypeRecord;
   finishing: DictFinishingRecord;
   squareM2: DictSquareM2Record;
-  journals_via_flat?: JournalsRecord[] | undefined;
+  post_flats_via_flat?: PostFlatsRecord[] | undefined;
 }
+
+const expand: (keyof Expand)[] = [
+  "user",
+  "squareM2",
+  "post_flats_via_flat",
+  "houseSeries",
+  "flatType",
+  "finishing",
+];
 
 const flat = await pb
   .collection(Collections.Flats)
   .getOne<FlatsResponse<Expand>>(route.params.id as string, {
-    expand: "user,houseSeries,flatType,finishing,squareM2,journals_via_flat",
+    expand: expand.join(","),
   });
 
 const images = flat.images.map((filename) => {
@@ -103,8 +110,18 @@ const images = flat.images.map((filename) => {
 
 const titleImageUrl = images[0];
 
-const { journals, isLastPage, next, onPageChange } = useJournalsList(`flat="${flat.id}"`);
-await onPageChange({currentPage: 1})
+const filterString = flat.expand.post_flats_via_flat
+  ?.map((record) => `id = "${record.post}"`)
+  .join(" || ");
+
+const { posts, isLastPage, next, onPageChange } = usePostsList(
+  "journal",
+  filterString
+);
+
+if (flat.expand.post_flats_via_flat) {
+  await onPageChange({ currentPage: 1 });
+}
 
 const authStore = useAuthStore();
 

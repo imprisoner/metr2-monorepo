@@ -18,12 +18,8 @@
       class="shadow-md"
       pt:content:class="grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
     >
-      <template v-if="journals.length">
-        <JournalCard
-          v-for="journal in journals"
-          :key="journal.id"
-          :journal="journal"
-        />
+      <template v-if="posts.length">
+        <PostCard v-for="post in posts" :key="post.id" :post="post" />
       </template>
       <NoItemsSection
         v-else
@@ -73,8 +69,10 @@ const seriesCard = {
   title: houseSeriesCardResponse.expand.houseSeries.name,
 };
 
-const { isLastPage, journals, next, onPageChange, updateFilters } =
-  useJournalsList(`flat.${initialFilter.field}="${initialFilter.value}"`);
+const { isLastPage, posts, next, onPageChange, updateFilters } = usePostsList(
+  "journal",
+  `post_flats_via_post.flat.${initialFilter.field}="${initialFilter.value}"`,
+);
 
 await onPageChange({ currentPage: 1 });
 </script>
