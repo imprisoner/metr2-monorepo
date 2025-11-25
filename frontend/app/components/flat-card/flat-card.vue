@@ -16,14 +16,6 @@
           flat.nickname
         }}</NuxtLink>
         <div v-if="isOwner" class="flex gap-2 flex-col sm:flex-row">
-          <Button v-slot="slotProps" as-child>
-            <NuxtLink
-              :class="slotProps.class"
-              :to="`/write/journals/flats/${flat.id}`"
-            >
-              Написать в бортжурнал
-            </NuxtLink>
-          </Button>
           <Button
             label="Редактировать"
             severity="info"

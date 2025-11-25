@@ -58,14 +58,19 @@
             <span>{{ comments }}</span>
           </div>
         </div>
-        <span class="text-gray-400 text-xs">{{ post.publishDate }}</span>
+        <span
+          v-if="post.status !== PostsStatusOptions.draft && post.publishDate !== ''"
+          class="text-gray-400 text-xs"
+          >{{ new Date(post.publishDate).toLocaleDateString('ru-RU') }}</span
+        >
+        <Badge v-else value="Черновик" />
       </div>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import type { PostsRecord } from "~/types/pocketbase-types";
+import { PostsStatusOptions, type PostsRecord } from "~/types/pocketbase-types";
 
 const { post } = defineProps<{ post: PostsRecord }>();
 
@@ -74,13 +79,10 @@ const comments = 0;
 
 let coverImageUrl = undefined;
 
-const imageCount = post.images?.length ?? 0
+const imageCount = post.images?.length ?? 0;
 
 if (imageCount > 0) {
-  coverImageUrl = getPocketbaseFilePath(
-    post,
-    post.images![0]!
-  );
+  coverImageUrl = getPocketbaseFilePath(post, post.images![0]!);
 }
 </script>
 

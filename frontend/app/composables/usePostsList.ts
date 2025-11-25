@@ -4,20 +4,29 @@ import type { PostsRecord, UsersRecord } from "~/types/pocketbase-types";
 
 const PAGE_SIZE = 3;
 
-type ExpandableRelations = "post_flats_via_post" | "post_services_via_post" | "post_flats_via_post.flat" | "post_services_via_post.services"
+type ExpandableRelations =
+  | "post_flats_via_post"
+  | "post_services_via_post"
+  | "post_flats_via_post.flat"
+  | "post_services_via_post.services";
 
 export const usePostsList = (
   type?: "journal" | "blog" | "portfolio",
   initialFilters?: string,
-  expand: (CollectionName | ExpandableRelations)[] = []
+  expand: (CollectionName | ExpandableRelations)[] = [],
+  showDrafts: boolean = false
 ) => {
   const filters = ref<string | undefined>(initialFilters);
 
   const computedFilters = computed(() => {
     const typeFilter = type ? `type = "${type}"` : "";
     const restFilters = filters.value ? ` && (${filters.value})` : "";
+    const draftFilter = `status != "draft"`;
 
-    return typeFilter + restFilters;
+    const filterString =
+      typeFilter + restFilters + (showDrafts ? draftFilter : "");
+
+    return filterString;
   });
 
   const fetchPosts = async (page: number) => {

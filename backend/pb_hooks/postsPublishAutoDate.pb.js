@@ -1,15 +1,15 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-onRecordUpdateRequest((e) => {
-  const originalRecord = e.record.original()
-  const newRecord = e.record
+// onRecordUpdateRequest((e) => {
+//   const originalRecord = e.record.original()
+//   const newRecord = e.record
   
-  const isPublished = originalRecord.get("published")
-  const willPublishNow = newRecord.get("published")
+//   const isPublished = originalRecord.get("published")
+//   const willPublishNow = newRecord.get("published")
 
-  if (!isPublished && willPublishNow) {
-    newRecord.set("publishDate", new Date())
-  }
+//   if (!isPublished && willPublishNow) {
+//     newRecord.set("publishDate", new Date())
+//   }
 
-  e.next()
-}, "posts")
+//   e.next()
+// }, "posts")

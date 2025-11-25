@@ -114,17 +114,18 @@ const filterString = flat.expand.post_flats_via_flat
   ?.map((record) => `id = "${record.post}"`)
   .join(" || ");
 
+const authStore = useAuthStore();
+const isOwner = authStore.userInfo?.id === flat.user;
+
 const { posts, isLastPage, next, onPageChange } = usePostsList(
   "journal",
-  filterString
+  filterString,
+  undefined,
+  isOwner
 );
 
 if (flat.expand.post_flats_via_flat) {
   await onPageChange({ currentPage: 1 });
 }
-
-const authStore = useAuthStore();
-
-const isOwner = authStore.userInfo?.id === flat.user;
 </script>
 

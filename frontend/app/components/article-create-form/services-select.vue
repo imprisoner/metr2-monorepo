@@ -8,7 +8,14 @@
       :loading="isLoading"
       fluid
       placeholder="Выберите услуги"
-    />
+      display="chip"
+    >
+      <template #option="slotProps">
+        <div :class="{ 'text-gray-300': slotProps.option.deleted }">
+          {{ slotProps.option.name }}
+        </div>
+      </template>
+    </MultiSelect>
     <Message
       v-if="fieldState && fieldState.invalid"
       severity="error"
@@ -21,10 +28,10 @@
 
 <script setup lang="ts">
 import type { FormFieldState } from "@primevue/forms/form";
-import { getContractorServices } from "~/api/functions";
+import { getContractorServices, getServicesByIds } from "~/api/functions";
 
-defineProps<{
-  fieldState?: FormFieldState;
+const { fieldState } = defineProps<{
+  fieldState: FormFieldState | undefined;
 }>();
 
 const isLoading = ref(false);
@@ -39,9 +46,38 @@ const getOptions = async () => {
   const response = await getContractorServices(userId);
 
   isLoading.value = false;
-  return response.map((item) => item.expand.specialtyService);
+
+  const options = response.map((item) => ({
+    ...item.expand.specialtyService,
+    deleted: false,
+  }));
+
+  return options;
 };
 
-const options = await getOptions();
+const options = ref(await getOptions());
+
+watch(() => fieldState?.value, async (newValue, oldValue) => {
+  if (oldValue || !newValue) {
+    return;
+  }
+  
+  const deletedServicesIds = fieldState?.value.filter((id: string) => {
+    return !options.value.find(
+      (item) => item.id === id
+    )
+  }) ?? [];
+  
+  if (deletedServicesIds.length > 0) {
+    const deleted = (await getServicesByIds(deletedServicesIds)).map(
+      (item) => ({
+        ...item,
+        deleted: true,
+      })
+    );
+
+    options.value = [...options.value, ...deleted];
+  }
+}, { immediate: true });
 </script>
 

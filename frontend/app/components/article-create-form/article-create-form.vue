@@ -1,6 +1,7 @@
 <template>
   <Panel header="Редактировать запись" pt:content:class="flex flex-col gap-8">
     <Form
+      ref="articleForm"
       v-slot="$form"
       class="flex flex-col gap-4 w-full"
       :initial-values
@@ -8,17 +9,22 @@
       @submit="onFormSubmit"
     >
       <!-- Flat select -->
-      <ArticleCreateFormFlatSelect
-        v-if="isJournal"
-        class="flex flex-col gap-1"
-        :field-state="$form.flat"
-      />
-
+      <div v-if="isJournal" class="flex flex-col gap-2">
+        <label class="font-semibold text-surface-500" for="title"
+          >Выберите квартиру</label
+        >
+        <ArticleCreateFormFlatSelect
+          class="flex flex-col gap-1"
+          :field-state="$form.flat"
+        />
+      </div>
       <!--  -->
-      <ArticleCreateFormServicesSelect
-        v-if="isPortfolio"
-        :field-state="$form.services"
-      />
+      <div v-if="isPortfolio" class="flex flex-col gap-2">
+        <label class="font-semibold text-surface-500" for="title"
+          >Выберите связанные услуги</label
+        >
+        <ArticleCreateFormServicesSelect :field-state="$form.services" />
+      </div>
 
       <div class="flex flex-col gap-2">
         <label class="font-semibold text-surface-500" for="title"
@@ -51,11 +57,17 @@
 </template>
 
 <script setup lang="ts">
+import type { FormInstance } from "@primevue/forms";
 import type { FormSubmitEvent } from "@primevue/forms/form";
 import { ClientResponseError } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
 import { articleResolver } from "~/schemas";
-import { PostsTypeOptions, type PostsRecord } from "~/types/pocketbase-types";
+import {
+  PostsStatusOptions,
+  PostsTypeOptions,
+  type PostsRecord,
+} from "~/types/pocketbase-types";
+import { throttle } from "~~/shared/utils";
 
 const { post } = defineProps<{
   post: PostsRecord;
@@ -95,7 +107,7 @@ if (isJournal) {
     console.error("Error fetching related flat:", e);
 
     if (e instanceof ClientResponseError && e.status === 404) {
-      relatedInitialValues = {};
+      relatedInitialValues = { flat: undefined };
     }
   }
 }
@@ -111,7 +123,8 @@ if (isPortfolio) {
     console.error("Error fetching related services:", e);
 
     if (e instanceof ClientResponseError && e.status === 404) {
-      relatedInitialValues = {};
+      console.log("here we go");
+      relatedInitialValues = { services: [] };
     }
   }
 }
@@ -119,47 +132,40 @@ if (isPortfolio) {
 const initialValues = reactive({
   title: title.value,
   content: content.value,
-  images: imageFiles.value ?? [],
   ...relatedInitialValues,
 });
+
 const resolver = articleResolver(post.type!);
 
 const router = useRouter();
 
 const isLoading = ref(false);
 
+interface ArticleData {
+  title: string;
+  content: string;
+  flat?: string;
+  services?: string[];
+}
+
 const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
   if (!valid) {
     return;
   }
 
-  const { title, content, images, flat, services } = values as {
-    title: string;
-    content: string;
-    images: File[];
-    flat?: string;
-    services?: string[];
-  };
+  const { title, content, flat, services } = values as ArticleData;
 
   isLoading.value = true;
 
-  if (isJournal) {
-    createOrUpdatePostFlatsRecord(flat!)
-  }
-
-  if (isPortfolio) {
-    createOrUpdatePostServicesRecord(services!)
-  }
-
-  const response = await updatePostContent({title, content, images})
-
-  const contentWithReplacedImages = replaceAllImageSrcs(content, (_, index) => {
-    return getPocketbaseFilePath(response, response.images[index]!);
-  });
-
-  await pb.collection("posts").update(response.id, {
-    content: contentWithReplacedImages,
-  });
+  saveFullPostWithRelatedEntities(
+    {
+      title,
+      content,
+      flat,
+      services,
+    },
+    true
+  );
 
   isLoading.value = false;
   router.push(`/users/${authStore.userInfo!.username}`);
@@ -194,13 +200,68 @@ async function createOrUpdatePostServicesRecord(servicesIds: string[]) {
 }
 
 async function updatePostContent(data: Record<string, unknown>) {
-  const response = await pb
-    .collection("posts")
-    .update(post.id, data);
+  const response = await pb.collection("posts").update(post.id, data);
 
   return response;
 }
 
+async function saveFullPostWithRelatedEntities(
+  { content, title, flat, services }: ArticleData,
+  shouldPublish: boolean = false
+) {
+  if (isJournal) {
+    createOrUpdatePostFlatsRecord(flat!);
+  }
 
+  if (isPortfolio) {
+    createOrUpdatePostServicesRecord(services!);
+  }
+
+  const response = await updatePostContent({
+    title,
+    content,
+    images: imageFiles.value,
+  });
+
+  const contentWithReplacedImages = replaceAllImageSrcs(content, (_, index) => {
+    return getPocketbaseFilePath(response, response.images[index]!);
+  });
+
+  await updatePostContent({
+    content: contentWithReplacedImages,
+    status: shouldPublish
+      ? PostsStatusOptions.published
+      : PostsStatusOptions.draft,
+  });
+}
+
+const articleForm = ref<FormInstance>();
+
+const autosave = throttle(async (states) => {
+  await saveFullPostWithRelatedEntities(states);
+}, 5000);
+
+watch(
+  () => articleForm.value?.states,
+  () => {
+    if (articleForm.value === undefined) return;
+
+    const data = Object.keys(articleForm.value.states).reduce(
+      (acc, key: string) => {
+        acc[key as keyof ArticleData] = articleForm.value!.states[key]!.value;
+        return acc;
+      },
+      {} as ArticleData
+    );
+
+    autosave({...data, images: imageFiles.value});
+  },
+  { deep: true }
+);
+
+// setInterval(() => {
+//   console.log('submit')
+//   console.log(articleForm.value?.states)
+// }, 5000)
 </script>
 

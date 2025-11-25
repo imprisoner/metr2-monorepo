@@ -31,7 +31,7 @@
 import { getPostsList } from "~/api/functions";
 import { PostsTypeOptions, type PostsRecord } from "~/types/pocketbase-types";
 
-const { userId, userRole } = defineProps<{
+const { userId, userRole, isOwner } = defineProps<{
   userId: string;
   isOwner: boolean;
   userRole: "owner" | "contractor";
@@ -62,11 +62,13 @@ const defaultTypeValue =
 
 const postsType = ref<PostsTypeOptions>(defaultTypeValue);
 
+const draftFilter = 'status != "draft"'
+
 const fetchPosts = async () => {
   const { items } = await getPostsList({
     page: 1,
     perPage: 100,
-    filter: `type="${postsType.value}" && author="${userId}"`,
+    filter: `type="${postsType.value}" && author="${userId}" ${isOwner ? (' && ' + draftFilter) : ''}`,
     isShortContent: true,
   });
 

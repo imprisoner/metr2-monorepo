@@ -349,3 +349,13 @@ export const getOnePost = async (id: string) => {
 
   return response;
 };
+
+export const getServicesByIds = async (ids: string[]) => {
+  const filterString = ids.map((id) => `id = "${id}"`).join(" || ");
+
+  const response = await pb.collection("dict_specialty_services").getFullList({
+    filter: filterString,
+  });
+
+  return response;
+}
