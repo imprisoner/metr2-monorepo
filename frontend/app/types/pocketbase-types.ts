@@ -29,6 +29,7 @@ export enum Collections {
 	DictLayout = "dict_layout",
 	DictObjectStatus = "dict_object_status",
 	DictParking = "dict_parking",
+	DictPostTags = "dict_post_tags",
 	DictPricePerM2 = "dict_price_per_m2",
 	DictRegions = "dict_regions",
 	DictServiceCategories = "dict_service_categories",
@@ -39,6 +40,9 @@ export enum Collections {
 	Flats = "flats",
 	HouseSeriesCards = "house_series_cards",
 	Journals = "journals",
+	PostFlats = "post_flats",
+	PostServices = "post_services",
+	Posts = "posts",
 	UserProfiles = "user_profiles",
 	Users = "users",
 }
@@ -241,6 +245,14 @@ export type DictParkingRecord = {
 	name: string
 }
 
+export type DictPostTagsRecord = {
+	created?: IsoDateString
+	description?: string
+	id: string
+	name?: string
+	updated?: IsoDateString
+}
+
 export type DictPricePerM2Record = {
 	id: string
 	name: string
@@ -336,6 +348,45 @@ export type JournalsRecord = {
 	user: RecordIdString
 }
 
+export type PostFlatsRecord = {
+	flat: RecordIdString
+	id: string
+	post: RecordIdString
+}
+
+export type PostServicesRecord = {
+	id: string
+	post: RecordIdString
+	services?: RecordIdString[]
+}
+
+export enum PostsTypeOptions {
+	"blog" = "blog",
+	"journal" = "journal",
+	"portfolio" = "portfolio",
+}
+
+export enum PostsStatusOptions {
+	"draft" = "draft",
+	"published" = "published",
+	"pending" = "pending",
+}
+export type PostsRecord = {
+	author?: RecordIdString
+	content?: HTMLString
+	created?: IsoDateString
+	id: string
+	images?: string[]
+	journal?: RecordIdString
+	portfolio?: RecordIdString
+	publishDate?: IsoDateString
+	status?: PostsStatusOptions
+	tags?: RecordIdString[]
+	title: string
+	type?: PostsTypeOptions
+	updated?: IsoDateString
+}
+
 export enum UserProfilesGenderOptions {
 	"male" = "male",
 	"female" = "female",
@@ -394,6 +445,7 @@ export type DictHouseSeriesResponse<Texpand = unknown> = Required<DictHouseSerie
 export type DictLayoutResponse<Texpand = unknown> = Required<DictLayoutRecord> & BaseSystemFields<Texpand>
 export type DictObjectStatusResponse<Texpand = unknown> = Required<DictObjectStatusRecord> & BaseSystemFields<Texpand>
 export type DictParkingResponse<Texpand = unknown> = Required<DictParkingRecord> & BaseSystemFields<Texpand>
+export type DictPostTagsResponse<Texpand = unknown> = Required<DictPostTagsRecord> & BaseSystemFields<Texpand>
 export type DictPricePerM2Response<Texpand = unknown> = Required<DictPricePerM2Record> & BaseSystemFields<Texpand>
 export type DictRegionsResponse<Texpand = unknown> = Required<DictRegionsRecord> & BaseSystemFields<Texpand>
 export type DictServiceCategoriesResponse<Texpand = unknown> = Required<DictServiceCategoriesRecord> & BaseSystemFields<Texpand>
@@ -404,6 +456,9 @@ export type DictStoreysResponse<Texpand = unknown> = Required<DictStoreysRecord>
 export type FlatsResponse<Texpand = unknown> = Required<FlatsRecord> & BaseSystemFields<Texpand>
 export type HouseSeriesCardsResponse<Texpand = unknown> = Required<HouseSeriesCardsRecord> & BaseSystemFields<Texpand>
 export type JournalsResponse<Texpand = unknown> = Required<JournalsRecord> & BaseSystemFields<Texpand>
+export type PostFlatsResponse<Texpand = unknown> = Required<PostFlatsRecord> & BaseSystemFields<Texpand>
+export type PostServicesResponse<Texpand = unknown> = Required<PostServicesRecord> & BaseSystemFields<Texpand>
+export type PostsResponse<Texpand = unknown> = Required<PostsRecord> & BaseSystemFields<Texpand>
 export type UserProfilesResponse<Texpand = unknown> = Required<UserProfilesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -433,6 +488,7 @@ export type CollectionRecords = {
 	dict_layout: DictLayoutRecord
 	dict_object_status: DictObjectStatusRecord
 	dict_parking: DictParkingRecord
+	dict_post_tags: DictPostTagsRecord
 	dict_price_per_m2: DictPricePerM2Record
 	dict_regions: DictRegionsRecord
 	dict_service_categories: DictServiceCategoriesRecord
@@ -443,6 +499,9 @@ export type CollectionRecords = {
 	flats: FlatsRecord
 	house_series_cards: HouseSeriesCardsRecord
 	journals: JournalsRecord
+	post_flats: PostFlatsRecord
+	post_services: PostServicesRecord
+	posts: PostsRecord
 	user_profiles: UserProfilesRecord
 	users: UsersRecord
 }
@@ -471,6 +530,7 @@ export type CollectionResponses = {
 	dict_layout: DictLayoutResponse
 	dict_object_status: DictObjectStatusResponse
 	dict_parking: DictParkingResponse
+	dict_post_tags: DictPostTagsResponse
 	dict_price_per_m2: DictPricePerM2Response
 	dict_regions: DictRegionsResponse
 	dict_service_categories: DictServiceCategoriesResponse
@@ -481,6 +541,9 @@ export type CollectionResponses = {
 	flats: FlatsResponse
 	house_series_cards: HouseSeriesCardsResponse
 	journals: JournalsResponse
+	post_flats: PostFlatsResponse
+	post_services: PostServicesResponse
+	posts: PostsResponse
 	user_profiles: UserProfilesResponse
 	users: UsersResponse
 }
@@ -512,6 +575,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'dict_layout'): RecordService<DictLayoutResponse>
 	collection(idOrName: 'dict_object_status'): RecordService<DictObjectStatusResponse>
 	collection(idOrName: 'dict_parking'): RecordService<DictParkingResponse>
+	collection(idOrName: 'dict_post_tags'): RecordService<DictPostTagsResponse>
 	collection(idOrName: 'dict_price_per_m2'): RecordService<DictPricePerM2Response>
 	collection(idOrName: 'dict_regions'): RecordService<DictRegionsResponse>
 	collection(idOrName: 'dict_service_categories'): RecordService<DictServiceCategoriesResponse>
@@ -522,6 +586,9 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'flats'): RecordService<FlatsResponse>
 	collection(idOrName: 'house_series_cards'): RecordService<HouseSeriesCardsResponse>
 	collection(idOrName: 'journals'): RecordService<JournalsResponse>
+	collection(idOrName: 'post_flats'): RecordService<PostFlatsResponse>
+	collection(idOrName: 'post_services'): RecordService<PostServicesResponse>
+	collection(idOrName: 'posts'): RecordService<PostsResponse>
 	collection(idOrName: 'user_profiles'): RecordService<UserProfilesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

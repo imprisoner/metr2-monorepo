@@ -5,9 +5,9 @@
     <!-- Header slot: Image -->
     <template #header>
       <div class="relative overflow-hidden h-[200px] rounded-t-lg flex">
-        <template v-if="image">
+        <template v-if="coverImageUrl">
           <img
-            :src="image"
+            :src="coverImageUrl"
             alt="post image"
             class="w-full object-cover"
           />
@@ -25,21 +25,19 @@
 
     <!-- Title slot -->
     <template #title>
-      <NuxtLink :to="`/contractors/posts/${postId}`">
-        <h2 class="font-bold text-base/5 line-clamp-2 h-[40px]">
-          {{ title }}
-        </h2>
-      </NuxtLink>
+      <h6 class="font-bold text-base/5 line-clamp-2 h-10">
+        {{ post.title }}
+      </h6>
     </template>
 
     <!-- Content slot -->
     <template #content>
-      <p v-if="text" class="text-gray-700 text-sm relative">
+      <p class="text-gray-700 text-sm relative">
         <span class="line-clamp-4">
-          {{ text }}
+          {{ post.content }}
         </span>
         <NuxtLink
-          :to="`/contractors/posts/${postId}`"
+          :to="`/posts/${post.id}`"
           class="text-blue-600 font-medium cursor-pointer flex w-fit ms-auto"
         >
           Читать дальше
@@ -60,24 +58,31 @@
             <span>{{ comments }}</span>
           </div>
         </div>
-        <span class="text-gray-400 text-xs">{{ publishDate }}</span>
+        <span
+          v-if="post.status !== PostsStatusOptions.draft && post.publishDate !== ''"
+          class="text-gray-400 text-xs"
+          >{{ new Date(post.publishDate).toLocaleDateString('ru-RU') }}</span
+        >
+        <Badge v-else value="Черновик" />
       </div>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-interface ContractorPostCardProps {
-  image: string;
-  postId: string;
-  imageCount?: number;
-  title: string;
-  text?: string;
-  likes: number;
-  comments: number;
-  publishDate: string;
-}
+import { PostsStatusOptions, type PostsRecord } from "~/types/pocketbase-types";
 
-defineProps<ContractorPostCardProps>();
+const { post } = defineProps<{ post: PostsRecord }>();
+
+const likes = 0;
+const comments = 0;
+
+let coverImageUrl = undefined;
+
+const imageCount = post.images?.length ?? 0;
+
+if (imageCount > 0) {
+  coverImageUrl = getPocketbaseFilePath(post, post.images![0]!);
+}
 </script>
 

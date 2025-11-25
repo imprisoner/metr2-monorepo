@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import type { ClientResponseError } from "pocketbase";
-import { getOneJournal } from "~/api/functions";
+import { getOneJournal_DEPRECATED } from "~/api/functions";
 import type { JournalsRecord } from "~/types/pocketbase-types";
 
 definePageMeta({
@@ -20,7 +20,7 @@ const articleId = useRoute().params.id as string;
 let articleRecord: JournalsRecord
 
 try {
-  articleRecord = await getOneJournal(articleId);
+  articleRecord = await getOneJournal_DEPRECATED(articleId);
 } catch (err) {
   throw showError(err as ClientResponseError);
 }

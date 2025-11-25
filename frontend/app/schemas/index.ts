@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { pb } from "~/api/pocketbase-client";
+import { PostsTypeOptions } from "~/types/pocketbase-types";
+import type { ClientResponseError } from "pocketbase";
 
 const requiredFieldMessage = "Поле обязательно";
 const wrongValueMessage = "Неверное значение";
@@ -13,7 +15,7 @@ const latinOnlyWithNumbersSchema = z
 export const usernameSchema = latinOnlyWithNumbersSchema.superRefine(
   async (userInput, ctx) => {
     try {
-      const collection = "users"
+      const collection = "users";
 
       const userId = pb.authStore!.record!.id;
 
@@ -24,10 +26,10 @@ export const usernameSchema = latinOnlyWithNumbersSchema.superRefine(
       if (response.id !== userId) {
         ctx.addIssue("Никнейм уже занят");
       }
-    } catch (err) {
-      console.log(err.status);
-      if (err.status !== 404) {
-        throw err;
+    } catch (e) {
+      const error = e as ClientResponseError
+      if (error.status !== 404) {
+        throw error;
       }
     }
   }
@@ -78,18 +80,20 @@ export const loginFormResolver = zodResolver(loginSchema);
 const passwordSchema = z
   .string(requiredFieldMessage)
   .regex(/^[a-zA-Z0-9!@#$%^&*]+$/, "Только латинские буквы")
-  .min(8, { message: 'Минимум 8 символов' })
-  .max(20, { message: 'Максимум 20 символов' })
+  .min(8, { message: "Минимум 8 символов" })
+  .max(20, { message: "Максимум 20 символов" })
   .refine((password) => /[A-Z]/.test(password), {
-    message: 'Минимум одна заглавная буква',
+    message: "Минимум одна заглавная буква",
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: 'Минимум одна строчная буква',
+    message: "Минимум одна строчная буква",
   })
-  .refine((password) => /[0-9]/.test(password), { message: 'Минимум одна цифра' })
+  .refine((password) => /[0-9]/.test(password), {
+    message: "Минимум одна цифра",
+  })
   .refine((password) => /[!@#$%^&*]/.test(password), {
     message: "Минимум один специальный символ",
-  })
+  });
 
 const registerSchema = z
   .object({
@@ -97,12 +101,41 @@ const registerSchema = z
     password: passwordSchema,
     passwordConfirm: z.string(requiredFieldMessage),
     name: z.string(wrongValueMessage).min(2, "Не менее 2-х символов"),
-    role: z.string()
-  }).refine((data) => data.password === data.passwordConfirm, {
-    message: 'Неверный повторный ввод',
-    path: ['passwordConfirm'],
+    role: z.string(),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Неверный повторный ввод",
+    path: ["passwordConfirm"],
   });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
 
 export const registerFormResolver = zodResolver(registerSchema);
+
+const commonArticleSchema = z.object({
+  title: z.string().min(1, { message: "Заголовок обязателен" }),
+  content: z.string(),
+});
+
+const journalSchema = commonArticleSchema.extend({
+  flat: z.string('Квартира обязательна').min(1, 'Квартира обязательна'),
+});
+
+const portfolioSchema = commonArticleSchema.extend({
+  services: z.array(z.string('Услуги обязательны')).min(1, 'Услуги обязательны'),
+});
+
+export const articleResolver = (postType: PostsTypeOptions) => {
+  let schema = commonArticleSchema;
+
+  if (postType === PostsTypeOptions.journal) {
+    schema = journalSchema;
+  }
+
+  if (postType === PostsTypeOptions.portfolio) {
+    schema = portfolioSchema;
+  }
+
+  return zodResolver(schema);
+};
+

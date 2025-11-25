@@ -7,15 +7,13 @@ import {
   type DictHouseSeriesRecord,
   type DictSpecialtyServicesRecord,
   type HouseSeriesCardsResponse,
-  type JournalsResponse,
+  type PostsResponse,
   type UsersRecord,
   type UsersResponse,
 } from "~/types/pocketbase-types";
 import { pb } from "./pocketbase-client";
 import type {
   UserProfileExpandLocation,
-  ContractorsPostsResponseWithExpand,
-  ContractorsPostWithContractor,
   ContractorWithUserInfoAndServices,
   ServiceCategorysWithSpecialties,
   SpecialtyRecordWithServices,
@@ -24,42 +22,7 @@ import type { FlatFilter } from "~/types/common.types";
 import type { LoginSchema, RegisterSchema } from "~/schemas";
 import type { OAUTH_PROVIDERS } from "~/constants";
 
-export const getJournalsResponse = async <E>({
-  page = 1,
-  perPage = 10,
-  sortBy = undefined,
-  expand = undefined,
-  fields = ["*"],
-  isShortContent = false,
-  filter = undefined,
-}: {
-  page?: number;
-  perPage?: number;
-  sortBy?: string[];
-  expand?: string[];
-  fields?: string[];
-  isShortContent?: boolean;
-  filter?: string;
-}) => {
-  if (isShortContent) {
-    fields.push("content:excerpt(100,true)");
-  }
-
-  const params = {
-    sort: sortBy?.join(","),
-    expand: expand?.join(","),
-    fields: fields?.join(","),
-    filter,
-  };
-
-  const response = await pb
-    .collection(Collections.Journals)
-    .getList<JournalsResponse<E>>(page, perPage, params);
-
-  return response;
-};
-
-export const getOneJournal = async (id: string) => {
+export const getOneJournal_DEPRECATED = async (id: string) => {
   const response = await pb.collection(Collections.Journals).getOne(id);
 
   return response;
@@ -118,15 +81,6 @@ export const getAllContractorServices = async <E>(id: string) => {
       expand: "specialtyService",
     });
 
-  return response;
-};
-
-export const getOneContractorsPost = async (id: string) => {
-  const response = await pb
-    .collection(Collections.ContractorsPosts)
-    .getOne<ContractorsPostWithContractor>(id, {
-      expand: "contractor",
-    });
   return response;
 };
 
@@ -258,21 +212,6 @@ export const registerWithEmailAndPassword = async ({
   });
 };
 
-export const getContractorProfile = async (username: string) => {
-  const expand = ["location", "user_profiles_via_user"].join(",");
-
-  const response = await pb
-    .collection(Collections.Users)
-    .getFirstListItem<UserProfileExpandLocation>(`username = "${username}"`, {
-      expand,
-    });
-
-  if (response.avatar !== "") {
-    response.avatar = getPocketbaseFilePath(response, response.avatar);
-  }
-  return response;
-};
-
 export const getContractorServices = async (userId: string) => {
   const expand = ["specialtyService"].join(",");
 
@@ -299,34 +238,6 @@ export const getContractorCities = async (userId: string) => {
     });
 
   return response;
-};
-
-export const getContractorPortfolio = async (userId: string) => {
-  const response = await pb
-    .collection(Collections.ContractorsPosts)
-    .getList<ContractorsPostsResponseWithExpand>(1, 10, {
-      filter: `user="${userId}"`,
-      expand: "contractorServices",
-      fields: "*,content:excerpt(100,true)",
-    });
-
-  const withPreviewImages = response.items.map((article) => {
-    let previewImage;
-
-    if (article.images) {
-      previewImage = getPocketbaseFilePath(
-        article,
-        article.images[article.previewImageIndex]!
-      );
-    }
-
-    return {
-      ...article,
-      previewImage,
-    };
-  });
-
-  return withPreviewImages;
 };
 
 export const getUserProfile = async (username: string) => {
@@ -359,7 +270,7 @@ export const getFlatsByUser = async (userId: string) => {
   return withImages;
 };
 
-export const getBlogPosts = async (userId: string) => {
+export const getBlogPosts_DEPRECATED = async (userId: string) => {
   const response = await pb
     .collection("blog_posts")
     .getFullList<BlogPostsResponse<{ users_via_user: UsersRecord }>>({
@@ -398,3 +309,53 @@ export const tryToRefreshToken = async () => {
   }
 };
 
+export const getPostsList = async <E>({
+  page = 1,
+  perPage = 10,
+  sortBy = undefined,
+  expand = undefined,
+  fields = ["*"],
+  isShortContent = false,
+  filter = undefined,
+}: {
+  page?: number;
+  perPage?: number;
+  sortBy?: string[];
+  expand?: string[];
+  fields?: string[];
+  isShortContent?: boolean;
+  filter?: string;
+}) => {
+  if (isShortContent) {
+    fields.push("content:excerpt(100,true)");
+  }
+
+  const params = {
+    sort: sortBy?.join(","),
+    expand: expand?.join(","),
+    fields: fields?.join(","),
+    filter,
+  };
+
+  const response = await pb
+    .collection(Collections.Posts)
+    .getList<PostsResponse<E>>(page, perPage, params);
+
+  return response;
+};
+
+export const getOnePost = async (id: string) => {
+  const response = await pb.collection(Collections.Posts).getOne(id);
+
+  return response;
+};
+
+export const getServicesByIds = async (ids: string[]) => {
+  const filterString = ids.map((id) => `id = "${id}"`).join(" || ");
+
+  const response = await pb.collection("dict_specialty_services").getFullList({
+    filter: filterString,
+  });
+
+  return response;
+}

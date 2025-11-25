@@ -9,10 +9,10 @@
       <Panel
         pt:content:class="xl:grid xl:grid-cols-3 md:grid md:grid-cols-2 gap-4 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-4"
       >
-        <JournalCard
-          v-for="journal in journals"
-          :key="journal.id"
-          :journal="journal"
+        <PostCard
+          v-for="post in posts"
+          :key="post.id"
+          :post="post"
         />
         <template #footer>
           <p
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-const { isLastPage, journals, next, onPageChange } = useJournalsList();
+const { isLastPage, posts, next, onPageChange } = usePostsList();
 
 await onPageChange({ currentPage: 1 });
 </script>

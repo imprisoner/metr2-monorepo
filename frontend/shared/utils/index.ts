@@ -10,7 +10,7 @@ export const capitalizeFirstLetter = (str: string) => {
  * @param html - The input HTML string.
  * @returns An array of src values found in <img> tags.
  */
-export function extractImageSrcs(html: string): string[] {
+export function extractImageSrcs(html: string = ""): string[] {
   const srcs: string[] = [];
   const imgTagRegex = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
 
@@ -53,7 +53,7 @@ export function base64ToFile(base64Data: string, fileName: string): File {
  * @returns The updated HTML string.
  */
 export function replaceAllImageSrcs(
-  html: string,
+  html: string = "",
   replacer: (oldSrc: string, index: number) => string
 ): string {
   let imgIndex = 0;
@@ -165,3 +165,37 @@ export const getPocketbaseFilePath = (
 
   return result;
 };
+
+export function throttle<T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  let lastCall = Date.now();
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let lastArgs: any[] | null = null;
+
+  return function (...args: Parameters<T>) {
+    const now = Date.now();
+    const remaining = delay - (now - lastCall);
+    if (remaining <= 0) {
+      // Execute immediately
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      lastCall = now;
+      fn(...args);
+    } else {
+      // Schedule for later
+      lastArgs = args;
+      if (!timeoutId) {
+        timeoutId = setTimeout(() => {
+          lastCall = Date.now();
+          timeoutId = null;
+          if (lastArgs) fn(...lastArgs);
+          lastArgs = null;
+        }, remaining);
+      }
+    }
+  };
+}

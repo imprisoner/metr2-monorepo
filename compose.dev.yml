@@ -6,6 +6,7 @@ services:
     container_name: metr2-backend
     volumes:
       - ./backend/pb_data:/pb/pb_data
+      - ./backend/pb_migrations:/pb/pb_migrations
     networks:
       - metr2-net
     ports:
@@ -22,8 +23,6 @@ services:
     container_name: metr2-frontend
     volumes:
       - ./frontend:/usr/src/app
-    #   - /app/node_modules
-    #   - /app/.nuxt
     networks:
       - metr2-net
 
