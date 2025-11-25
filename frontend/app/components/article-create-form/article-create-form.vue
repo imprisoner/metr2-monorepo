@@ -231,7 +231,7 @@ async function saveFullPostWithRelatedEntities(
     content: contentWithReplacedImages,
     status: shouldPublish
       ? PostsStatusOptions.published
-      : PostsStatusOptions.draft,
+      : undefined,
   });
 }
 
@@ -258,10 +258,5 @@ watch(
   },
   { deep: true }
 );
-
-// setInterval(() => {
-//   console.log('submit')
-//   console.log(articleForm.value?.states)
-// }, 5000)
 </script>
 
