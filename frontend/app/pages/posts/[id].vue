@@ -7,7 +7,7 @@
           <ButtonLink
             v-if="isOwner"
             label="Редактировать статью"
-            :to="`/write/portfolio/edit/${postId}`"
+            :to="`/write?edit=${post.id}`"
           />
         </div>
       </template>

@@ -10,7 +10,7 @@ export const capitalizeFirstLetter = (str: string) => {
  * @param html - The input HTML string.
  * @returns An array of src values found in <img> tags.
  */
-export function extractImageSrcs(html: string): string[] {
+export function extractImageSrcs(html: string = ""): string[] {
   const srcs: string[] = [];
   const imgTagRegex = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
 
@@ -53,7 +53,7 @@ export function base64ToFile(base64Data: string, fileName: string): File {
  * @returns The updated HTML string.
  */
 export function replaceAllImageSrcs(
-  html: string,
+  html: string = "",
   replacer: (oldSrc: string, index: number) => string
 ): string {
   let imgIndex = 0;

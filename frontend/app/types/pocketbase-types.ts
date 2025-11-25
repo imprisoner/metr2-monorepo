@@ -382,7 +382,7 @@ export type PostsRecord = {
 	publishDate?: IsoDateString
 	status?: PostsStatusOptions
 	tags?: RecordIdString[]
-	title?: string
+	title: string
 	type?: PostsTypeOptions
 	updated?: IsoDateString
 }

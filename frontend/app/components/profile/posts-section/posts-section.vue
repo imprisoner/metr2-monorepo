@@ -1,13 +1,18 @@
 <template>
   <Panel class="shadow-md" pt:content:class="flex flex-col gap-4">
     <template #header>
-      <PanelHeaderWithControls
-        text="Посты"
-        :controls-show-condition="isOwner && !!posts.length"
-        button-label="Добавить статью"
-        button-link="/write"
-      />
-      <Select v-model="postsType" :options="postsTypeOptions" option-label="label" option-value="value"/>
+      <PanelHeaderWithControls text="Посты" :controls-show-condition="false" button-label="ffdsf">
+        <template v-if="isOwner && !!posts.length">
+          <Select
+            v-model="postsType"
+            :options="postsTypeOptions"
+            option-label="label"
+            option-value="value"
+            size="small"
+          />
+          <CreatePostMenu />
+        </template>
+      </PanelHeaderWithControls>
     </template>
     <template v-if="posts.length">
       <PostCard v-for="post in posts" :key="post.id" :post="post" />
@@ -62,7 +67,7 @@ const fetchPosts = async () => {
     page: 1,
     perPage: 100,
     filter: `type="${postsType.value}" && author="${userId}"`,
-    isShortContent: true
+    isShortContent: true,
   });
 
   return items;
@@ -76,5 +81,7 @@ watch(
     posts.value = await fetchPosts();
   }
 );
+
+// create post button
 </script>
 
