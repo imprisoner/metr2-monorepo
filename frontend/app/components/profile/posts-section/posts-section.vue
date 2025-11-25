@@ -69,12 +69,14 @@ const postsType = ref<PostsTypeOptions>(defaultTypeValue);
 const draftFilter = 'status != "draft"';
 
 const fetchPosts = async () => {
+  const filter = `type="${postsType.value}" && author="${userId}" ${
+      isOwner ? "" : " && " + draftFilter
+    }`
+    
   const { items } = await getPostsList({
     page: 1,
     perPage: 100,
-    filter: `type="${postsType.value}" && author="${userId}" ${
-      isOwner ? "" : " && " + draftFilter
-    }`,
+    filter,
     isShortContent: true,
   });
 
