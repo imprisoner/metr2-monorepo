@@ -1,7 +1,11 @@
 <template>
   <Panel class="shadow-md" pt:content:class="flex flex-col gap-4">
     <template #header>
-      <PanelHeaderWithControls text="Посты" :controls-show-condition="false" button-label="ffdsf">
+      <PanelHeaderWithControls
+        text="Посты"
+        :controls-show-condition="false"
+        button-label="ffdsf"
+      >
         <template v-if="isOwner && !!posts.length">
           <Select
             v-model="postsType"
@@ -62,13 +66,15 @@ const defaultTypeValue =
 
 const postsType = ref<PostsTypeOptions>(defaultTypeValue);
 
-const draftFilter = 'status != "draft"'
+const draftFilter = 'status != "draft"';
 
 const fetchPosts = async () => {
   const { items } = await getPostsList({
     page: 1,
     perPage: 100,
-    filter: `type="${postsType.value}" && author="${userId}" ${isOwner ? (' && ' + draftFilter) : ''}`,
+    filter: `type="${postsType.value}" && author="${userId}" ${
+      isOwner ? "" : " && " + draftFilter
+    }`,
     isShortContent: true,
   });
 
