@@ -69,3 +69,20 @@ export interface FlatFilter {
 }
 
 export type CollectionName = keyof CollectionResponses
+
+// @blocknote
+
+export interface StyledText {
+  type: "text" | "link";
+  text: string;
+  href?: string;
+  styles?: {
+    bold?: boolean;
+    italic?: boolean;
+    underline?: boolean;
+    strike?: boolean;
+    code?: boolean;
+    textColor?: string;
+    backgroundColor?: string;
+  };
+}

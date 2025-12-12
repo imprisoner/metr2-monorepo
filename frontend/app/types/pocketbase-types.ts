@@ -49,7 +49,9 @@ export enum Collections {
 
 // Alias types for improved usability
 export type IsoDateString = string
+export type IsoAutoDateString = string & { readonly autodate: unique symbol }
 export type RecordIdString = string
+export type FileNameString = string & { readonly filename: unique symbol }
 export type HTMLString = string
 
 type ExpandType<T> = unknown extends T
@@ -76,96 +78,96 @@ export type AuthSystemFields<T = unknown> = {
 
 export type AuthoriginsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	fingerprint: string
 	id: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type ExternalauthsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	provider: string
 	providerId: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type MfasRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	method: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type OtpsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	password: string
 	recordRef: string
 	sentTo?: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type SuperusersRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
 	password: string
 	tokenKey: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	verified?: boolean
 }
 
 export type BlogPostsRecord = {
 	content: HTMLString
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
-	images?: string[]
+	images?: FileNameString[]
 	previewImageIndex?: number
 	publishDate?: IsoDateString
 	published?: boolean
 	title: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
 export type ContractorsCitiesRecord = {
 	city: RecordIdString
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
 export type ContractorsPostsRecord = {
 	content: HTMLString
 	contractorServices?: RecordIdString[]
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
-	images?: string[]
+	images?: FileNameString[]
 	previewImageIndex?: number
 	publishDate?: IsoDateString
 	published?: boolean
 	title: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
 export type ContractorsServicesRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	description?: string
 	id: string
 	priceMax?: number
 	priceMin?: number
 	specialtyService: RecordIdString
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
@@ -246,11 +248,11 @@ export type DictParkingRecord = {
 }
 
 export type DictPostTagsRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	description?: string
 	id: string
 	name?: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type DictPricePerM2Record = {
@@ -273,7 +275,7 @@ export type DictRegionsRecord = {
 
 export type DictServiceCategoriesRecord = {
 	id: string
-	image: string
+	image: FileNameString
 	name: string
 }
 
@@ -304,7 +306,7 @@ export type FlatsRecord = {
 	buildYear?: RecordIdString
 	buildingCategory: RecordIdString
 	ceilingHeight?: RecordIdString
-	created?: IsoDateString
+	created: IsoAutoDateString
 	description: string
 	elevator?: RecordIdString
 	finishing: RecordIdString
@@ -313,7 +315,7 @@ export type FlatsRecord = {
 	floorStructure?: RecordIdString
 	houseSeries: RecordIdString
 	id: string
-	images?: string[]
+	images?: FileNameString[]
 	journals?: RecordIdString[]
 	layout?: RecordIdString
 	nickname: string
@@ -321,30 +323,30 @@ export type FlatsRecord = {
 	pricePerM2?: RecordIdString
 	squareM2: RecordIdString
 	storeys?: RecordIdString
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
 export type HouseSeriesCardsRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	description?: string
 	houseSeries: RecordIdString
 	id: string
-	image?: string
-	updated?: IsoDateString
+	image?: FileNameString
+	updated: IsoAutoDateString
 }
 
 export type JournalsRecord = {
 	content: HTMLString
-	created?: IsoDateString
+	created: IsoAutoDateString
 	flat: RecordIdString
 	id: string
-	images?: string[]
+	images?: FileNameString[]
 	previewImageIndex?: number
 	publishDate?: IsoDateString
 	published?: boolean
 	title: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
@@ -371,20 +373,22 @@ export enum PostsStatusOptions {
 	"published" = "published",
 	"pending" = "pending",
 }
-export type PostsRecord = {
+export type PostsRecord<Tcontent_json = unknown> = {
 	author?: RecordIdString
 	content?: HTMLString
-	created?: IsoDateString
+	content_json?: null | Tcontent_json
+	created: IsoAutoDateString
 	id: string
-	images?: string[]
+	images?: FileNameString[]
 	journal?: RecordIdString
 	portfolio?: RecordIdString
 	publishDate?: IsoDateString
-	status?: PostsStatusOptions
+	status: PostsStatusOptions
 	tags?: RecordIdString[]
 	title: string
 	type?: PostsTypeOptions
-	updated?: IsoDateString
+	updated: IsoAutoDateString
+	videos?: FileNameString[]
 }
 
 export enum UserProfilesGenderOptions {
@@ -394,10 +398,10 @@ export enum UserProfilesGenderOptions {
 export type UserProfilesRecord = {
 	about?: string
 	age?: number
-	created?: IsoDateString
+	created: IsoAutoDateString
 	gender?: UserProfilesGenderOptions
 	id: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 
@@ -406,8 +410,8 @@ export enum UsersRoleOptions {
 	"contractor" = "contractor",
 }
 export type UsersRecord = {
-	avatar?: string
-	created?: IsoDateString
+	avatar?: FileNameString
+	created: IsoAutoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
@@ -416,7 +420,7 @@ export type UsersRecord = {
 	password: string
 	role?: UsersRoleOptions
 	tokenKey: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	username: string
 	verified?: boolean
 }
@@ -458,7 +462,7 @@ export type HouseSeriesCardsResponse<Texpand = unknown> = Required<HouseSeriesCa
 export type JournalsResponse<Texpand = unknown> = Required<JournalsRecord> & BaseSystemFields<Texpand>
 export type PostFlatsResponse<Texpand = unknown> = Required<PostFlatsRecord> & BaseSystemFields<Texpand>
 export type PostServicesResponse<Texpand = unknown> = Required<PostServicesRecord> & BaseSystemFields<Texpand>
-export type PostsResponse<Texpand = unknown> = Required<PostsRecord> & BaseSystemFields<Texpand>
+export type PostsResponse<Tcontent_json = unknown, Texpand = unknown> = Required<PostsRecord<Tcontent_json>> & BaseSystemFields<Texpand>
 export type UserProfilesResponse<Texpand = unknown> = Required<UserProfilesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -548,47 +552,68 @@ export type CollectionResponses = {
 	users: UsersResponse
 }
 
+// Utility types for create/update operations
+
+type ProcessCreateAndUpdateFields<T> = Omit<{
+	// Omit AutoDate fields
+	[K in keyof T as Extract<T[K], IsoAutoDateString> extends never ? K : never]: 
+		// Convert FileNameString to File
+		T[K] extends infer U ? 
+			U extends (FileNameString | FileNameString[]) ? 
+				U extends any[] ? File[] : File 
+			: U
+		: never
+}, 'id'>
+
+// Create type for Auth collections
+export type CreateAuth<T> = {
+	id?: RecordIdString
+	email: string
+	emailVisibility?: boolean
+	password: string
+	passwordConfirm: string
+	verified?: boolean
+} & ProcessCreateAndUpdateFields<T>
+
+// Create type for Base collections
+export type CreateBase<T> = {
+	id?: RecordIdString
+} & ProcessCreateAndUpdateFields<T>
+
+// Update type for Auth collections
+export type UpdateAuth<T> = Partial<
+	Omit<ProcessCreateAndUpdateFields<T>, keyof AuthSystemFields>
+> & {
+	email?: string
+	emailVisibility?: boolean
+	oldPassword?: string
+	password?: string
+	passwordConfirm?: string
+	verified?: boolean
+}
+
+// Update type for Base collections
+export type UpdateBase<T> = Partial<
+	Omit<ProcessCreateAndUpdateFields<T>, keyof BaseSystemFields>
+>
+
+// Get the correct create type for any collection
+export type Create<T extends keyof CollectionResponses> =
+	CollectionResponses[T] extends AuthSystemFields
+		? CreateAuth<CollectionRecords[T]>
+		: CreateBase<CollectionRecords[T]>
+
+// Get the correct update type for any collection
+export type Update<T extends keyof CollectionResponses> =
+	CollectionResponses[T] extends AuthSystemFields
+		? UpdateAuth<CollectionRecords[T]>
+		: UpdateBase<CollectionRecords[T]>
+
 // Type for usage with type asserted PocketBase instance
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
-export type TypedPocketBase = PocketBase & {
-	collection(idOrName: '_authOrigins'): RecordService<AuthoriginsResponse>
-	collection(idOrName: '_externalAuths'): RecordService<ExternalauthsResponse>
-	collection(idOrName: '_mfas'): RecordService<MfasResponse>
-	collection(idOrName: '_otps'): RecordService<OtpsResponse>
-	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
-	collection(idOrName: 'blog_posts'): RecordService<BlogPostsResponse>
-	collection(idOrName: 'contractors_cities'): RecordService<ContractorsCitiesResponse>
-	collection(idOrName: 'contractors_posts'): RecordService<ContractorsPostsResponse>
-	collection(idOrName: 'contractors_services'): RecordService<ContractorsServicesResponse>
-	collection(idOrName: 'dict_balcony'): RecordService<DictBalconyResponse>
-	collection(idOrName: 'dict_build_year'): RecordService<DictBuildYearResponse>
-	collection(idOrName: 'dict_building_category'): RecordService<DictBuildingCategoryResponse>
-	collection(idOrName: 'dict_ceiling_height'): RecordService<DictCeilingHeightResponse>
-	collection(idOrName: 'dict_cities'): RecordService<DictCitiesResponse>
-	collection(idOrName: 'dict_elevator'): RecordService<DictElevatorResponse>
-	collection(idOrName: 'dict_finishing'): RecordService<DictFinishingResponse>
-	collection(idOrName: 'dict_flat_type'): RecordService<DictFlatTypeResponse>
-	collection(idOrName: 'dict_floor'): RecordService<DictFloorResponse>
-	collection(idOrName: 'dict_floor_structure'): RecordService<DictFloorStructureResponse>
-	collection(idOrName: 'dict_house_series'): RecordService<DictHouseSeriesResponse>
-	collection(idOrName: 'dict_layout'): RecordService<DictLayoutResponse>
-	collection(idOrName: 'dict_object_status'): RecordService<DictObjectStatusResponse>
-	collection(idOrName: 'dict_parking'): RecordService<DictParkingResponse>
-	collection(idOrName: 'dict_post_tags'): RecordService<DictPostTagsResponse>
-	collection(idOrName: 'dict_price_per_m2'): RecordService<DictPricePerM2Response>
-	collection(idOrName: 'dict_regions'): RecordService<DictRegionsResponse>
-	collection(idOrName: 'dict_service_categories'): RecordService<DictServiceCategoriesResponse>
-	collection(idOrName: 'dict_specialties'): RecordService<DictSpecialtiesResponse>
-	collection(idOrName: 'dict_specialty_services'): RecordService<DictSpecialtyServicesResponse>
-	collection(idOrName: 'dict_square_m2'): RecordService<DictSquareM2Response>
-	collection(idOrName: 'dict_storeys'): RecordService<DictStoreysResponse>
-	collection(idOrName: 'flats'): RecordService<FlatsResponse>
-	collection(idOrName: 'house_series_cards'): RecordService<HouseSeriesCardsResponse>
-	collection(idOrName: 'journals'): RecordService<JournalsResponse>
-	collection(idOrName: 'post_flats'): RecordService<PostFlatsResponse>
-	collection(idOrName: 'post_services'): RecordService<PostServicesResponse>
-	collection(idOrName: 'posts'): RecordService<PostsResponse>
-	collection(idOrName: 'user_profiles'): RecordService<UserProfilesResponse>
-	collection(idOrName: 'users'): RecordService<UsersResponse>
-}
+export type TypedPocketBase = {
+	collection<T extends keyof CollectionResponses>(
+		idOrName: T
+	): RecordService<CollectionResponses[T]>
+} & PocketBase

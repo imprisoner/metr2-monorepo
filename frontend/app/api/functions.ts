@@ -22,12 +22,6 @@ import type { FlatFilter } from "~/types/common.types";
 import type { LoginSchema, RegisterSchema } from "~/schemas";
 import type { OAUTH_PROVIDERS } from "~/constants";
 
-export const getOneJournal_DEPRECATED = async (id: string) => {
-  const response = await pb.collection(Collections.Journals).getOne(id);
-
-  return response;
-};
-
 export const getAllHouseSeriesCards = async () => {
   const response = await pb
     .collection(Collections.HouseSeriesCards)
@@ -268,33 +262,6 @@ export const getFlatsByUser = async (userId: string) => {
   }));
 
   return withImages;
-};
-
-export const getBlogPosts_DEPRECATED = async (userId: string) => {
-  const response = await pb
-    .collection("blog_posts")
-    .getFullList<BlogPostsResponse<{ users_via_user: UsersRecord }>>({
-      expand: "users_via_user",
-      filter: `user="${userId}"`,
-    });
-
-  const withPreviewImages = response.map((article) => {
-    let previewImage;
-
-    if (article.images) {
-      previewImage = getPocketbaseFilePath(
-        article,
-        article.images[article.previewImageIndex]!
-      );
-    }
-
-    return {
-      ...article,
-      previewImage,
-    };
-  });
-
-  return withPreviewImages;
 };
 
 export const updateUser = async (id: string, data: Partial<UsersRecord>) => {

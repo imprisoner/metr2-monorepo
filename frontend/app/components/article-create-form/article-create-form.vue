@@ -1,13 +1,13 @@
 <template>
-  <Panel header="Редактировать запись" pt:content:class="flex flex-col gap-8">
-    <Form
-      ref="articleForm"
-      v-slot="$form"
-      class="flex flex-col gap-4 w-full"
-      :initial-values
-      :resolver
-      @submit="onFormSubmit"
-    >
+  <Form
+    ref="articleForm"
+    v-slot="$form"
+    class="flex flex-col gap-4 w-full"
+    :initial-values
+    :resolver
+    @submit="onFormSubmit"
+  >
+    <Panel header="Редактировать запись" pt:content:class="flex flex-col gap-8">
       <!-- Flat select -->
       <div v-if="isJournal" class="flex flex-col gap-2">
         <label class="font-semibold text-surface-500" for="title"
@@ -32,12 +32,17 @@
         >
         <InputText name="title" aria-describedby="title" />
       </div>
-      <div class="flex flex-col gap-1">
+    </Panel>
+    <Panel class="mt-4" header="Контент статьи">
+      <div class="flex flex-col gap-1 relative">
         <RichTextEditor
+          v-model:blocks="content"
+          :post-id="post.id"
           form-name="content"
-          @images-updated="onImagesUpdatedInTextEditor"
         />
       </div>
+    </Panel>
+    <Panel pt:header:class="hidden" class="pt-4">
       <div class="flex justify-end gap-2">
         <ButtonLink
           button-size=""
@@ -52,13 +57,14 @@
           type="submit"
         />
       </div>
-    </Form>
-  </Panel>
+    </Panel>
+  </Form>
 </template>
 
 <script setup lang="ts">
 import type { FormInstance } from "@primevue/forms";
 import type { FormSubmitEvent } from "@primevue/forms/form";
+import type { Block } from "blocknotejs-vue-rte";
 import { ClientResponseError } from "pocketbase";
 import { pb } from "~/api/pocketbase-client";
 import { articleResolver } from "~/schemas";
@@ -77,17 +83,13 @@ const isJournal = post.type === PostsTypeOptions.journal;
 const isPortfolio = post.type === PostsTypeOptions.portfolio;
 
 const title = ref(post.title);
-const content = ref(post.content);
+const content = ref<Block[]>(post.content_json as Block[]);
 
-const uploadedImages = ref<string[]>(post.images ?? []);
+watchEffect(() => {
+  const text = extractText(content.value);
 
-const imageFiles = computed(() =>
-  uploadedImages.value.map((str, i) => base64ToFile(str, `image_${i}.png`))
-);
-
-const onImagesUpdatedInTextEditor = (base64images: string[]) => {
-  uploadedImages.value = base64images;
-};
+  console.log(text);
+});
 
 const authStore = useAuthStore();
 
@@ -206,7 +208,7 @@ async function updatePostContent(data: Record<string, unknown>) {
 }
 
 async function saveFullPostWithRelatedEntities(
-  { content, title, flat, services }: ArticleData,
+  { title, flat, services }: ArticleData,
   shouldPublish: boolean = false
 ) {
   if (isJournal) {
@@ -219,44 +221,38 @@ async function saveFullPostWithRelatedEntities(
 
   const response = await updatePostContent({
     title,
-    content,
-    images: imageFiles.value,
+    content_json: content.value,
+    status: shouldPublish ? PostsStatusOptions.published : undefined,
   });
 
-  const contentWithReplacedImages = replaceAllImageSrcs(content, (_, index) => {
-    return getPocketbaseFilePath(response, response.images[index]!);
-  });
-
-  await updatePostContent({
-    content: contentWithReplacedImages,
-    status: shouldPublish
-      ? PostsStatusOptions.published
-      : undefined,
-  });
+  // TODO
 }
 
 const articleForm = ref<FormInstance>();
 
 const autosave = throttle(async (states) => {
+  console.log("autosave");
   await saveFullPostWithRelatedEntities(states);
 }, 5000);
 
-watch(
-  () => articleForm.value?.states,
-  () => {
-    if (articleForm.value === undefined) return;
+const listener = () => {
+  const data = Object.keys(articleForm.value!.states).reduce(
+    (acc, key: string) => {
+      acc[key as keyof ArticleData] = articleForm.value!.states[key]!.value;
+      return acc;
+    },
+    {} as ArticleData
+  );
 
-    const data = Object.keys(articleForm.value.states).reduce(
-      (acc, key: string) => {
-        acc[key as keyof ArticleData] = articleForm.value!.states[key]!.value;
-        return acc;
-      },
-      {} as ArticleData
-    );
+  autosave(data);
+};
 
-    autosave({...data, images: imageFiles.value});
-  },
-  { deep: true }
-);
+onMounted(() => {
+  document.addEventListener("keydown", listener);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("keydown", listener);
+});
 </script>
 

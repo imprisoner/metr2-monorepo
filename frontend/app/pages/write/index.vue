@@ -40,23 +40,8 @@ async function tryToFindPostOrRedirect() {
         `author = "${userId}" && id = "${editId}"`
       );
 
-    const imageSources = extractImageSrcs(post.content);
-
-    const base64ImageSources = await Promise.all(
-      imageSources.map(imageUrlToBase64Client)
-    );
-
-    const contentWithReplacedImages = replaceAllImageSrcs(
-      post.content,
-      (_, index) => {
-        return base64ImageSources[index]!;
-      }
-    );
-
     article.value = {
       ...post,
-      images: base64ImageSources,
-      content: contentWithReplacedImages,
     };
   } catch (e) {
     console.error(e);

@@ -34,7 +34,7 @@
     <template #content>
       <p class="text-gray-700 text-sm relative">
         <span class="line-clamp-4">
-          {{ post.content }}
+          {{ extractText(post.content_json as Block[]) }}
         </span>
         <NuxtLink
           :to="`/posts/${post.id}`"
@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Block } from "blocknotejs-vue-rte";
 import { PostsStatusOptions, type PostsRecord } from "~/types/pocketbase-types";
 
 const { post } = defineProps<{ post: PostsRecord }>();

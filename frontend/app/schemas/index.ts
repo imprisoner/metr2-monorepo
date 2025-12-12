@@ -114,7 +114,6 @@ export const registerFormResolver = zodResolver(registerSchema);
 
 const commonArticleSchema = z.object({
   title: z.string().min(1, { message: "Заголовок обязателен" }),
-  content: z.string(),
 });
 
 const journalSchema = commonArticleSchema.extend({

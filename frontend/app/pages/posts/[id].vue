@@ -4,19 +4,17 @@
     <TwoSectionContainer>
       <template #left>
         <Panel>
-          <template #header>
-            <div class="flex justify-end items-center w-full">
-              <ButtonLink
-                v-if="isOwner"
-                label="Редактировать статью"
-                :to="`/write?edit=${post.id}`"
-              />
-            </div>
-          </template>
+          
           <div class="mb-8">
             <SmallUserInfoPlate :user-id="post.author" class="mb-8" />
           </div>
-          <div class="content" v-html="post.content" />
+        </Panel>
+        <Panel class="mt-8">
+          <BlockRenderer
+            v-for="block in (post.content_json as Block[])"
+            :key="block.id"
+            :block="block"
+          />
         </Panel>
       </template>
       <template #right>
@@ -33,11 +31,16 @@
               <span class="font-semibold">{{ postTypesMap[post.type] }}</span>
             </div>
             <div
-              v-if="post.status === PostsStatusOptions.published && post.publishDate !== ''"
+              v-if="
+                post.status === PostsStatusOptions.published &&
+                post.publishDate !== ''
+              "
               class="flex gap-2"
             >
               <span class="text-gray-400">Опубликовано: </span>
-              <span class="font-semibold">{{ new Date(post.publishDate) }}</span>
+              <span class="font-semibold">{{
+                new Date(post.publishDate)
+              }}</span>
             </div>
             <ButtonLink
               v-if="isOwner"
@@ -52,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Block } from "blocknotejs-vue-rte";
 import { getOnePost } from "~/api/functions";
 import { PostsStatusOptions, PostsTypeOptions } from "~/types/pocketbase-types";
 
