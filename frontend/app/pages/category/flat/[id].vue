@@ -37,7 +37,7 @@
         <PanelHeaderWithControls
           text="Бортжурналы"
           button-label="Добавить статью"
-          :button-link="`/write/journals/flats/${flat.id}`"
+          :button-link="`/write?type=journal`"
           :controls-show-condition="!!(isOwner && posts.length)"
         />
       </template>
@@ -50,7 +50,7 @@
         text="Здесь ещё нет статей"
         :controls-show-condition="isOwner"
         button-label="Добавить статью"
-        :button-link="`/write/journals/flats/${flat.id}`"
+        :button-link="`/write?type=journal`"
       />
       <template #footer>
         <p

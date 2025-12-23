@@ -21,13 +21,17 @@
     <template v-if="posts.length">
       <PostCard v-for="post in posts" :key="post.id" :post="post" />
     </template>
-    <NoItemsSection
+    <!-- <NoItemsSection
       v-else
       text="Здесь ещё нет статей"
       button-label="Добавить статью"
       button-link="/write"
       :controls-show-condition="isOwner"
-    />
+    /> -->
+    <div class="flex flex-col items-center justify-center py-8">
+      <span class="text-gray-500 mb-2">{{ text }}</span>
+      <CreatePostMenu />
+    </div>
   </Panel>
 </template>
 
@@ -70,9 +74,9 @@ const draftFilter = 'status != "draft"';
 
 const fetchPosts = async () => {
   const filter = `type="${postsType.value}" && author="${userId}" ${
-      isOwner ? "" : " && " + draftFilter
-    }`
-    
+    isOwner ? "" : " && " + draftFilter
+  }`;
+
   const { items } = await getPostsList({
     page: 1,
     perPage: 100,
